@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmmA Production — продюсерский центр</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <script src="//s3.intickets.ru/intickets.js"></script>
+    <style>
+        :root {
+            --background: #0f0f0f;
+            --background-alt: #171717;
+            --text: #f7f7f7;
+            --muted: #cfcfcf;
+            --accent: #d8b25d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(12, 12, 12, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(216, 178, 93, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.25rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            font-size: 0.95rem;
+            color: var(--muted);
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -0.35rem;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--text);
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        .hero {
+            position: relative;
+            padding: 2.5rem 0 5rem;
+        }
+
+        .hero-title {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-heading {
+            margin: 0;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-brand {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.35em;
+            font-size: clamp(3.4rem, 7vw, 5.4rem);
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        .hero-letter {
+            display: inline-block;
+        }
+
+        .hero-letter-large {
+            font-size: 1em;
+        }
+
+        .hero-letter-small {
+            font-size: 0.72em;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-production {
+            font-size: clamp(1.2rem, 3vw, 1.9rem);
+            letter-spacing: 0.75em;
+            text-transform: uppercase;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(247, 247, 247, 0.25);
+        }
+
+        .hero-director {
+            margin-top: 1.4rem;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(216, 178, 93, 0.9);
+            color: var(--background);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 600;
+            padding: 1rem 1.8rem;
+            border: 1px solid rgba(216, 178, 93, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-director-label {
+            font-size: 0.7rem;
+        }
+
+        .hero-director-name {
+            font-size: 0.95rem;
+            letter-spacing: 0.25em;
+            margin-top: 0.4rem;
+        }
+
+        .hero p {
+            max-width: 620px;
+            color: var(--muted);
+            margin-top: 2rem;
+        }
+
+        .banner {
+            margin-top: 3rem;
+            border: 1px solid rgba(216, 178, 93, 0.4);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            min-height: 320px;
+            background: radial-gradient(circle at top, rgba(216,178,93,0.2), transparent 60%),
+                        linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.6));
+        }
+
+        .banner-item {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            gap: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            animation: bannerFade 15s infinite;
+        }
+
+        .banner-item:nth-child(2) {
+            animation-delay: 5s;
+        }
+
+        .banner-item:nth-child(3) {
+            animation-delay: 10s;
+        }
+
+        .banner-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .banner-description {
+            max-width: 480px;
+            color: var(--muted);
+        }
+
+        .banner-cta {
+            padding: 0.85rem 2.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.7);
+            color: var(--background);
+            background: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .banner-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(216, 178, 93, 0.2);
+        }
+
+        @keyframes bannerFade {
+            0%, 8% {
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(25px);
+            }
+            8%, 38% {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            38%, 100% {
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+            }
+        }
+
+        section {
+            margin-top: 5rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .about {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        .about p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .widget {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+            border-radius: 18px;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            background: var(--background-alt);
+        }
+
+        .widget a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1.8rem;
+            border-radius: 999px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .widget a:hover {
+            background: var(--accent);
+            color: var(--background);
+        }
+
+        .repertoire-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .repertoire-card {
+            padding: 2rem;
+            border-radius: 18px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(0,0,0,0.8));
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 200px;
+        }
+
+        .repertoire-card span {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .team-card {
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            border-radius: 18px;
+            padding: 1.8rem;
+            background: var(--background-alt);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-card strong {
+            letter-spacing: 0.05em;
+            font-size: 1.1rem;
+        }
+
+        .team-card span {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .contacts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(216, 178, 93, 0.12), rgba(0,0,0,0.75));
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .contact-info a {
+            color: var(--accent);
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.4rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.5);
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .social-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .social-button:hover {
+            transform: translateY(-3px);
+            background: rgba(216, 178, 93, 0.15);
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--muted);
+            border-top: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            header {
+                position: static;
+            }
+
+            .hero {
+                padding-top: 2.9rem;
+            }
+
+            .hero-brand {
+                gap: 0.25em;
+            }
+
+            .hero-director {
+                letter-spacing: 0.14em;
+                padding: 0.85rem 1.5rem;
+            }
+
+            .banner {
+                border-radius: 16px;
+                min-height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <div class="logo">AmmA Production</div>
+            <nav>
+                <ul>
+                    <li><a href="#about">О центре</a></li>
+                    <li><a href="#repertoire">Репертуар</a></li>
+                    <li><a href="#team">Команда</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="about">
+            <div class="hero-title">
+                <h1 class="hero-heading" aria-label="AmmA Production">
+                    <span class="hero-brand" aria-hidden="true">
+                        <span class="hero-letter hero-letter-large">A</span>
+                        <span class="hero-letter hero-letter-small">M</span>
+                        <span class="hero-letter hero-letter-small">M</span>
+                        <span class="hero-letter hero-letter-large">A</span>
+                    </span>
+                    <span class="hero-production" aria-hidden="true">PRODUCTION</span>
+                </h1>
+                <div class="hero-director" aria-label="Художественный руководитель — Вера Анненкова">
+                    <span class="hero-director-label">Художественный руководитель</span>
+                    <span class="hero-director-name">Вера Анненкова</span>
+                </div>
+            </div>
+            <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
+
+            <div class="banner" aria-label="Актуальные спектакли">
+                <div class="banner-item">
+                    <div class="banner-title">«Мой бедный Марат»</div>
+                    <p class="banner-description">История любви и выбора на фоне блокадного Ленинграда. Эмоциональный спектакль о стойкости человеческого духа.</p>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+                <div class="banner-item">
+                    <div class="banner-title">«Окна. Город. Любовь...»</div>
+                    <p class="banner-description">Поэтический калейдоскоп о ритме мегаполиса и камерных историях жителей большого города.</p>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+                <div class="banner-item">
+                    <div class="banner-title">«Остров»</div>
+                    <p class="banner-description">Медитативное путешествие к себе. Спектакль о тишине, выборе и внутренней свободе.</p>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="about">
+                <div>
+                    <h2 class="section-title">О центре</h2>
+                    <p>AmmA Production сопровождает культурные проекты на всех этапах — от идеи до премьерного поклона. Наша команда курирует постановки, гастроли, медиасопровождение и работу с партнёрами, создавая актуальные театральные события.</p>
+                </div>
+                <div class="widget">
+                    <h3 style="margin:0; font-size:1.2rem; text-transform:uppercase; letter-spacing:0.08em;">Онлайн-билеты</h3>
+                    <p style="margin:0; color:var(--muted);">Используйте готовый виджет для моментальной покупки билетов на спектакли нашего репертуара.</p>
+                    <a href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="repertoire">
+            <h2 class="section-title">Текущий репертуар</h2>
+            <div class="repertoire-grid">
+                <div class="repertoire-card">
+                    <span>Драма</span>
+                    <h3>Мой бедный Марат</h3>
+                    <p>Пьеса Алексея Арбузова о молодости, любви и надежде, которая не угасает даже в самые тяжёлые времена.</p>
+                </div>
+                <div class="repertoire-card">
+                    <span>Поэтический спектакль</span>
+                    <h3>Окна. Город. Любовь...</h3>
+                    <p>Погружение в городские истории, рассказанные языком пластики, видеоарта и живой музыки.</p>
+                </div>
+                <div class="repertoire-card">
+                    <span>Современная притча</span>
+                    <h3>Остров</h3>
+                    <p>Постановка о поиске себя и силе одиночества, объединяющая перформанс, медиа и авторскую музыку.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="team">
+            <h2 class="section-title">Команда</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <strong>Вера Анненкова</strong>
+                    <span>Художественный руководитель</span>
+                </div>
+                <div class="team-card">
+                    <strong>Михаил Маликов</strong>
+                    <span>Продюсер</span>
+                </div>
+                <div class="team-card">
+                    <strong>Алина Мазненкова</strong>
+                    <span>PR и коммуникации</span>
+                </div>
+                <div class="team-card">
+                    <strong>Максим Дементьев</strong>
+                    <span>Технический директор</span>
+                </div>
+                <div class="team-card">
+                    <strong>Аксинья Олейник</strong>
+                    <span>Куратор проектов</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacts">
+            <h2 class="section-title">Контакты</h2>
+            <div class="contacts">
+                <div class="contact-info">
+                    <div><strong>Телефон:</strong> <a href="tel:+79991234567">+7 (999) 123-45-67</a></div>
+                    <div><strong>Email:</strong> <a href="mailto:info@amma-production.ru">info@amma-production.ru</a></div>
+                    <div><strong>Адрес:</strong> Москва, Большая театральная, 12</div>
+                    <div><strong>График:</strong> Пн–Пт 10:00–19:00</div>
+                </div>
+                <div>
+                    <h3 style="margin-top:0; text-transform:uppercase; letter-spacing:0.08em;">Свяжитесь с нами</h3>
+                    <p style="color:var(--muted); margin-top:0;">Менеджеры AmmA Production готовы помочь с организацией показов, партнёрскими предложениями и покупкой билетов.</p>
+                    <div class="social-buttons">
+                        <a class="social-button" href="https://wa.me/79991234567" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3C9.4 3 4 8.29 4 14.82c0 2.48.79 4.79 2.14 6.69L4 29l7.74-2.06c1.83 1 3.94 1.57 6.3 1.57 6.63 0 12.04-5.29 12.04-11.82C30.09 8.29 22.67 3 16.04 3zm0 20.97c-2.03 0-3.92-.56-5.52-1.53l-.39-.24-4.59 1.22 1.23-4.35-.26-.45a9.43 9.43 0 01-1.45-4.99c0-5.3 4.42-9.62 9.98-9.62s9.98 4.32 9.98 9.62-4.42 9.62-9.98 9.62zm5.76-7.18c-.31-.15-1.84-.9-2.12-1-.28-.1-.49-.15-.7.15-.21.31-.81 1-.99 1.2-.18.21-.37.23-.68.08-.31-.16-1.29-.47-2.46-1.5-.91-.81-1.53-1.81-1.71-2.12-.18-.31-.02-.48.13-.63.14-.14.31-.37.47-.55.15-.18.21-.31.31-.52.1-.21.05-.39-.02-.55-.08-.15-.7-1.68-.96-2.3-.25-.6-.51-.52-.7-.53l-.6-.01c-.21 0-.55.08-.84.39-.28.31-1.1 1.08-1.1 2.63s1.13 3.06 1.29 3.27c.16.21 2.23 3.38 5.41 4.73.76.33 1.35.53 1.81.68.76.24 1.45.21 2 .13.61-.09 1.84-.75 2.1-1.48.26-.73.26-1.36.18-1.48-.08-.13-.28-.21-.6-.37z"></path></svg>
+                            WhatsApp
+                        </a>
+                        <a class="social-button" href="https://t.me/amma_production" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M28.44 5.23L3.46 14.97c-1.69.66-1.68 1.58-.31 2.02l6.21 1.94 2.39 7.64c.29.81.15 1.14.99 1.14.65 0 .94-.3 1.31-.65l3.15-3.06 6.56 4.83c1.2.66 2.07.32 2.37-1.11l4.29-20.13c.44-1.76-.67-2.55-1.98-2.03zM25.4 9.3l-11.2 10.4c-.49.44-.18.69.29 1.11l3.36 2.86c.56.52 1.14.16 1.31-.29l2.53-7.56 4.59-4.35c.23-.21-.05-.5-.88-.17z"></path></svg>
+                            Telegram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © 2024 AmmA Production. Все права защищены.
+    </footer>
+</body>
+</html>
