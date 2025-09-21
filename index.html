@@ -6,7 +6,9 @@
     <title>AmmA Production — продюсерский центр</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
     <script src="//s3.intickets.ru/intickets.js"></script>
     <style>
@@ -106,19 +108,86 @@
 
         .hero {
             position: relative;
-            padding: 8rem 0 5rem;
+
+            padding: 2.5rem 0 5rem;
         }
 
-        .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            margin-bottom: 1rem;
-            text-transform: uppercase;
+        .hero-title {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-heading {
+            margin: 0;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
             letter-spacing: 0.2em;
+        }
+
+        .hero-brand {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.35em;
+            font-size: clamp(3.4rem, 7vw, 5.4rem);
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        .hero-letter {
+            display: inline-block;
+        }
+
+        .hero-letter-large {
+            font-size: 1em;
+        }
+
+        .hero-letter-small {
+            font-size: 0.72em;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-production {
+            font-size: clamp(1.2rem, 3vw, 1.9rem);
+            letter-spacing: 0.75em;
+            text-transform: uppercase;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(247, 247, 247, 0.25);
+        }
+
+        .hero-director {
+            margin-top: 1.4rem;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(216, 178, 93, 0.9);
+            color: var(--background);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 600;
+            padding: 1rem 1.8rem;
+            border: 1px solid rgba(216, 178, 93, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-director-label {
+            font-size: 0.7rem;
+        }
+
+        .hero-director-name {
+            font-size: 0.95rem;
+            letter-spacing: 0.25em;
+            margin-top: 0.4rem;
         }
 
         .hero p {
             max-width: 620px;
             color: var(--muted);
+            margin-top: 2rem;
+
         }
 
         .banner {
@@ -377,7 +446,18 @@
             }
 
             .hero {
-                padding-top: 4.5rem;
+
+                padding-top: 2.9rem;
+            }
+
+            .hero-brand {
+                gap: 0.25em;
+            }
+
+            .hero-director {
+                letter-spacing: 0.14em;
+                padding: 0.85rem 1.5rem;
+
             }
 
             .banner {
@@ -404,7 +484,23 @@
 
     <main>
         <section class="hero" id="about">
-            <h1>AmmA Production</h1>
+
+            <div class="hero-title">
+                <h1 class="hero-heading" aria-label="AmmA Production">
+                    <span class="hero-brand" aria-hidden="true">
+                        <span class="hero-letter hero-letter-large">A</span>
+                        <span class="hero-letter hero-letter-small">M</span>
+                        <span class="hero-letter hero-letter-small">M</span>
+                        <span class="hero-letter hero-letter-large">A</span>
+                    </span>
+                    <span class="hero-production" aria-hidden="true">PRODUCTION</span>
+                </h1>
+                <div class="hero-director" aria-label="Художественный руководитель — Вера Анненкова">
+                    <span class="hero-director-label">Художественный руководитель</span>
+                    <span class="hero-director-name">Вера Анненкова</span>
+                </div>
+            </div>
+
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
 
             <div class="banner" aria-label="Актуальные спектакли">
