@@ -126,7 +126,6 @@
             font-family: 'Cinzel', serif;
             font-weight: 400;
             letter-spacing: 0.2em;
-
             align-items: center;
             text-align: center;
 
@@ -134,7 +133,6 @@
 
         .hero-brand {
             display: flex;
-
             align-items: center;
             justify-content: center;
 
@@ -175,12 +173,11 @@
             text-transform: uppercase;
             letter-spacing: 0.18em;
             font-weight: 600;
-      
+
         }
 
         .hero-director-label {
             font-size: 0.7rem;
-
             color: var(--accent);
 
         }
@@ -188,7 +185,6 @@
         .hero-director-name {
             font-size: 0.95rem;
             letter-spacing: 0.25em;
-
             color: var(--accent);
 
             margin-top: 0.4rem;
@@ -227,23 +223,24 @@
             gap: 1rem;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(20px);
-
-            animation: bannerFade 20s infinite;
-
+            pointer-events: none;
+            transform: translateY(18px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
         }
 
-        .banner-item:nth-child(2) {
-            animation-delay: 5s;
+        .banner-item:first-child {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
         }
 
-        .banner-item:nth-child(3) {
-            animation-delay: 10s;
-        }
+        .banner-item.is-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
 
-
-        .banner-item:nth-child(4) {
-            animation-delay: 15s;
         }
 
         .banner-item-brand {
@@ -279,34 +276,6 @@
             box-shadow: 0 10px 25px rgba(216, 178, 93, 0.2);
         }
 
-        @keyframes bannerFade {
-
-            0%, 1% {
-
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(25px);
-            }
-
-            1%, 24% {
-
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-
-            24%, 28% {
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px);
-            }
-            28%, 100% {
-
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px);
-            }
-        }
 
         section {
             margin-top: 5rem;
@@ -371,14 +340,29 @@
         }
 
         .repertoire-card {
-            padding: 2rem;
+            padding: 1.75rem;
+
             border-radius: 18px;
             background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(0,0,0,0.8));
             border: 1px solid rgba(216, 178, 93, 0.2);
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            min-height: 200px;
+        }
+
+        .repertoire-media {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(247, 247, 247, 0.08);
+        }
+
+        .repertoire-media svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+
         }
 
         .repertoire-card span {
@@ -387,6 +371,16 @@
             letter-spacing: 0.3em;
             color: var(--accent);
         }
+
+        .repertoire-card h3 {
+            margin: 0;
+        }
+
+        .repertoire-card p {
+            margin: 0;
+            color: var(--muted);
+        }
+
 
         .team-grid {
             display: grid;
@@ -483,13 +477,14 @@
             }
 
             .hero {
-
-                padding: 2.7rem 0 3.5rem;
+                padding: 2.4rem 0 3.2rem;
 
             }
 
             .hero-brand {
                 gap: 0.25em;
+                flex-wrap: wrap;
+
             }
 
             .hero-director {
@@ -501,6 +496,59 @@
                 border-radius: 16px;
                 min-height: 280px;
             }
+
+            .banner-item {
+                padding: 2.4rem 1.6rem;
+            }
+
+            .repertoire-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 560px) {
+            main {
+                padding: 0 1rem 3.5rem;
+            }
+
+            .hero-brand {
+                font-size: clamp(2.4rem, 14vw, 3.2rem);
+                letter-spacing: 0.12em;
+            }
+
+            .hero-production {
+                letter-spacing: 0.45em;
+                font-size: clamp(1rem, 6vw, 1.35rem);
+            }
+
+            .hero-director-name {
+                letter-spacing: 0.18em;
+            }
+
+            .banner {
+                min-height: 250px;
+            }
+
+            .banner-item {
+                padding: 2rem 1.25rem;
+            }
+
+            .banner-title {
+                font-size: clamp(1.5rem, 6vw, 2.1rem);
+            }
+
+            .repertoire-media {
+                aspect-ratio: 3 / 2;
+            }
+
+            .contacts {
+                padding: 1.8rem;
+            }
+
+            .social-buttons {
+                gap: 0.75rem;
+            }
+
         }
     </style>
 </head>
@@ -555,7 +603,6 @@
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
                 </div>
             </div>
-
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
 
         </section>
@@ -578,16 +625,109 @@
             <h2 class="section-title">Текущий репертуар</h2>
             <div class="repertoire-grid">
                 <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-marat" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-marat">Стилизованная афиша спектакля «Мой бедный Марат»</title>
+                            <defs>
+                                <linearGradient id="marat-bg" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#1c1c1c" />
+                                    <stop offset="100%" stop-color="#0b0b0b" />
+                                </linearGradient>
+                                <linearGradient id="marat-accent" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" />
+                                    <stop offset="100%" stop-color="#8f6a1f" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#marat-bg)" />
+                            <g opacity="0.25" stroke="#f7f7f7" stroke-opacity="0.4" stroke-width="2">
+                                <line x1="28" y1="52" x2="292" y2="52" />
+                                <line x1="28" y1="118" x2="292" y2="118" />
+                                <line x1="28" y1="184" x2="292" y2="184" />
+                            </g>
+                            <path d="M36 212 L160 38 L284 212 Z" fill="url(#marat-accent)" fill-opacity="0.68" />
+                            <path d="M72 212 L160 108 L248 212 Z" fill="none" stroke="#d8b25d" stroke-width="4" stroke-opacity="0.7" />
+                            <circle cx="160" cy="126" r="26" fill="#0f0f0f" stroke="#d8b25d" stroke-width="3" />
+                            <path d="M126 212 L150 166 L170 212 Z" fill="#101010" opacity="0.85" />
+                            <path d="M176 212 L190 186 L204 212 Z" fill="#0b0b0b" opacity="0.75" />
+                        </svg>
+                    </figure>
+
                     <span>Драма</span>
                     <h3>Мой бедный Марат</h3>
                     <p>Пьеса Алексея Арбузова о молодости, любви и надежде, которая не угасает даже в самые тяжёлые времена.</p>
                 </div>
                 <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-okna" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-okna">Стилизованная афиша спектакля «Окна. Город. Любовь...»</title>
+                            <defs>
+                                <linearGradient id="okna-bg" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#1e1e1e" />
+                                    <stop offset="100%" stop-color="#090909" />
+                                </linearGradient>
+                                <linearGradient id="okna-highlight" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" stop-opacity="0.9" />
+                                    <stop offset="100%" stop-color="#b48b3f" stop-opacity="0.6" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#okna-bg)" />
+                            <g stroke="#f7f7f7" stroke-width="3" stroke-opacity="0.08">
+                                <line x1="40" y1="30" x2="280" y2="30" />
+                                <line x1="40" y1="90" x2="280" y2="90" />
+                                <line x1="40" y1="150" x2="280" y2="150" />
+                                <line x1="40" y1="210" x2="280" y2="210" />
+                                <line x1="40" y1="30" x2="40" y2="210" />
+                                <line x1="110" y1="30" x2="110" y2="210" />
+                                <line x1="190" y1="30" x2="190" y2="210" />
+                                <line x1="280" y1="30" x2="280" y2="210" />
+                            </g>
+                            <g fill="url(#okna-highlight)" fill-opacity="0.85">
+                                <rect x="56" y="48" width="40" height="60" rx="6" />
+                                <rect x="126" y="110" width="48" height="70" rx="6" />
+                                <rect x="206" y="60" width="52" height="82" rx="6" />
+                            </g>
+                            <g fill="#d8b25d" fill-opacity="0.4">
+                                <rect x="62" y="164" width="28" height="36" rx="4" />
+                                <rect x="138" y="70" width="26" height="32" rx="4" />
+                                <rect x="216" y="162" width="34" height="44" rx="4" />
+                            </g>
+                            <path d="M36 212 H284" stroke="#d8b25d" stroke-width="4" stroke-linecap="round" stroke-opacity="0.6" />
+                        </svg>
+                    </figure>
+
                     <span>Поэтический спектакль</span>
                     <h3>Окна. Город. Любовь...</h3>
                     <p>Погружение в городские истории, рассказанные языком пластики, видеоарта и живой музыки.</p>
                 </div>
                 <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-ostrov" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-ostrov">Стилизованная афиша спектакля «Остров»</title>
+                            <defs>
+                                <linearGradient id="ostrov-sky" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#161616" />
+                                    <stop offset="100%" stop-color="#050505" />
+                                </linearGradient>
+                                <linearGradient id="ostrov-glow" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" stop-opacity="0.85" />
+                                    <stop offset="100%" stop-color="#8d6f2c" stop-opacity="0.6" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#ostrov-sky)" />
+                            <circle cx="236" cy="64" r="34" fill="url(#ostrov-glow)" fill-opacity="0.75" />
+                            <path d="M0 188 Q80 144 160 176 T320 188 V240 H0 Z" fill="#0c0c0c" />
+                            <path d="M92 188 Q120 150 160 164 Q200 178 228 188 Z" fill="#111" />
+                            <path d="M128 186 Q160 148 188 184 Z" fill="#d8b25d" fill-opacity="0.45" />
+                            <g stroke="#d8b25d" stroke-width="3" stroke-opacity="0.6" fill="none">
+                                <path d="M40 212 C80 204 120 204 160 212" />
+                                <path d="M160 212 C200 220 240 220 280 212" />
+                            </g>
+                            <g stroke="#f7f7f7" stroke-opacity="0.12" stroke-width="2" fill="none">
+                                <path d="M24 138 Q112 96 160 120 Q208 144 296 108" />
+                            </g>
+                        </svg>
+                    </figure>
+
                     <span>Современная притча</span>
                     <h3>Остров</h3>
                     <p>Постановка о поиске себя и силе одиночества, объединяющая перформанс, медиа и авторскую музыку.</p>
@@ -651,5 +791,38 @@
     <footer>
         © 2024 AmmA Production. Все права защищены.
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slider = document.querySelector('.hero-slider');
+            if (!slider) return;
+
+            const slides = Array.from(slider.querySelectorAll('.banner-item'));
+            if (slides.length === 0) return;
+
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            slides.forEach((slide, index) => {
+                if (index === 0) {
+                    slide.classList.add('is-active');
+                } else {
+                    slide.classList.remove('is-active');
+                }
+            });
+
+            if (reduceMotion || slides.length === 1) {
+                return;
+            }
+
+            let current = 0;
+            const cycleDuration = 5000;
+
+            setInterval(() => {
+                slides[current].classList.remove('is-active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('is-active');
+            }, cycleDuration);
+        });
+    </script>
+
 </body>
 </html>
