@@ -1,5 +1,5 @@
 (function () {
-    const DEFAULT_ENDPOINT = '/api/intickets-events';
+    const DEFAULT_ENDPOINT = 'baza_afisha.json';
     const DATE_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
         weekday: 'long',
         day: 'numeric',
@@ -382,7 +382,7 @@
                 grid.appendChild(createEventCard(event));
             });
         } catch (error) {
-            console.error('Не удалось загрузить афишу Intickets', error);
+            console.error('Не удалось загрузить афишу', error);
             showStatus(grid, 'Не удалось загрузить события. Попробуйте обновить страницу позже.');
         }
     }
