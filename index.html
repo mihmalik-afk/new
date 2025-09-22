@@ -346,6 +346,7 @@
             background: var(--accent);
             color: var(--background);
         }
+      
         .playbill {
             margin-top: 4rem;
             padding: 3rem;
@@ -375,6 +376,18 @@
             display: grid;
             gap: 1.8rem;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .playbill-empty {
+            grid-column: 1 / -1;
+            padding: 2.5rem 1.5rem;
+            border-radius: 18px;
+            border: 1px dashed rgba(216, 178, 93, 0.4);
+            text-align: center;
+            color: var(--muted);
+            background: rgba(15, 15, 15, 0.65);
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
         }
 
         .playbill-card {
@@ -447,9 +460,18 @@
 
         .playbill-card-body {
             padding: 1.75rem 1.8rem 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.15rem;
+            display: grid;
+            grid-template-rows: min-content 1fr min-content;
+            align-items: start;
+            gap: 1.1rem;
+        }
+
+        .playbill-card-body > *:nth-child(2) {
+            align-self: stretch;
+        }
+
+        .playbill-card-body > *:last-child {
+            align-self: end;
         }
 
         .playbill-card h3 {
@@ -677,6 +699,7 @@
             flex-wrap: wrap;
             gap: 0.85rem;
         }
+
         .intickets-widget {
             margin-top: 1.5rem;
         }
@@ -684,6 +707,7 @@
         .intickets-widget + .intickets-widget {
             margin-top: 1rem;
         }
+      
         .repertoire-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -845,6 +869,7 @@
             .banner-item {
                 padding: 2.4rem 1.6rem;
             }
+
             .playbill {
                 padding: 2.4rem 2rem;
                 gap: 2rem;
@@ -859,6 +884,7 @@
             .playbill-modal {
                 padding: 2rem;
             }
+
             .repertoire-card {
                 padding: 1.5rem;
             }
@@ -900,6 +926,7 @@
                 letter-spacing: 0.18em;
                 padding: 0.45rem 1.2rem;
             }
+
             .playbill {
                 padding: 1.8rem 1.2rem;
                 gap: 1.8rem;
@@ -935,6 +962,7 @@
             .playbill-gallery {
                 grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
             }
+
             .repertoire-media {
                 aspect-ratio: 3 / 2;
             }
@@ -1061,6 +1089,7 @@
                 </div>
             </div>
         </div>
+      
         <section>
             <div class="about">
                 <div>
@@ -1270,7 +1299,24 @@
                 }
             }
 
-            const playbillShows = [
+            const allowedTitles = new Set([
+                'Мой бедный Марат',
+                'Окна. Город. Любовь...',
+                'Остров'
+            ]);
+
+            const allowedTitleKeys = new Set(
+                Array.from(allowedTitles).map((title) =>
+                    title
+                        .toLowerCase()
+                        .replace(/[\s\u2026\.]+/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                )
+            );
+
+            const fallbackShows = [
+
                 {
                     id: 'my-poor-marat',
                     title: 'Мой бедный Марат',
@@ -1393,7 +1439,11 @@
                     }
 
                     if (modalMedia) {
-                        modalMedia.style.setProperty('--image', `url('${show.image}')`);
+                        if (show.image) {
+                            modalMedia.style.setProperty('--image', `url('${show.image}')`);
+                        } else {
+                            modalMedia.style.removeProperty('--image');
+                        }
                     }
 
                     if (modalMeta) {
@@ -1459,7 +1509,7 @@
                     }
 
                     if (modalTicket) {
-                        modalTicket.href = show.ticketUrl;
+                        modalTicket.href = show.ticketUrl || 'https://iframeab-pre2514.intickets.ru/events/#abiframe';
                         modalTicket.textContent = show.price ? `Купить билет — ${show.price}` : 'Купить билет';
                     }
 
@@ -1491,6 +1541,171 @@
                     return span;
                 }
 
+                const textContainer = document.createElement('div');
+
+                function sanitizeText(value) {
+                    if (!value) {
+                        return '';
+                    }
+                    textContainer.innerHTML = String(value);
+                    return textContainer.textContent.trim();
+                }
+
+                function ensureUrl(value) {
+                    if (!value) {
+                        return '';
+                    }
+                    try {
+                        return new URL(value, 'https://iframeab-pre2514.intickets.ru').toString();
+                    } catch (error) {
+                        return '';
+                    }
+                }
+
+                function normalizeShow(raw) {
+                    if (!raw || typeof raw !== 'object') {
+                        return null;
+                    }
+
+                    const primarySeance = Array.isArray(raw.seances) && raw.seances.length > 0
+                        ? raw.seances[0]
+                        : Array.isArray(raw.sessions) && raw.sessions.length > 0
+                            ? raw.sessions[0]
+                            : null;
+
+                    const title = sanitizeText(raw.title || raw.name || raw.caption || (primarySeance && primarySeance.title));
+                    const titleKey = title
+                        .toLowerCase()
+                        .replace(/[\s\u2026\.]+/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                    if (!title || !allowedTitleKeys.has(titleKey)) {
+                        return null;
+                    }
+
+                    const rawDate = raw.date || raw.start_date || raw.starts_at || raw.event_date || (primarySeance && (primarySeance.date || primarySeance.starts_at));
+                    const rawTime = raw.time || raw.start_time || raw.starts_at || (primarySeance && (primarySeance.time || primarySeance.start_time || primarySeance.starts_at));
+
+                    const venue = sanitizeText(
+                        (raw.venue && (raw.venue.name || raw.venue.title)) ||
+                        raw.venue_name ||
+                        raw.place ||
+                        (primarySeance && (primarySeance.venue_name || primarySeance.place))
+                    );
+
+                    const age = sanitizeText(raw.age || raw.age_limit || raw.age_category || (raw.labels && raw.labels.age));
+                    const duration = sanitizeText(raw.duration || raw.duration_text || (primarySeance && primarySeance.duration));
+
+                    const priceFrom = raw.min_price || raw.price_from || raw.price || (raw.prices && (raw.prices.min || raw.prices.from));
+                    const priceTo = raw.max_price || (raw.prices && raw.prices.max);
+                    let price = '';
+                    if (priceFrom && priceTo && priceFrom !== priceTo) {
+                        price = `от ${priceFrom} ₽`;
+                    } else if (priceFrom) {
+                        price = `от ${priceFrom} ₽`;
+                    } else if (priceTo) {
+                        price = `${priceTo} ₽`;
+                    }
+
+                    const possibleImages = [];
+                    if (raw.images) {
+                        if (Array.isArray(raw.images)) {
+                            raw.images.forEach((img) => {
+                                if (!img) return;
+                                if (typeof img === 'string') {
+                                    possibleImages.push(img);
+                                } else if (img.url) {
+                                    possibleImages.push(img.url);
+                                } else if (img.src) {
+                                    possibleImages.push(img.src);
+                                }
+                            });
+                        } else if (typeof raw.images === 'object') {
+                            Object.values(raw.images).forEach((img) => {
+                                if (!img) return;
+                                if (typeof img === 'string') {
+                                    possibleImages.push(img);
+                                } else if (img.url) {
+                                    possibleImages.push(img.url);
+                                }
+                            });
+                        }
+                    }
+                    if (raw.poster) {
+                        if (typeof raw.poster === 'string') {
+                            possibleImages.unshift(raw.poster);
+                        } else if (raw.poster.url) {
+                            possibleImages.unshift(raw.poster.url);
+                        }
+                    }
+                    if (primarySeance && primarySeance.poster) {
+                        possibleImages.push(primarySeance.poster);
+                    }
+
+                    const image = ensureUrl(possibleImages.find(Boolean));
+
+                    const linkCandidates = [
+                        raw.url,
+                        raw.link,
+                        raw.booking_url,
+                        raw.purchase_url,
+                        raw.buy_url,
+                        raw.widget_url,
+                        primarySeance && (primarySeance.url || primarySeance.booking_url || primarySeance.purchase_url)
+                    ];
+                    const ticketUrl = ensureUrl(linkCandidates.find(Boolean));
+
+                    const description = sanitizeText(raw.description || raw.short_description || raw.annotation || raw.note);
+
+                    const gallery = [];
+                    if (Array.isArray(raw.gallery)) {
+                        raw.gallery.forEach((item) => {
+                            if (typeof item === 'string') {
+                                gallery.push({ src: ensureUrl(item) });
+                            } else if (item && (item.src || item.url)) {
+                                gallery.push({ src: ensureUrl(item.src || item.url), alt: sanitizeText(item.alt || item.title) });
+                            }
+                        });
+                    }
+
+                    const creators = [];
+                    if (Array.isArray(raw.creators)) {
+                        raw.creators.forEach((creator) => {
+                            if (!creator) return;
+                            const role = sanitizeText(creator.role || creator.title || creator.name);
+                            const value = sanitizeText(creator.value || creator.person || creator.description);
+                            if (role && value) {
+                                creators.push({ role, value });
+                            }
+                        });
+                    }
+
+                    const id = raw.id || raw.alias || raw.slug || (ticketUrl ? ticketUrl.split('/').pop() : title.toLowerCase().replace(/[^a-zа-я0-9]+/gi, '-'));
+
+                    return {
+                        id,
+                        title,
+                        date: sanitizeText(rawDate),
+                        time: sanitizeText(rawTime),
+                        venue,
+                        age,
+                        duration,
+                        price,
+                        image,
+                        ticketUrl: ticketUrl || 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
+                        description,
+                        creators,
+                        gallery
+                    };
+                }
+
+                function createEmptyState(message) {
+                    const empty = document.createElement('div');
+                    empty.className = 'playbill-empty';
+                    empty.textContent = message;
+                    return empty;
+                }
+
                 function renderCard(show) {
                     const card = document.createElement('article');
                     card.className = 'playbill-card';
@@ -1498,7 +1713,9 @@
                     const imageButton = document.createElement('button');
                     imageButton.type = 'button';
                     imageButton.className = 'playbill-card-image';
-                    imageButton.style.setProperty('--image', `url('${show.image}')`);
+                    if (show.image) {
+                        imageButton.style.setProperty('--image', `url('${show.image}')`);
+                    }
                     imageButton.setAttribute('aria-label', `Подробнее о спектакле «${show.title}»`);
 
                     const tagWrap = document.createElement('div');
@@ -1550,7 +1767,7 @@
 
                     const buyLink = document.createElement('a');
                     buyLink.className = 'playbill-button primary';
-                    buyLink.href = show.ticketUrl;
+                    buyLink.href = show.ticketUrl || 'https://iframeab-pre2514.intickets.ru/events/#abiframe';
                     buyLink.target = '_blank';
                     buyLink.rel = 'noopener';
                     buyLink.textContent = 'Купить билет';
@@ -1574,8 +1791,128 @@
                     playbillGrid.appendChild(card);
                 }
 
+                function extractEventArray(payload, depth = 0) {
+                    if (!payload || depth > 4) {
+                        return [];
+                    }
+                    if (Array.isArray(payload)) {
+                        return payload;
+                    }
+                    if (typeof payload === 'object') {
+                        for (const key of ['events', 'items', 'data', 'result', 'list']) {
+                            if (payload[key]) {
+                                const nested = extractEventArray(payload[key], depth + 1);
+                                if (nested.length) {
+                                    return nested;
+                                }
+                            }
+                        }
+                        for (const value of Object.values(payload)) {
+                            const nested = extractEventArray(value, depth + 1);
+                            if (nested.length) {
+                                return nested;
+                            }
+                        }
+                    }
+                    return [];
+                }
+
+                function parseJsonWithFallback(rawText) {
+                    if (!rawText) {
+                        return null;
+                    }
+                    const trimmed = rawText.trim();
+                    if (!trimmed) {
+                        return null;
+                    }
+                    try {
+                        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                            return JSON.parse(trimmed);
+                        }
+                        const jsonpMatch = trimmed.match(/^[^(]+\((.*)\)\s*;?$/s);
+                        if (jsonpMatch) {
+                            return JSON.parse(jsonpMatch[1]);
+                        }
+                    } catch (error) {
+                        console.warn('Не удалось разобрать ответ Intickets', error);
+                    }
+                    return null;
+                }
+
+                async function fetchInticketsShows() {
+                    const endpoints = [
+                        'https://iframeab-pre2514.intickets.ru/api/public/events?format=json',
+                        'https://iframeab-pre2514.intickets.ru/api/events?format=json',
+                        'https://iframeab-pre2514.intickets.ru/events/?format=json',
+                        'https://iframeab-pre2514.intickets.ru/widget/events?format=json'
+                    ];
+
+                    for (const endpoint of endpoints) {
+                        try {
+                            const response = await fetch(endpoint, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json, text/javascript, */*;q=0.1'
+                                },
+                                mode: 'cors',
+                                credentials: 'omit'
+                            });
+
+                            if (!response.ok) {
+                                continue;
+                            }
+
+                            const text = await response.text();
+                            const payload = parseJsonWithFallback(text);
+                            if (!payload) {
+                                continue;
+                            }
+
+                            const rawEvents = extractEventArray(payload);
+                            if (!rawEvents || rawEvents.length === 0) {
+                                continue;
+                            }
+
+                            const normalized = rawEvents
+                                .map(normalizeShow)
+                                .filter(Boolean);
+
+                            if (normalized.length > 0) {
+                                return normalized;
+                            }
+                        } catch (error) {
+                            console.warn('Ошибка загрузки Intickets', endpoint, error);
+                        }
+                    }
+
+                    return [];
+                }
+
+                function renderShows(shows) {
+                    playbillGrid.innerHTML = '';
+                    if (!shows || shows.length === 0) {
+                        playbillGrid.appendChild(createEmptyState('Актуальные события появятся здесь после обновления афиши.'));
+                        return;
+                    }
+                    shows.forEach(renderCard);
+                }
+
+                async function loadShows() {
+                    const remoteShows = await fetchInticketsShows();
+                    if (remoteShows.length > 0) {
+                        renderShows(remoteShows);
+                    } else {
+                        renderShows(fallbackShows);
+                        playbillGrid.appendChild(createEmptyState('Автоматическая загрузка афиши временно недоступна — отображаются сохранённые мероприятия.'));
+                    }
+                }
+
                 playbillGrid.innerHTML = '';
-                playbillShows.forEach(renderCard);
+                playbillGrid.appendChild(createEmptyState('Загружаем афишу Intickets…'));
+                loadShows().catch(() => {
+                    renderShows(fallbackShows);
+                    playbillGrid.appendChild(createEmptyState('Автоматическая загрузка афиши временно недоступна — отображаются сохранённые мероприятия.'));
+                });
             }
         });
     </script>
