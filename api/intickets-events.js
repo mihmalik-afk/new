@@ -1,77 +1,138 @@
-const DEFAULT_CACHE_SECONDS = 60;
 
-function buildResponse(res, statusCode, payload) {
-    if (typeof res.status === 'function') {
-        res.status(statusCode);
-    } else {
-        res.statusCode = statusCode;
-    }
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    const cacheControl = statusCode >= 400 ? 'no-store' : `public, max-age=${DEFAULT_CACHE_SECONDS}`;
-    res.setHeader('Cache-Control', cacheControl);
-    res.end(JSON.stringify(payload));
+const ALLOWED_QUERY_PARAMS = new Set([
+    'limit',
+    'page',
+    'city',
+    'venue',
+    'category',
+    'date_from',
+    'date_to',
+    'project',
+    'search',
+    'sort',
+]);
+
+const DEFAULT_HEADERS = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+};
+
+function buildJsonResponse(statusCode, payload, extraHeaders = {}) {
+    return {
+        statusCode,
+        headers: { ...DEFAULT_HEADERS, ...extraHeaders },
+        body: payload != null ? JSON.stringify(payload) : '',
+    };
 }
 
-export default async function handler(req, res) {
-    const apiUrl = process.env.INTICKETS_EVENTS_URL;
-    const token = process.env.INTICKETS_TOKEN;
+async function fetchEvents(query = {}) {
+    const endpoint = process.env.INTICKETS_EVENTS_URL;
 
-    if (!apiUrl) {
-        return buildResponse(res, 500, {
-            error: 'Configuration error',
-            detail: 'INTICKETS_EVENTS_URL environment variable is not set.'
+    if (!endpoint) {
+        return buildJsonResponse(500, {
+            error: 'INTICKETS_EVENTS_URL is not configured. Set the environment variable before deploying.',
         });
     }
 
+    let requestUrl;
     try {
-        const headers = { Accept: 'application/json' };
-        if (token) {
-            headers.Authorization = `Bearer ${token}`;
-        }
+        requestUrl = new URL(endpoint);
+    } catch (error) {
+        return buildJsonResponse(500, {
+            error: 'Invalid INTICKETS_EVENTS_URL value.',
+            details: error.message,
+        });
+    }
 
-        const upstreamResponse = await fetch(apiUrl, { headers });
+    Object.entries(query)
+        .filter(([key, value]) => ALLOWED_QUERY_PARAMS.has(key) && value != null && value !== '')
+        .forEach(([key, value]) => {
+            requestUrl.searchParams.set(key, value);
+        });
 
-        if (!upstreamResponse.ok) {
-            const detail = await upstreamResponse.text();
-            return buildResponse(res, upstreamResponse.status, {
-                error: `Upstream error ${upstreamResponse.status}`,
-                detail
+    const headers = {
+        Accept: 'application/json',
+    };
+
+    const token = process.env.INTICKETS_TOKEN || process.env.INTICKETS_API_KEY;
+    if (token) {
+        headers.Authorization = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    try {
+        const response = await fetch(requestUrl.toString(), {
+            headers,
+            signal: controller.signal,
+        });
+
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            return buildJsonResponse(response.status, {
+                error: 'Failed to fetch events from Intickets.',
+                details: errorText,
             });
         }
 
-        const payload = await upstreamResponse.json();
-        const events = normaliseEvents(payload);
+        const data = await response.json();
 
-        return buildResponse(res, 200, { events });
+        return buildJsonResponse(200, data, {
+            'Cache-Control': 's-maxage=300, stale-while-revalidate=600',
+        });
     } catch (error) {
-        return buildResponse(res, 500, {
-            error: 'Proxy failed',
-            detail: error instanceof Error ? error.message : String(error)
+        const isTimeout = error.name === 'AbortError';
+        const statusCode = isTimeout ? 504 : 500;
+
+        return buildJsonResponse(statusCode, {
+            error: 'Unable to fetch events from Intickets.',
+            details: error.message,
         });
     }
 }
 
-function normaliseEvents(payload) {
-    const items = Array.isArray(payload)
-        ? payload
-        : Array.isArray(payload?.events)
-        ? payload.events
-        : Array.isArray(payload?.data)
-        ? payload.data
-        : [];
+async function handleRequest(method, query) {
+    if (method === 'OPTIONS') {
+        return buildJsonResponse(200, null);
+    }
 
-    return items.map((event) => ({
-        id: event?.id ?? event?.event_id ?? event?.slug ?? null,
-        title: event?.title ?? event?.name ?? 'Без названия',
-        date: event?.date ?? event?.datetime_start ?? event?.starts_at ?? event?.start_date ?? null,
-        venue: event?.venue?.name ?? event?.venue ?? event?.place ?? event?.location ?? '',
-        image:
-            event?.image?.url ??
-            event?.image ??
-            event?.poster ??
-            event?.cover ??
-            event?.photos?.[0]?.url ??
-            null,
-        url: event?.url ?? event?.seance_url ?? event?.link ?? null
-    }));
+    if (method !== 'GET') {
+        return buildJsonResponse(405, {
+            error: 'Method Not Allowed',
+        }, {
+            Allow: 'GET,OPTIONS',
+        });
+    }
+
+    return fetchEvents(query);
 }
+
+module.exports = async function vercelHandler(req, res) {
+    const result = await handleRequest(req.method, req.query || {});
+
+    Object.entries(result.headers || {}).forEach(([key, value]) => {
+        res.setHeader(key, value);
+    });
+
+    res.status(result.statusCode);
+    res.send(result.body);
+};
+
+module.exports.config = {
+    api: {
+        bodyParser: false,
+    },
+};
+
+const netlifyHandler = async function (event) {
+    const result = await handleRequest(event.httpMethod, event.queryStringParameters || {});
+    return result;
+};
+
+module.exports.handler = netlifyHandler;
+exports.handler = netlifyHandler;

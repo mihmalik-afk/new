@@ -304,52 +304,7 @@
             letter-spacing: 0.1em;
         }
 
-        .about {
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
-            border-radius: 20px;
-            padding: 2.5rem;
-            border: 1px solid rgba(216, 178, 93, 0.2);
-        }
-
-        .about p {
-            margin: 0;
-            color: var(--muted);
-        }
-
-        .widget {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 2rem;
-            border-radius: 18px;
-            border: 1px solid rgba(216, 178, 93, 0.2);
-            background: var(--background-alt);
-        }
-
-        .widget a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.9rem 1.8rem;
-            border-radius: 999px;
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 600;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        .widget a:hover {
-            background: var(--accent);
-            color: var(--background);
-        }
-
-        .afisha {
+        .playbill {
             margin-top: 4rem;
             padding: 3rem;
             border-radius: 24px;
@@ -639,6 +594,191 @@
             background: linear-gradient(145deg, rgba(216, 178, 93, 0.12), rgba(0,0,0,0.75));
         }
 
+        .afisha-preview {
+            margin: 5rem 0;
+            padding: 2.75rem;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(216, 178, 93, 0.18), rgba(15, 15, 15, 0.65));
+            border: 1px solid rgba(216, 178, 93, 0.28);
+            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .afisha-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .afisha-preview-title {
+            margin: 0;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+        }
+
+        .afisha-preview-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.85rem;
+            color: var(--accent);
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .afisha-preview-link::after {
+            content: '→';
+            font-size: 1.05rem;
+        }
+
+        .afisha-preview-link:hover,
+        .afisha-preview-link:focus-visible {
+            background: rgba(216, 178, 93, 0.18);
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .afisha-preview-grid {
+            display: grid;
+            gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .afisha-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: 18px;
+            background: rgba(17, 17, 17, 0.85);
+            border: 1px solid rgba(216, 178, 93, 0.28);
+            overflow: hidden;
+            min-height: 100%;
+            transition: transform 0.35s ease, border-color 0.35s ease;
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(16px);
+        }
+
+        .afisha-card:hover,
+        .afisha-card:focus-within {
+            transform: translateY(-6px);
+            border-color: rgba(216, 178, 93, 0.5);
+        }
+
+        .afisha-card__poster {
+            position: relative;
+            padding-top: 133%;
+            background: linear-gradient(135deg, rgba(216, 178, 93, 0.12), rgba(17, 17, 17, 0.9));
+            overflow: hidden;
+        }
+
+        .afisha-card__poster img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .afisha-card__body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            padding: 1.25rem 1.25rem 0;
+        }
+
+        .afisha-card__title {
+            margin: 0;
+            font-size: 1.05rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .afisha-card__meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            font-size: 0.92rem;
+            color: rgba(247, 247, 247, 0.75);
+        }
+
+        .afisha-card__meta-row {
+            display: inline-flex;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        .afisha-card__meta-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(247, 247, 247, 0.55);
+        }
+
+        .afisha-card__description {
+            margin: 0;
+            color: rgba(247, 247, 247, 0.8);
+            font-size: 0.92rem;
+            line-height: 1.55;
+        }
+
+        .afisha-card__footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .afisha-card__price {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+        }
+
+        .afisha-card__link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.82rem;
+            color: var(--text);
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .afisha-card__link::after {
+            content: '→';
+            font-size: 1.05rem;
+        }
+
+        .afisha-card__link:hover,
+        .afisha-card__link:focus-visible {
+            background: rgba(216, 178, 93, 0.2);
+            border-color: var(--accent);
+        }
+
+        .afisha-status {
+            margin: 0;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 18px;
+            border: 1px dashed rgba(216, 178, 93, 0.35);
+            color: rgba(247, 247, 247, 0.7);
+            background: rgba(16, 16, 16, 0.6);
+        }
+
         .contact-info {
             display: flex;
             flex-direction: column;
@@ -740,6 +880,24 @@
             .repertoire-card {
                 padding: 1.5rem;
             }
+
+            .afisha-preview {
+                padding: 2.1rem 1.6rem;
+            }
+
+            .afisha-preview-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .afisha-preview-link {
+                align-self: flex-start;
+            }
+
+            .afisha-preview-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 560px) {
@@ -804,6 +962,15 @@
                 padding: 1.8rem;
             }
 
+            .afisha-preview {
+                margin: 3.5rem 0;
+                padding: 1.8rem 1.4rem;
+            }
+
+            .afisha-preview-grid {
+                gap: 1.2rem;
+            }
+
             .social-buttons {
                 gap: 0.75rem;
             }
@@ -817,9 +984,9 @@
             <div class="logo">AmmA Production</div>
             <nav>
                 <ul>
-                    <li><a href="#about">О центре</a></li>
                     <li><a href="#repertoire">Репертуар</a></li>
                     <li><a href="#team">Команда</a></li>
+                    <li><a href="afisha.html">Афиша</a></li>
                     <li><a href="#contacts">Контакты</a></li>
                 </ul>
             </nav>
@@ -845,17 +1012,17 @@
                     </div>
                 </div>
                 <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">12 апреля 2024</div>
+                    <div class="banner-date">12 апреля 2025</div>
                     <div class="banner-title">«Мой бедный Марат»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
                 <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">26 апреля 2024</div>
+                    <div class="banner-date">26 апреля 2025</div>
                     <div class="banner-title">«Окна. Город. Любовь...»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
                 <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">14 мая 2024</div>
+                    <div class="banner-date">14 мая 2025</div>
                     <div class="banner-title">«Остров»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
@@ -884,19 +1051,6 @@
             <div class="afisha-status" data-afisha-status hidden></div>
             <div class="afisha-grid" data-afisha-grid aria-live="polite" aria-busy="true"></div>
             <div class="afisha-empty" data-afisha-empty hidden>События не найдены.</div>
-        </section>
-        <section>
-            <div class="about">
-                <div>
-                    <h2 class="section-title">О центре</h2>
-                    <p>AmmA Production сопровождает культурные проекты на всех этапах — от идеи до премьерного поклона. Наша команда курирует постановки, гастроли, медиасопровождение и работу с партнёрами, создавая актуальные театральные события.</p>
-                </div>
-                <div class="widget">
-                    <h3 style="margin:0; font-size:1.2rem; text-transform:uppercase; letter-spacing:0.08em;">Онлайн-билеты</h3>
-                    <p style="margin:0; color:var(--muted);">Используйте готовый виджет для моментальной покупки билетов на спектакли нашего репертуара.</p>
-                    <a href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
-                </div>
-            </div>
         </section>
 
         <section id="repertoire">
@@ -1010,6 +1164,16 @@
             </div>
         </section>
 
+        <section class="afisha-preview" data-afisha-root data-afisha-limit="3">
+            <div class="afisha-preview-header">
+                <h2 class="afisha-preview-title">Ближайшие события</h2>
+                <a class="afisha-preview-link" href="afisha.html">Вся афиша</a>
+            </div>
+            <div class="afisha-preview-grid" data-afisha-grid>
+                <p class="afisha-status">Загружаем события…</p>
+            </div>
+        </section>
+
         <section id="team">
             <h2 class="section-title">Команда</h2>
             <div class="team-grid">
@@ -1064,9 +1228,10 @@
     </main>
 
     <footer>
-        © 2024 AmmA Production. Все права защищены.
+        © 2025 AmmA Production. Все права защищены.
     </footer>
 
+    <script src="afisha.js" defer></script>
     <script>
         const INTICKETS_WIDGET_CONFIG = Object.freeze({
             baseUrl: 'https://iframeab-pre2514.intickets.ru/',
