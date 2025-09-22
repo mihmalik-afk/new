@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
     <script src="//s3.intickets.ru/intickets.js"></script>
     <style>
@@ -107,14 +106,12 @@
 
         .hero {
             position: relative;
-
             padding: 2.5rem 0 4.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             gap: 2rem;
-
         }
 
         .hero-heading {
@@ -133,7 +130,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
             gap: 0.35em;
             font-size: clamp(3.4rem, 7vw, 5.4rem);
             line-height: 0.95;
@@ -351,6 +347,13 @@
             color: var(--background);
         }
 
+        .intickets-widget {
+            margin-top: 1.5rem;
+        }
+
+        .intickets-widget + .intickets-widget {
+            margin-top: 1rem;
+        }
         .repertoire-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -617,6 +620,37 @@
                     <div class="banner-title">«Остров»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
+            </div>
+            <!-- Подключение скрипта виджета Intickets -->
+            <script src="https://user.intickets.ru/widget/script.js"></script>
+
+            <!-- ===============================
+                 КНОПКА "КУПИТЬ БИЛЕТ"
+                 =============================== -->
+            <div class="intickets-widget"
+                 data-widget="button"
+                 data-event="ВАШ_ID_СОБЫТИЯ"
+                 data-partner="ВАШ_ID_ПАРТНЕРА"
+                 data-lang="ru"
+                 data-color="#000000"
+                 data-bg="#FFD700"
+                 data-font="Arial"
+                 data-width="220"
+                 data-height="60">
+            </div>
+
+            <!-- ===============================
+                 АФИША (ВСЕ СОБЫТИЯ)
+                 =============================== -->
+            <div class="intickets-widget"
+                 data-widget="events"
+                 data-partner="ВАШ_ID_ПАРТНЕРА"
+                 data-lang="ru"
+                 data-color="#000000"
+                 data-bg="#FFD700"
+                 data-font="Arial"
+                 data-width="100%"
+                 data-height="auto">
             </div>
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
         </section>
