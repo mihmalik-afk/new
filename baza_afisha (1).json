@@ -1,0 +1,28 @@
+{
+  "events": [
+    {
+      "id": "marat",
+      "title": "Мой бедный Марат",
+      "date": "2025-10-31",
+      "time": "18:00",
+      "venue": "Москва · Центр Высоцкого",
+      "link": "",
+      "image": "https://amma-production.ru/img/maxresdefault.png",
+      "description": "Легендарная история о дружбе и любви на фоне блокадного города.",
+      "showInHero": true,
+      "heroOrder": 1
+    },
+    {
+      "id": "okna",
+      "title": "Окна. Город. Любовь...",
+      "date": "2025-11-09",
+      "time": "19:00",
+      "venue": "Москва · Арт-пространство «Окна»",
+      "link": "",
+      "image": "https://amma-production.ru/img/OS_04401.jpg",
+      "description": "Поэтический спектакль о городских историях и ритме мегаполиса.",
+      "showInHero": true,
+      "heroOrder": 2
+    }
+  ]
+}
