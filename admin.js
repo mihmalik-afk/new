@@ -1,17 +1,22 @@
 'use strict';
 
 (function () {
+    const ADMIN_USERNAME = 'admin';
+    const ADMIN_PASSWORD = 'ammapro';
+
     const BAZA_URL = 'baza_afisha.json';
     const API_SAVE_URL = '/api/admin/events';
     const API_UPLOAD_URL = '/api/admin/upload';
 
     const ADMIN_AUTH_STORAGE_KEY = 'amma-admin-token';
-    const DEFAULT_ADMIN_TOKEN = 'ammapro';
+    const DEFAULT_ADMIN_TOKEN = ADMIN_PASSWORD;
 
     const UNSAVED_MESSAGE = 'Есть несохранённые изменения';
     const UPLOAD_MESSAGE = 'Идёт загрузка файлов…';
     const DEFAULT_IMAGE =
         'https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=900&q=80';
+
+    let appInitialized = false;
 
     const state = {
         events: [],
@@ -20,16 +25,14 @@
         saving: false,
         pendingUploads: 0,
         authToken: '',
-
+        authenticated: false,
     };
 
     const elements = {};
 
     document.addEventListener('DOMContentLoaded', () => {
         cacheElements();
-        bindGlobalActions();
-        hydrateAuthToken();
-        loadInitialData();
+        setupAuthOverlay();
     });
 
     function cacheElements() {
@@ -46,6 +49,119 @@
         elements.importInput = document.querySelector('[data-admin-import-input]');
         elements.unsavedBadge = document.querySelector('[data-admin-unsaved]');
         elements.authButton = document.querySelector('[data-admin-auth]');
+        elements.authOverlay = document.querySelector('[data-admin-auth-overlay]');
+        elements.authForm = document.querySelector('[data-admin-auth-form]');
+        elements.authLogin = document.querySelector('[data-admin-auth-login]');
+        elements.authPassword = document.querySelector('[data-admin-auth-password]');
+        elements.authError = document.querySelector('[data-admin-auth-error]');
+    }
+
+    function setupAuthOverlay() {
+        if (!elements.authOverlay) {
+            startAdminApp();
+            return;
+        }
+
+        if (elements.authForm) {
+            elements.authForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                handleAuthSubmit();
+            });
+        }
+
+        [elements.authLogin, elements.authPassword].forEach((input) => {
+            if (!input) {
+                return;
+            }
+
+            input.addEventListener('input', () => {
+                clearAuthError();
+            });
+        });
+
+        showAuthOverlay();
+    }
+
+    function startAdminApp() {
+        if (appInitialized) {
+            return;
+        }
+
+        appInitialized = true;
+        state.authenticated = true;
+        bindGlobalActions();
+        hydrateAuthToken();
+        loadInitialData();
+    }
+
+    function showAuthOverlay() {
+        if (!elements.authOverlay) {
+            return;
+        }
+
+        state.authenticated = false;
+        elements.authOverlay.hidden = false;
+        clearAuthError();
+
+        if (document.body) {
+            document.body.setAttribute('data-admin-locked', '');
+        }
+
+        window.setTimeout(() => {
+            if (elements.authLogin && typeof elements.authLogin.focus === 'function') {
+                elements.authLogin.focus();
+            }
+        }, 50);
+    }
+
+    function hideAuthOverlay() {
+        if (elements.authOverlay) {
+            elements.authOverlay.hidden = true;
+        }
+
+        if (document.body) {
+            document.body.removeAttribute('data-admin-locked');
+        }
+    }
+
+    function handleAuthSubmit() {
+        const login = elements.authLogin ? elements.authLogin.value.trim() : '';
+        const password = elements.authPassword ? elements.authPassword.value : '';
+
+        if (login === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            state.authenticated = true;
+            clearAuthError();
+            if (elements.authForm) {
+                elements.authForm.reset();
+            }
+            hideAuthOverlay();
+            startAdminApp();
+            return;
+        }
+
+        showAuthError('Неверный логин или пароль. Попробуйте ещё раз.');
+        if (elements.authPassword) {
+            elements.authPassword.value = '';
+            elements.authPassword.focus();
+        }
+    }
+
+    function showAuthError(message) {
+        if (!elements.authError) {
+            return;
+        }
+
+        elements.authError.textContent = message;
+        elements.authError.hidden = !message;
+    }
+
+    function clearAuthError() {
+        if (!elements.authError) {
+            return;
+        }
+
+        elements.authError.textContent = '';
+        elements.authError.hidden = true;
     }
 
     function bindGlobalActions() {
@@ -331,6 +447,20 @@
                     event.venue,
                     (value, input) => updateEvent(index, 'venue', value, { input }),
                     { fieldName: 'venue' },
+                ),
+            );
+
+            form.appendChild(
+                createTextField(
+                    'Ссылка на покупку билетов',
+                    event.link,
+                    (value, input) => updateEvent(index, 'link', value, { input }),
+                    {
+                        type: 'url',
+                        placeholder: 'https://example.com',
+                        helpText: 'Оставьте пустым, чтобы показать плашку «Скоро в продаже».',
+                        fieldName: 'link',
+                    },
                 ),
             );
 
@@ -1006,6 +1136,11 @@
     }
 
     function ensureAuthToken() {
+        if (!state.authenticated) {
+            showAuthOverlay();
+            return '';
+        }
+
         if (state.authToken) {
             return state.authToken;
         }

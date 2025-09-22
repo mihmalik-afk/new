@@ -838,7 +838,6 @@ function renderAfishaCard(event) {
     const safeTitle = escapeHtml(event.title);
     const safeAlt = escapeAttr(`Афиша спектакля ${event.title}`);
     const cover = escapeAttr(event.image || AFISHA_PLACEHOLDER_IMAGE);
-    const meta = escapeHtml(event.cardMeta || 'Дата уточняется');
     const hasTicket = Boolean(event.ticketUrl);
     const ticketLink = hasTicket ? escapeAttr(event.ticketUrl) : '';
     const triggerId = escapeAttr(event.id || 'event');
@@ -847,6 +846,31 @@ function renderAfishaCard(event) {
         ? `<a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>`
         : '<span class="afisha-card-badge" aria-label="Билеты появятся позже">Скоро в продаже</span>';
 
+    const dateLabel =
+        event.date instanceof Date && !Number.isNaN(event.date.getTime())
+            ? event.date.toLocaleDateString('ru-RU', {
+                  day: '2-digit',
+                  month: 'long',
+              })
+            : '';
+    const metaItems = [];
+
+    if (dateLabel) {
+        metaItems.push(`<span class="afisha-card-meta-item afisha-card-date">${escapeHtml(dateLabel)}</span>`);
+    }
+
+    if (event.time) {
+        metaItems.push(`<span class="afisha-card-meta-item">${escapeHtml(event.time)}</span>`);
+    }
+
+    if (event.venue) {
+        metaItems.push(`<span class="afisha-card-meta-item">${escapeHtml(event.venue)}</span>`);
+    }
+
+    const metaMarkup = metaItems.length
+        ? metaItems.join('')
+        : `<span class="afisha-card-meta-item">${escapeHtml(event.cardMeta || 'Дата уточняется')}</span>`;
+
     return `
         <article class="afisha-card" data-afisha-id="${triggerId}">
             <button type="button" class="afisha-card-cover" data-afisha-trigger="${triggerId}" aria-label="${openLabel}">
@@ -854,7 +878,7 @@ function renderAfishaCard(event) {
             </button>
             <div class="afisha-card-body">
                 <h3 class="afisha-card-title">${safeTitle}</h3>
-                <div class="afisha-card-meta">${meta}</div>
+                <div class="afisha-card-meta">${metaMarkup}</div>
                 <div class="afisha-card-actions">
 
                     ${actionMarkup}
@@ -874,7 +898,7 @@ function renderAfishaSkeleton(grid, count) {
             <div class="afisha-card-cover"></div>
             <div class="afisha-card-body">
                 <h3 class="afisha-card-title">Загрузка…</h3>
-                <div class="afisha-card-meta">Расписание обновляется</div>
+                <div class="afisha-card-meta"><span class="afisha-card-meta-item">Расписание обновляется</span></div>
                 <div class="afisha-card-actions">
                     <span class="btn">&nbsp;</span>
                 </div>
