@@ -304,7 +304,80 @@
             letter-spacing: 0.1em;
         }
 
-        .playbill {
+        .about {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        .about p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .widget {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+            border-radius: 18px;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            background: var(--background-alt);
+        }
+
+        .widget a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1.8rem;
+            border-radius: 999px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .widget a:hover {
+            background: var(--accent);
+            color: var(--background);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            background: var(--accent);
+            border: 1px solid rgba(216, 178, 93, 0.8);
+            color: var(--background);
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(216, 178, 93, 0.25);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid rgba(216, 178, 93, 0.75);
+            outline-offset: 2px;
+        }
+
+        .afisha {
             margin-top: 4rem;
             padding: 3rem;
             border-radius: 24px;
@@ -390,6 +463,10 @@
             aspect-ratio: 16 / 10;
             background: rgba(15, 15, 15, 0.72);
             overflow: hidden;
+            border: none;
+            padding: 0;
+            display: block;
+            cursor: pointer;
         }
 
         .afisha-card-cover img {
@@ -401,8 +478,28 @@
             transition: transform 0.4s ease;
         }
 
-        .afisha-card:hover .afisha-card-cover img {
+        .afisha-card-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(216, 178, 93, 0.08), rgba(0, 0, 0, 0.55));
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .afisha-card:hover .afisha-card-cover img,
+        .afisha-card-cover:focus-visible img {
             transform: scale(1.05);
+        }
+
+        .afisha-card:hover .afisha-card-cover::after,
+        .afisha-card-cover:focus-visible::after {
+            opacity: 1;
+        }
+
+        .afisha-card-cover:focus-visible {
+            outline: none;
+            box-shadow: inset 0 0 0 2px rgba(216, 178, 93, 0.6);
         }
 
         .afisha-card-body {
@@ -428,41 +525,10 @@
         .afisha-card-actions {
             margin-top: auto;
             display: flex;
-            gap: 0.75rem;
         }
 
         .afisha-card-actions .btn {
-            flex: 1;
-            border-radius: 999px;
-            padding: 0.75rem 1.1rem;
-            font-size: 0.88rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 600;
-            background: var(--accent);
-            border: 1px solid rgba(216, 178, 93, 0.8);
-            color: var(--background);
-            text-decoration: none;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-        }
-
-        .afisha-card-actions .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(216, 178, 93, 0.25);
-        }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--accent);
-            border: 1px solid rgba(216, 178, 93, 0.55);
-        }
-
-        .btn-ghost:hover {
-            background: rgba(216, 178, 93, 0.12);
-            color: var(--text);
+            width: 100%;
         }
 
         .afisha-empty {
@@ -489,6 +555,163 @@
 
         .afisha-card.afisha-card--skeleton * {
             visibility: hidden;
+        }
+
+        .afisha-modal {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 2.5rem 1.5rem;
+            background: rgba(10, 10, 10, 0.72);
+            backdrop-filter: blur(12px);
+            z-index: 250;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .afisha-modal.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .afisha-modal-dialog {
+            position: relative;
+            width: min(100%, 780px);
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.4);
+            background: linear-gradient(160deg, rgba(26, 26, 26, 0.95), rgba(0, 0, 0, 0.86));
+            padding: 2.25rem 2.5rem 2.5rem;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            transform: translateY(40px) scale(0.96);
+            opacity: 0;
+            transition: transform 0.45s ease, opacity 0.45s ease;
+        }
+
+        .afisha-modal.is-visible .afisha-modal-dialog {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .afisha-modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            background: rgba(216, 178, 93, 0.12);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .afisha-modal-close:hover {
+            transform: translateY(-2px);
+            border-color: rgba(216, 178, 93, 0.75);
+        }
+
+        .afisha-modal-close:focus-visible {
+            outline: 2px solid rgba(216, 178, 93, 0.8);
+            outline-offset: 2px;
+        }
+
+        .afisha-modal-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .afisha-modal-title {
+            margin: 0;
+            font-size: clamp(1.6rem, 3vw, 2.1rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .afisha-modal-meta {
+            color: var(--accent);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .afisha-modal-description {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.98rem;
+        }
+
+        .afisha-modal-creators {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .afisha-modal-creators li {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.75rem;
+            color: var(--text);
+        }
+
+        .afisha-modal-role {
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .afisha-modal-name {
+            color: var(--muted);
+        }
+
+        .afisha-modal-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .afisha-modal-gallery figure {
+            margin: 0;
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(17, 17, 17, 0.8);
+        }
+
+        .afisha-modal-gallery img {
+            display: block;
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .afisha-modal-gallery figcaption {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 0.35rem 0.75rem;
+            background: linear-gradient(180deg, rgba(15, 15, 15, 0), rgba(15, 15, 15, 0.75));
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(247, 247, 247, 0.85);
+        }
+
+        .afisha-modal .btn {
+            align-self: flex-start;
+            padding-inline: 1.6rem;
         }
 
         .visually-hidden {
@@ -594,191 +817,6 @@
             background: linear-gradient(145deg, rgba(216, 178, 93, 0.12), rgba(0,0,0,0.75));
         }
 
-        .afisha-preview {
-            margin: 5rem 0;
-            padding: 2.75rem;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(216, 178, 93, 0.18), rgba(15, 15, 15, 0.65));
-            border: 1px solid rgba(216, 178, 93, 0.28);
-            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
-        }
-
-        .afisha-preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .afisha-preview-title {
-            margin: 0;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-size: clamp(1.5rem, 4vw, 2.4rem);
-        }
-
-        .afisha-preview-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1.6rem;
-            border-radius: 999px;
-            border: 1px solid rgba(216, 178, 93, 0.45);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-size: 0.85rem;
-            color: var(--accent);
-            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-        }
-
-        .afisha-preview-link::after {
-            content: '→';
-            font-size: 1.05rem;
-        }
-
-        .afisha-preview-link:hover,
-        .afisha-preview-link:focus-visible {
-            background: rgba(216, 178, 93, 0.18);
-            border-color: var(--accent);
-            color: var(--text);
-        }
-
-        .afisha-preview-grid {
-            display: grid;
-            gap: 1.8rem;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        }
-
-        .afisha-card {
-            display: flex;
-            flex-direction: column;
-            border-radius: 18px;
-            background: rgba(17, 17, 17, 0.85);
-            border: 1px solid rgba(216, 178, 93, 0.28);
-            overflow: hidden;
-            min-height: 100%;
-            transition: transform 0.35s ease, border-color 0.35s ease;
-            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(16px);
-        }
-
-        .afisha-card:hover,
-        .afisha-card:focus-within {
-            transform: translateY(-6px);
-            border-color: rgba(216, 178, 93, 0.5);
-        }
-
-        .afisha-card__poster {
-            position: relative;
-            padding-top: 133%;
-            background: linear-gradient(135deg, rgba(216, 178, 93, 0.12), rgba(17, 17, 17, 0.9));
-            overflow: hidden;
-        }
-
-        .afisha-card__poster img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .afisha-card__body {
-            display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
-            padding: 1.25rem 1.25rem 0;
-        }
-
-        .afisha-card__title {
-            margin: 0;
-            font-size: 1.05rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .afisha-card__meta {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-            font-size: 0.92rem;
-            color: rgba(247, 247, 247, 0.75);
-        }
-
-        .afisha-card__meta-row {
-            display: inline-flex;
-            gap: 0.45rem;
-            align-items: center;
-        }
-
-        .afisha-card__meta-label {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(247, 247, 247, 0.55);
-        }
-
-        .afisha-card__description {
-            margin: 0;
-            color: rgba(247, 247, 247, 0.8);
-            font-size: 0.92rem;
-            line-height: 1.55;
-        }
-
-        .afisha-card__footer {
-            margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1.25rem;
-        }
-
-        .afisha-card__price {
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--accent);
-        }
-
-        .afisha-card__link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            padding: 0.55rem 1.2rem;
-            border-radius: 999px;
-            border: 1px solid rgba(216, 178, 93, 0.35);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-size: 0.82rem;
-            color: var(--text);
-            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-        }
-
-        .afisha-card__link::after {
-            content: '→';
-            font-size: 1.05rem;
-        }
-
-        .afisha-card__link:hover,
-        .afisha-card__link:focus-visible {
-            background: rgba(216, 178, 93, 0.2);
-            border-color: var(--accent);
-        }
-
-        .afisha-status {
-            margin: 0;
-            padding: 2rem;
-            text-align: center;
-            border-radius: 18px;
-            border: 1px dashed rgba(216, 178, 93, 0.35);
-            color: rgba(247, 247, 247, 0.7);
-            background: rgba(16, 16, 16, 0.6);
-        }
-
         .contact-info {
             display: flex;
             flex-direction: column;
@@ -877,26 +915,20 @@
                 padding: 1.4rem 1.4rem 1.6rem;
             }
 
+            .afisha-modal {
+                padding: 2rem 1.25rem;
+            }
+
+            .afisha-modal-dialog {
+                padding: 1.85rem 1.8rem 2.1rem;
+            }
+
+            .afisha-modal-gallery img {
+                height: 120px;
+            }
+
             .repertoire-card {
                 padding: 1.5rem;
-            }
-
-            .afisha-preview {
-                padding: 2.1rem 1.6rem;
-            }
-
-            .afisha-preview-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .afisha-preview-link {
-                align-self: flex-start;
-            }
-
-            .afisha-preview-grid {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -954,6 +986,23 @@
                 font-size: 0.88rem;
             }
 
+            .afisha-modal-dialog {
+                padding: 1.6rem 1.35rem 1.8rem;
+            }
+
+            .afisha-modal-close {
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+
+            .afisha-modal-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .afisha-modal-gallery img {
+                height: 160px;
+            }
+
             .repertoire-media {
                 aspect-ratio: 3 / 2;
             }
@@ -962,14 +1011,6 @@
                 padding: 1.8rem;
             }
 
-            .afisha-preview {
-                margin: 3.5rem 0;
-                padding: 1.8rem 1.4rem;
-            }
-
-            .afisha-preview-grid {
-                gap: 1.2rem;
-            }
 
             .social-buttons {
                 gap: 0.75rem;
@@ -984,9 +1025,9 @@
             <div class="logo">AmmA Production</div>
             <nav>
                 <ul>
+                    <li><a href="#about">О центре</a></li>
                     <li><a href="#repertoire">Репертуар</a></li>
                     <li><a href="#team">Команда</a></li>
-                    <li><a href="afisha.html">Афиша</a></li>
                     <li><a href="#contacts">Контакты</a></li>
                 </ul>
             </nav>
@@ -1012,17 +1053,20 @@
                     </div>
                 </div>
                 <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">12 апреля 2025</div>
+
+                    <div class="banner-date">12 апреля 2024</div>
                     <div class="banner-title">«Мой бедный Марат»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
                 <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">26 апреля 2025</div>
+                    <div class="banner-date">26 апреля 2024</div>
+
                     <div class="banner-title">«Окна. Город. Любовь...»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
                 <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">14 мая 2025</div>
+
+                    <div class="banner-date">14 мая 2024</div>
                     <div class="banner-title">«Остров»</div>
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
@@ -1033,7 +1077,8 @@
         <section class="afisha" id="playbill" data-afisha>
             <div class="afisha-header">
                 <h2 class="section-title">Афиша</h2>
-                <p class="afisha-description">Предстоящие спектакли AmmA Production синхронизируются с Intickets через наш серверный прокси. Используйте поиск и сортировку, чтобы быстрее найти нужное событие.</p>
+
+                <p class="afisha-description">Расписание спектаклей формируется автоматически из файла <strong>baza_afisha.json</strong>. Обновите дату, время или ссылку в базе — и афиша мгновенно изменится на сайте.</p>
             </div>
             <div class="afisha-controls">
                 <label class="afisha-field">
@@ -1051,6 +1096,32 @@
             <div class="afisha-status" data-afisha-status hidden></div>
             <div class="afisha-grid" data-afisha-grid aria-live="polite" aria-busy="true"></div>
             <div class="afisha-empty" data-afisha-empty hidden>События не найдены.</div>
+        </section>
+        <div class="afisha-modal" data-afisha-modal hidden>
+            <div class="afisha-modal-dialog" data-afisha-modal-dialog role="dialog" aria-modal="true" aria-labelledby="afisha-modal-title" tabindex="-1">
+                <button type="button" class="afisha-modal-close" data-afisha-modal-close aria-label="Закрыть окно афиши">&times;</button>
+                <div class="afisha-modal-header">
+                    <h3 class="afisha-modal-title" id="afisha-modal-title"></h3>
+                    <div class="afisha-modal-meta" data-afisha-modal-meta></div>
+                </div>
+                <p class="afisha-modal-description" data-afisha-modal-description></p>
+                <ul class="afisha-modal-creators" data-afisha-modal-creators></ul>
+                <div class="afisha-modal-gallery" data-afisha-modal-gallery></div>
+                <a class="btn" data-afisha-modal-ticket target="_blank" rel="noopener">Купить билет</a>
+            </div>
+        </div>
+        <section>
+            <div class="about">
+                <div>
+                    <h2 class="section-title">О центре</h2>
+                    <p>AmmA Production сопровождает культурные проекты на всех этапах — от идеи до премьерного поклона. Наша команда курирует постановки, гастроли, медиасопровождение и работу с партнёрами, создавая актуальные театральные события.</p>
+                </div>
+                <div class="widget">
+                    <h3 style="margin:0; font-size:1.2rem; text-transform:uppercase; letter-spacing:0.08em;">Онлайн-билеты</h3>
+                    <p style="margin:0; color:var(--muted);">Используйте готовый виджет для моментальной покупки билетов на спектакли нашего репертуара.</p>
+                    <a href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+            </div>
         </section>
 
         <section id="repertoire">
@@ -1164,16 +1235,6 @@
             </div>
         </section>
 
-        <section class="afisha-preview" data-afisha-root data-afisha-limit="3">
-            <div class="afisha-preview-header">
-                <h2 class="afisha-preview-title">Ближайшие события</h2>
-                <a class="afisha-preview-link" href="afisha.html">Вся афиша</a>
-            </div>
-            <div class="afisha-preview-grid" data-afisha-grid>
-                <p class="afisha-status">Загружаем события…</p>
-            </div>
-        </section>
-
         <section id="team">
             <h2 class="section-title">Команда</h2>
             <div class="team-grid">
@@ -1231,567 +1292,7 @@
         © 2025 AmmA Production. Все права защищены.
     </footer>
 
-    <script src="afisha.js" defer></script>
-    <script>
-        const INTICKETS_WIDGET_CONFIG = Object.freeze({
-            baseUrl: 'https://iframeab-pre2514.intickets.ru/',
-            anchor: '#abiframe'
-        });
+    <script src="main.js"></script>
 
-        const AFISHA_PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80';
-
-        const REPERTOIRE_FIXTURES = [
-            {
-                id: 'repertoire-marath',
-                slug: 'moi-bedny-marath',
-                title: 'Мой бедный Марат',
-                venue: 'Москва',
-                image: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
-                inticketsEventId: '11756122',
-                ticketPath: 'node/11756122',
-                detailsPath: 'event/11756122',
-                seances: [
-                    {
-                        datetime: '2024-04-12T19:00:00+03:00',
-                        seanceId: '60835614'
-                    }
-                ]
-            },
-            {
-                id: 'repertoire-okna',
-                slug: 'okna-gorod-lyubov',
-                title: 'Окна. Город. Любовь...',
-                venue: 'Москва',
-                image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
-                detailsUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
-                seances: [
-                    {
-                        datetime: '2024-04-26T19:00:00+03:00',
-                        directUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
-                    }
-                ]
-            },
-            {
-                id: 'repertoire-ostrov',
-                slug: 'ostrov',
-                title: 'Остров',
-                venue: 'Санкт-Петербург',
-                image: 'https://images.unsplash.com/photo-1462212210333-335063b676d3?auto=format&fit=crop&w=1200&q=80',
-                detailsUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
-                seances: [
-                    {
-                        datetime: '2024-05-14T19:00:00+03:00',
-                        directUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
-                    }
-                ]
-            }
-        ];
-
-        const afishaFallbackEvents = buildFallbackAfishaEvents(REPERTOIRE_FIXTURES);
-
-        function buildFallbackAfishaEvents(fixtures) {
-            if (!Array.isArray(fixtures)) {
-                return [];
-            }
-
-            return fixtures.map((fixture) => {
-                const nextSeance = getNextSeanceEntry(fixture?.seances);
-                const seanceDescriptor = nextSeance
-                    ? {
-                          datetime: nextSeance.datetime ?? null,
-                          seanceId: nextSeance.seanceId ?? null,
-                          directUrl: nextSeance.directUrl ?? null
-                      }
-                    : null;
-
-                const eventIdentifier =
-                    fixture?.inticketsEventIdentifier ??
-                    (fixture?.inticketsEventId ? `node/${fixture.inticketsEventId}` : null) ??
-                    fixture?.eventIdentifier ??
-                    null;
-
-                const ticketSource =
-                    typeof fixture?.ticketPath === 'string' && fixture.ticketPath
-                        ? fixture.ticketPath
-                        : eventIdentifier;
-
-                const detailsSource =
-                    typeof fixture?.detailsPath === 'string' && fixture.detailsPath
-                        ? fixture.detailsPath
-                        : eventIdentifier;
-
-                const ticketUrl =
-                    typeof fixture?.ticketUrl === 'string' && fixture.ticketUrl
-                        ? fixture.ticketUrl
-                        : seanceDescriptor?.directUrl
-                        ? composeInticketsUrl(seanceDescriptor.directUrl, { anchor: true })
-                        : composeInticketsUrl(ticketSource, { seance: seanceDescriptor, anchor: true });
-
-                const detailsUrl =
-                    typeof fixture?.detailsUrl === 'string' && fixture.detailsUrl
-                        ? composeInticketsUrl(fixture.detailsUrl, { anchor: true })
-                        : composeInticketsUrl(detailsSource, { anchor: true });
-
-                return {
-                    id:
-                        fixture?.id ??
-                        fixture?.slug ??
-                        fixture?.inticketsEventId ??
-                        fixture?.title ??
-                        'afisha-event',
-                    title: fixture?.title ?? 'Без названия',
-                    venue: fixture?.venue ?? '',
-                    date: seanceDescriptor?.datetime ?? fixture?.date ?? null,
-                    image: fixture?.image ?? AFISHA_PLACEHOLDER_IMAGE,
-                    ticketUrl,
-                    detailsUrl,
-                    inticketsEventIdentifier: eventIdentifier,
-                    inticketsSeanceId: seanceDescriptor?.seanceId ?? null
-                };
-            });
-        }
-
-        function getNextSeanceEntry(seances) {
-            if (!Array.isArray(seances) || !seances.length) {
-                return null;
-            }
-
-            const normalised = seances
-                .map((entry) => {
-                    if (!entry) {
-                        return null;
-                    }
-
-                    const iso = entry.datetime ?? entry.date ?? null;
-                    const dateObject = iso ? new Date(iso) : null;
-                    const isValidDate = dateObject instanceof Date && !Number.isNaN(dateObject.getTime());
-
-                    if (!isValidDate && !entry.directUrl && !entry.seanceId && !entry.inticketsSeanceId) {
-                        return null;
-                    }
-
-                    return {
-                        datetime: isValidDate ? dateObject.toISOString() : iso,
-                        dateObject: isValidDate ? dateObject : null,
-                        seanceId: entry.seanceId ?? entry.inticketsSeanceId ?? null,
-                        directUrl: entry.directUrl ?? entry.seanceUrl ?? null
-                    };
-                })
-                .filter(Boolean);
-
-            if (!normalised.length) {
-                return null;
-            }
-
-            normalised.sort((a, b) => {
-                const aTime = a.dateObject ? a.dateObject.getTime() : Number.POSITIVE_INFINITY;
-                const bTime = b.dateObject ? b.dateObject.getTime() : Number.POSITIVE_INFINITY;
-                return aTime - bTime;
-            });
-
-            const now = new Date();
-            const upcoming = normalised.find((entry) => entry.dateObject && entry.dateObject.getTime() >= now.getTime());
-            const selected = upcoming || normalised[0];
-
-            return {
-                datetime: selected.datetime ?? null,
-                seanceId: selected.seanceId ?? null,
-                directUrl: selected.directUrl ?? null
-            };
-        }
-
-        function composeInticketsUrl(pathOrUrl, options = {}) {
-            const { seance, anchor = false } = options;
-            const baseUrl = normaliseBaseUrl(INTICKETS_WIDGET_CONFIG.baseUrl);
-            const anchorSuffix =
-                anchor && typeof INTICKETS_WIDGET_CONFIG.anchor === 'string'
-                    ? INTICKETS_WIDGET_CONFIG.anchor
-                    : '';
-            const seanceDescriptor = seance && typeof seance === 'object' ? seance : null;
-
-            let url = pathOrUrl ? String(pathOrUrl) : '';
-
-            if (!url) {
-                if (seanceDescriptor?.seanceId) {
-                    url = `${baseUrl}seance/${seanceDescriptor.seanceId}`;
-                } else if (seanceDescriptor?.datetime) {
-                    const suffix = formatInticketsScheduleSuffix(new Date(seanceDescriptor.datetime));
-                    url = suffix ? `${baseUrl.replace(/\/$/, '')}/${suffix}` : baseUrl || '#';
-                } else {
-                    url = baseUrl || '#';
-                }
-            } else if (!/^https?:/i.test(url)) {
-                url = `${baseUrl}${url.replace(/^\//, '')}`;
-            }
-
-            const hasSeancePath = /\/seance\/\d+/.test(url) || /\d{8}_\d{4}(?:[#/]|$)/.test(url);
-
-            if (seanceDescriptor && !hasSeancePath) {
-                if (seanceDescriptor.seanceId) {
-                    url = `${baseUrl}seance/${seanceDescriptor.seanceId}`;
-                } else if (seanceDescriptor.datetime) {
-                    const suffix = formatInticketsScheduleSuffix(new Date(seanceDescriptor.datetime));
-                    if (suffix) {
-                        const hashIndex = url.indexOf('#');
-                        const basePart = hashIndex >= 0 ? url.slice(0, hashIndex) : url;
-                        const hashPart = hashIndex >= 0 ? url.slice(hashIndex) : '';
-                        url = `${basePart.replace(/\/$/, '')}/${suffix}${hashPart}`;
-                    }
-                }
-            }
-
-            if (anchorSuffix && !url.includes('#')) {
-                url += anchorSuffix;
-            }
-
-            return url;
-        }
-
-        function normaliseBaseUrl(value) {
-            if (!value) {
-                return '';
-            }
-
-            return value.endsWith('/') ? value : `${value}/`;
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            initHeroSlider();
-            initAfishaSection();
-        });
-
-        function initHeroSlider() {
-            const slider = document.querySelector('.hero-slider');
-            if (!slider) {
-                return;
-            }
-
-            const slides = Array.from(slider.querySelectorAll('.banner-item'));
-            if (!slides.length) {
-                return;
-            }
-
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            slides.forEach((slide, index) => {
-                slide.classList.toggle('is-active', index === 0);
-            });
-
-            if (reduceMotion || slides.length <= 1) {
-                return;
-            }
-
-            let current = 0;
-            const cycleDuration = 5000;
-            setInterval(() => {
-                slides[current].classList.remove('is-active');
-                current = (current + 1) % slides.length;
-                slides[current].classList.add('is-active');
-            }, cycleDuration);
-        }
-
-        function initAfishaSection() {
-            const section = document.querySelector('[data-afisha]');
-            if (!section) {
-                return;
-            }
-
-            const grid = section.querySelector('[data-afisha-grid]');
-            const empty = section.querySelector('[data-afisha-empty]');
-            const searchField = section.querySelector('[data-afisha-search]');
-            const sortField = section.querySelector('[data-afisha-sort]');
-            const statusField = section.querySelector('[data-afisha-status]');
-
-            if (grid) {
-                renderAfishaSkeleton(grid, 3);
-            }
-
-            let events = [];
-            let fallbackUsed = false;
-
-            if (searchField) {
-                searchField.addEventListener('input', () => renderAfisha());
-            }
-
-            if (sortField) {
-                sortField.addEventListener('change', () => renderAfisha());
-            }
-
-            fetchAfishaEvents();
-
-            async function fetchAfishaEvents() {
-                if (!grid) {
-                    return;
-                }
-
-                grid.setAttribute('aria-busy', 'true');
-
-                try {
-                    const response = await fetch('/api/intickets-events', { cache: 'no-store' });
-                    if (!response.ok) {
-                        throw new Error(`Request failed with status ${response.status}`);
-                    }
-
-                    const payload = await response.json();
-                    const list = Array.isArray(payload?.events) ? payload.events : [];
-
-                    if (!list.length) {
-                        throw new Error('Empty Intickets feed');
-                    }
-
-                    events = list.map(normalizeAfishaEvent);
-                    fallbackUsed = false;
-                } catch (error) {
-                    console.warn('Не удалось загрузить афишу Intickets, используем резервный список.', error);
-                    events = afishaFallbackEvents.map(normalizeAfishaEvent);
-                    fallbackUsed = true;
-                }
-
-                renderAfisha();
-            }
-
-            function renderAfisha() {
-                if (!grid) {
-                    return;
-                }
-
-                const term = (searchField?.value || '').trim().toLowerCase();
-                const sortValue = sortField?.value || 'date_asc';
-
-                const filtered = events.filter((event) => {
-                    const haystack = `${event.title} ${event.venue}`.toLowerCase();
-                    return haystack.includes(term);
-                });
-
-                filtered.sort((a, b) => {
-                    const aTime = a.date ? a.date.getTime() : 0;
-                    const bTime = b.date ? b.date.getTime() : 0;
-                    return sortValue === 'date_desc' ? bTime - aTime : aTime - bTime;
-                });
-
-                if (filtered.length) {
-                    grid.innerHTML = filtered.map(renderAfishaCard).join('');
-                } else {
-                    grid.innerHTML = '';
-                }
-
-                grid.setAttribute('aria-busy', 'false');
-
-                if (empty) {
-                    if (filtered.length > 0) {
-                        empty.hidden = true;
-                    } else {
-                        empty.hidden = false;
-                        empty.textContent = term ? 'По вашему запросу ничего не найдено.' : 'События не найдены.';
-                    }
-                }
-
-                if (statusField) {
-                    if (fallbackUsed) {
-                        statusField.hidden = false;
-                        statusField.textContent = 'Показаны события из резервного списка — проверьте подключение к Intickets.';
-                    } else {
-                        statusField.hidden = true;
-                        statusField.textContent = '';
-                    }
-                }
-            }
-        }
-
-        function normalizeAfishaEvent(raw) {
-            if (!raw) {
-                return {
-                    id: 'unknown',
-                    title: 'Без названия',
-                    venue: '',
-                    date: null,
-                    dateText: 'Дата уточняется',
-                    image: AFISHA_PLACEHOLDER_IMAGE,
-                    ticketUrl: '#',
-                    detailsUrl: '#',
-                    url: '#'
-                };
-            }
-
-            const isoDate = raw.date || raw.datetime_start || raw.starts_at || raw.start_date || raw.seance_date;
-            const parsedDate = isoDate ? new Date(isoDate) : null;
-            const displayDate = parsedDate ? formatAfishaDate(parsedDate) : 'Дата уточняется';
-
-            const seanceDescriptor = createSeanceDescriptor(raw, isoDate);
-            const eventIdentifier =
-                raw.inticketsEventIdentifier ||
-                raw.event_identifier ||
-                raw.eventPath ||
-                raw.event_slug ||
-                (raw.inticketsEventId ? `node/${raw.inticketsEventId}` : null) ||
-                (raw.event_id ? `node/${raw.event_id}` : null);
-
-            const detailsCandidate =
-                raw.detailsUrl ||
-                raw.details_url ||
-                raw.event_url ||
-                raw.url ||
-                raw.link ||
-                eventIdentifier;
-
-            const ticketCandidate =
-                raw.ticketUrl ||
-                raw.ticket_url ||
-                raw.seance_url ||
-                raw.url ||
-                raw.link ||
-                eventIdentifier;
-
-            const ticketUrl =
-                typeof raw.ticketUrl === 'string' && raw.ticketUrl
-                    ? raw.ticketUrl
-                    : seanceDescriptor?.directUrl
-                    ? composeInticketsUrl(seanceDescriptor.directUrl, { anchor: true })
-                    : composeInticketsUrl(ticketCandidate, { seance: seanceDescriptor, anchor: true });
-
-            const detailsUrl =
-                typeof raw.detailsUrl === 'string' && raw.detailsUrl
-                    ? composeInticketsUrl(raw.detailsUrl, { anchor: true })
-                    : composeInticketsUrl(detailsCandidate, { anchor: true });
-
-            const imageSource =
-                raw.image ||
-                raw.poster ||
-                raw.cover ||
-                raw.imageUrl ||
-                raw.photo ||
-                (Array.isArray(raw.photos) ? raw.photos[0]?.url : null) ||
-                AFISHA_PLACEHOLDER_IMAGE;
-
-            return {
-                id: raw.id || raw.event_id || raw.slug || 'unknown',
-                title: raw.title || raw.name || 'Без названия',
-                venue: raw.venue || raw.place || raw.location || '',
-                date: parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime()) ? parsedDate : null,
-                dateText: displayDate,
-                image: imageSource || AFISHA_PLACEHOLDER_IMAGE,
-                ticketUrl: ticketUrl || '#',
-                detailsUrl: detailsUrl || '#',
-                url: (detailsUrl || ticketUrl || '#')
-            };
-        }
-
-        function renderAfishaCard(event) {
-            const safeTitle = escapeHtml(event.title);
-            const safeAlt = escapeAttr(`Афиша спектакля ${event.title}`);
-            const dateLabel = escapeHtml(event.dateText || 'Дата уточняется');
-            const venueLabel = event.venue ? ` · ${escapeHtml(event.venue)}` : '';
-            const cover = escapeAttr(event.image || AFISHA_PLACEHOLDER_IMAGE);
-            const ticketLink = escapeAttr(event.ticketUrl || event.url || '#');
-            const detailsLink = escapeAttr(event.detailsUrl || event.url || '#');
-
-            return `
-                <article class="afisha-card">
-                    <div class="afisha-card-cover">
-                        <img src="${cover}" alt="${safeAlt}" loading="lazy">
-                    </div>
-                    <div class="afisha-card-body">
-                        <h3 class="afisha-card-title">${safeTitle}</h3>
-                        <div class="afisha-card-meta">${dateLabel}${venueLabel}</div>
-                        <div class="afisha-card-actions">
-                            <a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>
-                            <a class="btn btn-ghost" href="${detailsLink}" target="_blank" rel="noopener">Подробнее</a>
-                        </div>
-                    </div>
-                </article>
-            `;
-        }
-
-        function renderAfishaSkeleton(grid, count) {
-            if (!grid) {
-                return;
-            }
-
-            const skeleton = `
-                <article class="afisha-card afisha-card--skeleton">
-                    <div class="afisha-card-cover"></div>
-                    <div class="afisha-card-body">
-                        <h3 class="afisha-card-title">Загрузка…</h3>
-                        <div class="afisha-card-meta">Скоро появится событие</div>
-                        <div class="afisha-card-actions">
-                            <span class="btn">&nbsp;</span>
-                            <span class="btn btn-ghost">&nbsp;</span>
-                        </div>
-                    </div>
-                </article>
-            `;
-
-            grid.innerHTML = Array.from({ length: count }, () => skeleton).join('');
-        }
-
-
-        function formatInticketsScheduleSuffix(date) {
-            if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
-                return '';
-            }
-
-            const pad = (value) => String(value).padStart(2, '0');
-
-            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(
-                date.getMinutes()
-            )}`;
-        }
-
-        function createSeanceDescriptor(raw, isoDate) {
-            const descriptor = {};
-
-            if (isoDate) {
-                descriptor.datetime = isoDate;
-            }
-
-            const seanceId =
-                raw?.inticketsSeanceId ??
-                raw?.seanceId ??
-                raw?.seance_id ??
-                raw?.session_id ??
-                (raw?.seance && raw.seance.id) ??
-                null;
-
-            if (seanceId) {
-                descriptor.seanceId = String(seanceId).trim();
-            }
-
-            const directUrl = raw?.seanceUrl ?? raw?.seance_url ?? null;
-            if (directUrl) {
-                descriptor.directUrl = directUrl;
-            }
-
-            return Object.keys(descriptor).length ? descriptor : null;
-        }
-
-        function formatAfishaDate(date) {
-            try {
-                return date.toLocaleString('ru-RU', {
-                    day: '2-digit',
-                    month: 'long',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            } catch (error) {
-                console.warn('Не удалось отформатировать дату события', error);
-                return 'Дата уточняется';
-            }
-        }
-
-        function escapeHtml(value) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            };
-
-            return String(value ?? '').replace(/[&<>"']/g, (char) => map[char]);
-        }
-
-        function escapeAttr(value) {
-            return escapeHtml(value);
-        }
-    </script>
 </body>
 </html>
