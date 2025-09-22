@@ -92,7 +92,6 @@ app.post('/api/admin/events', requireAdminToken, async (req, res) => {
 });
 
 app.post('/api/admin/upload', requireAdminToken, upload.single('image'), (req, res) => {
-=======
     if (!req.file) {
         res.status(400).json({ error: 'Файл не получен.' });
         return;
