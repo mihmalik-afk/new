@@ -6,6 +6,7 @@
     const API_UPLOAD_URL = '/api/admin/upload';
 
     const ADMIN_AUTH_STORAGE_KEY = 'amma-admin-token';
+    const DEFAULT_ADMIN_TOKEN = 'ammapro';
 
     const UNSAVED_MESSAGE = 'Есть несохранённые изменения';
     const UPLOAD_MESSAGE = 'Идёт загрузка файлов…';
@@ -100,8 +101,14 @@
     }
 
     function hydrateAuthToken() {
-        state.authToken = getStoredAuthToken();
-        updateAuthButton();
+        const storedToken = getStoredAuthToken();
+        if (storedToken) {
+            state.authToken = storedToken;
+            updateAuthButton();
+            return;
+        }
+
+        setAuthToken(DEFAULT_ADMIN_TOKEN);
     }
 
     async function loadInitialData() {

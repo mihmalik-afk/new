@@ -17,7 +17,8 @@
 ## Локальный запуск
 
 1. Установите зависимости: `npm install`.
-2. Задайте ключ администратора в переменной окружения `ADMIN_TOKEN` и запустите сервер:
+2. По умолчанию административные API используют ключ доступа `ammapro`. Чтобы задать свой ключ (например, для продакшена),
+   укажите его в переменной окружения `ADMIN_TOKEN` перед запуском сервера:
    - macOS/Linux: `ADMIN_TOKEN=supersecret npm start`
    - Windows (PowerShell): `$env:ADMIN_TOKEN='supersecret'; npm start`
    - Windows (cmd.exe): `set ADMIN_TOKEN=supersecret && npm start`

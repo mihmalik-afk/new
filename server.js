@@ -12,10 +12,12 @@ const ROOT_DIR = __dirname;
 const DATA_FILE = path.join(ROOT_DIR, 'baza_afisha.json');
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads');
 const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5 MB
-const ADMIN_TOKEN = typeof process.env.ADMIN_TOKEN === 'string' ? process.env.ADMIN_TOKEN.trim() : '';
+const DEFAULT_ADMIN_TOKEN = 'ammapro';
+const ENV_ADMIN_TOKEN = typeof process.env.ADMIN_TOKEN === 'string' ? process.env.ADMIN_TOKEN.trim() : '';
+const ADMIN_TOKEN = ENV_ADMIN_TOKEN || DEFAULT_ADMIN_TOKEN;
 
-if (!ADMIN_TOKEN) {
-    console.warn('Административные API защищены и выключены: задайте переменную окружения ADMIN_TOKEN, чтобы включить сохранение.');
+if (!ENV_ADMIN_TOKEN) {
+    console.warn('Используется ключ доступа администратора по умолчанию. Задайте переменную окружения ADMIN_TOKEN, чтобы его изменить.');
 }
 
 
