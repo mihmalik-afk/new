@@ -970,7 +970,7 @@
         formData.append('image', file);
 
         const response = await fetch(API_UPLOAD_URL, {
-            method: 'POST',e
+            method: 'POST',
             headers,
             body: formData,
         });
