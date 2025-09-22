@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель AmmA Production</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --background: #101010;
+            --panel: #161616;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #d8b25d;
+            --text: #f7f7f7;
+            --muted: #b9b9b9;
+            --danger: #ff6666;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top, rgba(216, 178, 93, 0.07), transparent 55%), var(--background);
+            color: var(--text);
+        }
+
+        header {
+            padding: 1.75rem clamp(1rem, 3vw, 2.5rem);
+            border-bottom: 1px solid var(--border);
+            background: rgba(12, 12, 12, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .title {
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(216, 178, 93, 0.15);
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            color: var(--accent);
+        }
+
+        main {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: clamp(1.5rem, 3vw, 3rem);
+            display: grid;
+            gap: 2rem;
+        }
+
+        .panel {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.6));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: clamp(1.5rem, 3vw, 2.5rem);
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .panel h2 {
+            margin: 0;
+            font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .panel p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.75rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            background: rgba(216, 178, 93, 0.1);
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(216, 178, 93, 0.15);
+        }
+
+        .admin-btn:focus-visible {
+            outline: 2px solid rgba(216, 178, 93, 0.65);
+            outline-offset: 2px;
+        }
+
+        .admin-btn--ghost {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--muted);
+        }
+
+        .admin-btn--danger {
+            border-color: rgba(255, 102, 102, 0.4);
+            background: rgba(255, 102, 102, 0.08);
+            color: var(--danger);
+        }
+
+        .admin-status {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            background: rgba(216, 178, 93, 0.08);
+            border: 1px solid rgba(216, 178, 93, 0.15);
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .admin-status[data-type='error'] {
+            background: rgba(255, 102, 102, 0.08);
+            border-color: rgba(255, 102, 102, 0.2);
+            color: var(--danger);
+        }
+
+        .admin-status[data-type='success'] {
+            background: rgba(126, 217, 87, 0.08);
+            border-color: rgba(126, 217, 87, 0.2);
+            color: #84ff8a;
+        }
+
+        .admin-events {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .admin-event {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            background: rgba(12, 12, 12, 0.65);
+            overflow: hidden;
+        }
+
+        .admin-event__summary {
+            list-style: none;
+            margin: 0;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .admin-event__summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .admin-event__summary::after {
+            content: '▾';
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        details[open] > .admin-event__summary::after {
+            transform: rotate(180deg);
+        }
+
+        .admin-event__summary-title {
+            flex: 1 1 auto;
+        }
+
+        .admin-event__summary-meta {
+            font-size: 0.85rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .admin-event__form {
+            padding: 1.25rem;
+            display: grid;
+            gap: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(8, 8, 8, 0.7);
+        }
+
+        .admin-field {
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .admin-field__label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .admin-field__help {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .admin-input,
+        .admin-textarea {
+            width: 100%;
+            padding: 0.75rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.45);
+            color: inherit;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .admin-input:focus-visible,
+        .admin-textarea:focus-visible {
+            outline: 2px solid rgba(216, 178, 93, 0.45);
+            outline-offset: 2px;
+        }
+
+        .admin-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .admin-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+        }
+
+        .admin-event__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .admin-empty {
+            margin: 0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .admin-hero-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .admin-hero-item {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        .admin-hero-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-hero-content {
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .admin-json {
+            width: 100%;
+            min-height: 240px;
+            font-family: 'Fira Code', 'Source Code Pro', monospace;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.55);
+            color: var(--text);
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 720px) {
+            .admin-event__summary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .admin-hero-item {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-hero-thumb {
+                aspect-ratio: 3 / 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="title">AmmA Production · Админ-панель</div>
+            <span class="badge" data-admin-unsaved hidden>Есть несохранённые изменения</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="panel">
+            <h2>Файл базы афиши</h2>
+            <p>Страница загружает <code>baza_afisha.json</code> и помогает подготовить новый файл. После правок скачайте экспорт и замените исходный файл в проекте.</p>
+            <div class="controls">
+                <button type="button" class="admin-btn" data-admin-add-event>Добавить событие</button>
+                <button type="button" class="admin-btn" data-admin-download>Скачать JSON</button>
+                <button type="button" class="admin-btn admin-btn--ghost" data-admin-copy>Скопировать JSON</button>
+                <button type="button" class="admin-btn admin-btn--ghost" data-admin-import>Импортировать файл…</button>
+                <button type="button" class="admin-btn admin-btn--ghost" data-admin-reload>Сбросить изменения</button>
+            </div>
+            <div class="admin-status" data-admin-status>Ожидание загрузки данных…</div>
+            <p class="note">Сохранение происходит вручную: скачайте файл или скопируйте JSON и замените им содержимое <code>baza_afisha.json</code>.</p>
+        </section>
+
+        <section class="panel">
+            <h2>События афиши</h2>
+            <p>Укажите название, дату, площадку, ссылку на покупку и изображение. Если ссылка пустая, на сайте появится плашка «Скоро в продаже». Чтобы убрать событие из слайдера на главной, снимите флажок «Показывать в слайдере».</p>
+            <div class="admin-events" data-admin-events></div>
+        </section>
+
+        <section class="panel">
+            <h2>Предпросмотр слайдов</h2>
+            <p>Здесь отображаются события, отмеченные для героя. Порядок определяется числом «Порядок в слайдере», затем — датой события.</p>
+            <div data-admin-hero-preview></div>
+        </section>
+
+        <section class="panel">
+            <h2>JSON предпросмотр</h2>
+            <p>Содержимое файла обновляется при каждом изменении. Используйте блок ниже, чтобы быстро скопировать данные вручную.</p>
+            <textarea class="admin-json" data-admin-json readonly></textarea>
+        </section>
+    </main>
+
+    <input type="file" accept="application/json" data-admin-import-input hidden>
+    <script src="admin.js" defer></script>
+</body>
+</html>
