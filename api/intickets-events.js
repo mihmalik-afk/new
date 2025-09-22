@@ -1,3 +1,4 @@
+
 const DEFAULT_CACHE_SECONDS = 60;
 
 function buildResponse(res, statusCode, payload) {

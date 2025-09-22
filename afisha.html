@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Афиша AmmA Production</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="afisha.css">
+</head>
+<body>
+    <header class="afisha-header">
+        <div class="afisha-header__inner">
+            <a class="afisha-brand" href="index.html">AmmA Production</a>
+            <nav class="afisha-nav" aria-label="Основная навигация">
+                <a class="afisha-nav__link" href="index.html">Главная</a>
+                <a class="afisha-nav__link" href="afisha.html" aria-current="page">Афиша</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="afisha-main">
+        <section class="afisha-intro">
+            <h1 class="afisha-intro__heading">Афиша AmmA Production</h1>
+            <p class="afisha-intro__description">
+                Следите за свежими постановками и гастролями. Мы подгружаем список событий напрямую из Intickets,
+                поэтому здесь всегда актуальная информация и возможность перейти к покупке билетов.
+            </p>
+        </section>
+
+        <section class="afisha-grid-section" data-afisha-root data-afisha-limit="12">
+            <div class="afisha-grid-header">
+                <h2 class="afisha-grid-title">Ближайшие события</h2>
+                <a class="afisha-grid-action" href="https://intickets.ru/" target="_blank" rel="noopener">Все события</a>
+            </div>
+            <div class="afisha-grid" data-afisha-grid>
+                <p class="afisha-status">Загружаем события…</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="afisha-footer">
+        © 2025 AmmA Production. Все права защищены.
+
+    </footer>
+
+    <script src="afisha.js" defer></script>
+</body>
+</html>
