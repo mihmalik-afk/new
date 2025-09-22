@@ -28,8 +28,7 @@ const AFISHA_SUPPLEMENTAL = Object.freeze({
                 src: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=900&q=80',
                 caption: 'Финальный световой акцент спектакля'
             }
-        ],
-        ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe'
+        ]
     },
     okna: {
         title: 'Окна. Город. Любовь...',
@@ -56,8 +55,7 @@ const AFISHA_SUPPLEMENTAL = Object.freeze({
                 src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=80',
                 caption: 'Пластический дуэт в свете города'
             }
-        ],
-        ticketUrl: 'https://iframeab-pre2514.intickets.ru/event/11756122/#abiframe'
+        ]
     },
     ostrov: {
         title: 'Остров',
@@ -84,8 +82,7 @@ const AFISHA_SUPPLEMENTAL = Object.freeze({
                 src: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&w=900&q=80',
                 caption: 'Музыкальный эпизод у моря'
             }
-        ],
-        ticketUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
+        ]
     }
 });
 
@@ -520,9 +517,24 @@ function normalizeAfishaEvent(raw) {
     const supplemental = AFISHA_SUPPLEMENTAL[id] || {};
     const title = raw.title || supplemental.title || 'Без названия';
 
-    const time = raw.time || '';
+    const time = extractEventTime(raw) || normalizeTimeString(supplemental.time);
     const venue = raw.venue || supplemental.venue || '';
-    const isoDate = buildIsoDate(raw.date, time);
+    const dateSource =
+        raw.date ||
+        raw.start_date ||
+        raw.startDate ||
+        raw.date_start ||
+        raw.dateStart ||
+        raw.starts_at ||
+        raw.startsAt ||
+        raw.start_at ||
+        raw.startAt ||
+        raw.datetime_start ||
+        raw.datetimeStart ||
+        raw.event_date ||
+        raw.eventDate ||
+        null;
+    const isoDate = buildIsoDate(dateSource, time);
     const parsedDate = isoDate ? new Date(isoDate) : null;
     const isValidDate = parsedDate instanceof Date && !Number.isNaN(parsedDate?.getTime());
     const cardMeta = buildCardMeta(parsedDate, time, venue);
@@ -531,9 +543,17 @@ function normalizeAfishaEvent(raw) {
     const creators = Array.isArray(supplemental.creators) ? supplemental.creators : [];
     const gallery = Array.isArray(supplemental.gallery) ? supplemental.gallery : [];
     const image = supplemental.image || AFISHA_PLACEHOLDER_IMAGE;
-    const ticketUrl = raw.link || supplemental.ticketUrl || '';
-
-
+    const ticketUrl =
+        raw.link ||
+        raw.url ||
+        raw.seance_url ||
+        raw.seanceUrl ||
+        raw.purchase_url ||
+        raw.purchaseUrl ||
+        raw.ticket_url ||
+        raw.ticketUrl ||
+        supplemental.ticketUrl ||
+        '';
 
     return {
         id: id || slugify(title),
@@ -556,13 +576,94 @@ function buildIsoDate(date, time) {
         return null;
     }
 
+    if (date instanceof Date && !Number.isNaN(date.getTime())) {
+        return date.toISOString();
+    }
+
     const normalizedDate = `${date}`.trim();
+    if (!normalizedDate) {
+        return null;
+    }
+
+    if (normalizedDate.includes('T')) {
+        return normalizedDate;
+    }
+
+    if (normalizedDate.includes(' ')) {
+        return normalizedDate.replace(/\s+/, 'T');
+    }
+
     if (!time) {
         return normalizedDate;
     }
 
     const normalizedTime = `${time}`.trim();
+    if (!normalizedTime) {
+        return normalizedDate;
+    }
+
     return `${normalizedDate}T${normalizedTime}`;
+}
+
+function extractEventTime(raw) {
+    if (!raw) {
+        return '';
+    }
+
+    const candidates = [
+        raw.time,
+        raw.start_time,
+        raw.startTime,
+        raw.start_at,
+        raw.startAt,
+        raw.starts_at,
+        raw.startsAt,
+        raw.datetime_start,
+        raw.datetimeStart,
+        raw.date_time,
+        raw.dateTime,
+        raw.event_time,
+        raw.eventTime,
+        raw.seance_time,
+        raw.seanceTime,
+        raw.start,
+        raw.date,
+    ];
+
+    for (const candidate of candidates) {
+        const normalized = normalizeTimeString(candidate);
+        if (normalized) {
+            return normalized;
+        }
+    }
+
+    return '';
+}
+
+function normalizeTimeString(value) {
+    if (!value) {
+        return '';
+    }
+
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        const hours = String(value.getHours()).padStart(2, '0');
+        const minutes = String(value.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    const str = `${value}`.trim();
+    if (!str) {
+        return '';
+    }
+
+    const match = str.match(/(\d{1,2})([:.])(\d{2})/);
+    if (match) {
+        const hours = match[1].padStart(2, '0');
+        const minutes = match[3].padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    return '';
 }
 
 function buildCardMeta(date, time, venue) {
