@@ -519,6 +519,7 @@ function normalizeAfishaEvent(raw) {
     const id = raw.id || slugify(raw.title || '');
     const supplemental = AFISHA_SUPPLEMENTAL[id] || {};
     const title = raw.title || supplemental.title || 'Без названия';
+
     const time = raw.time || '';
     const venue = raw.venue || supplemental.venue || '';
     const isoDate = buildIsoDate(raw.date, time);
@@ -531,6 +532,8 @@ function normalizeAfishaEvent(raw) {
     const gallery = Array.isArray(supplemental.gallery) ? supplemental.gallery : [];
     const image = supplemental.image || AFISHA_PLACEHOLDER_IMAGE;
     const ticketUrl = raw.link || supplemental.ticketUrl || '';
+
+
 
     return {
         id: id || slugify(title),
@@ -629,6 +632,7 @@ function formatHeroDate(date, time) {
     return parts.join(' · ') || 'Дата уточняется';
 }
 
+
 function renderAfishaCard(event) {
     const safeTitle = escapeHtml(event.title);
     const safeAlt = escapeAttr(`Афиша спектакля ${event.title}`);
@@ -651,6 +655,7 @@ function renderAfishaCard(event) {
                 <h3 class="afisha-card-title">${safeTitle}</h3>
                 <div class="afisha-card-meta">${meta}</div>
                 <div class="afisha-card-actions">
+
                     ${actionMarkup}
                 </div>
             </div>
@@ -704,6 +709,8 @@ function escapeAttr(value) {
     return escapeHtml(value);
 }
 
+
 function escapeCssUrl(value) {
     return String(value ?? '').replace(/([')\\"])/g, '\\$1');
 }
+
