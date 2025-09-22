@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets-button-simple.min.css">
     <script src="//s3.intickets.ru/intickets.js"></script>
     <style>
         :root {
@@ -311,100 +312,204 @@
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0));
             display: flex;
             flex-direction: column;
-            gap: 2.4rem;
+            gap: 1.8rem;
         }
 
-        .playbill-header {
+        .afisha-header {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .afisha-description {
+            margin: 0;
+            max-width: 560px;
+            color: var(--muted);
+        }
+
+        .afisha-controls {
+            display: flex;
+            flex-wrap: wrap;
             gap: 1rem;
         }
 
-        .playbill-description {
-            max-width: 540px;
-            color: var(--muted);
-            margin: 0;
+        .afisha-field {
+            position: relative;
+            flex: 1 1 220px;
         }
 
-        .playbill-widgets {
+        .afisha-field input,
+        .afisha-field select {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(216, 178, 93, 0.28);
+            background: rgba(17, 17, 17, 0.92);
+            color: var(--text);
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+        }
+
+        .afisha-status {
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(216, 178, 93, 0.28);
+            background: rgba(216, 178, 93, 0.1);
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .afisha-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1.5rem;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         }
 
-        .playbill-widget {
-            padding: 1.9rem;
+        .afisha-card {
+            display: flex;
+            flex-direction: column;
             border-radius: 20px;
             border: 1px solid rgba(216, 178, 93, 0.18);
             background: linear-gradient(160deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.65));
-            display: grid;
-            grid-template-rows: min-content min-content 1fr;
-            gap: 0.85rem;
+            overflow: hidden;
+            min-height: 100%;
+            transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
         }
 
-        .playbill-widget-title {
-            margin: 0;
-            font-size: clamp(1.1rem, 2.2vw, 1.35rem);
-
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
+        .afisha-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(216, 178, 93, 0.45);
+            box-shadow: 0 18px 32px rgba(0, 0, 0, 0.45);
         }
 
-        .playbill-widget-description {
-            margin: 0;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .playbill-widget-frame {
+        .afisha-card-cover {
             position: relative;
-            border-radius: 16px;
-            border: 1px solid rgba(216, 178, 93, 0.2);
+            width: 100%;
+            aspect-ratio: 16 / 10;
             background: rgba(15, 15, 15, 0.72);
             overflow: hidden;
-            min-height: var(--widget-frame-height, 360px);
-            display: flex;
-            align-items: stretch;
         }
 
-        .playbill-widget-placeholder {
+        .afisha-card-cover img {
             position: absolute;
             inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .afisha-card:hover .afisha-card-cover img {
+            transform: scale(1.05);
+        }
+
+        .afisha-card-body {
             display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            padding: 1.6rem 1.6rem 1.8rem;
+        }
+
+        .afisha-card-title {
+            margin: 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .afisha-card-meta {
+            color: var(--muted);
+            font-size: 0.92rem;
+            letter-spacing: 0.04em;
+        }
+
+        .afisha-card-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .afisha-card-actions .btn {
+            flex: 1;
+            border-radius: 999px;
+            padding: 0.75rem 1.1rem;
+            font-size: 0.88rem;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
-            text-align: center;
-            font-size: 0.92rem;
-            letter-spacing: 0.05em;
-            color: var(--muted);
-            background: linear-gradient(160deg, rgba(216, 178, 93, 0.12), rgba(15, 15, 15, 0.85));
-            transition: opacity 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            background: var(--accent);
+            border: 1px solid rgba(216, 178, 93, 0.8);
+            color: var(--background);
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
         }
 
-        .playbill-widget-frame.is-loaded .playbill-widget-placeholder {
-            opacity: 0;
-            pointer-events: none;
+        .afisha-card-actions .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(216, 178, 93, 0.25);
         }
 
-        .playbill-widget-frame.has-error {
-            border-style: dashed;
-            border-color: rgba(216, 178, 93, 0.5);
-            background: rgba(78, 8, 8, 0.55);
-        }
-
-        .playbill-widget-frame.has-error .playbill-widget-placeholder {
-            color: #ffd2d2;
-        }
-
-        .playbill-widget-iframe {
-            flex: 1 1 auto;
-            width: 100%;
-            border: 0;
-            min-height: 100%;
+        .btn-ghost {
             background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(216, 178, 93, 0.55);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(216, 178, 93, 0.12);
+            color: var(--text);
+        }
+
+        .afisha-empty {
+            padding: 1.6rem;
+            border-radius: 18px;
+            border: 1px dashed rgba(216, 178, 93, 0.4);
+            text-align: center;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+        }
+
+        .afisha-card.afisha-card--skeleton {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .afisha-card.afisha-card--skeleton::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(247, 247, 247, 0), rgba(247, 247, 247, 0.12), rgba(247, 247, 247, 0));
+            animation: shimmer 1.6s infinite;
+        }
+
+        .afisha-card.afisha-card--skeleton * {
+            visibility: hidden;
+        }
+
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .repertoire-grid {
@@ -754,23 +859,22 @@
                 padding: 2.4rem 1.6rem;
             }
 
-            .playbill {
+            .afisha {
                 padding: 2.4rem 2rem;
-                gap: 2rem;
+                gap: 1.6rem;
             }
 
-            .playbill-header {
+            .afisha-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.75rem;
             }
-
-            .playbill-widgets {
+            .afisha-grid {
                 grid-template-columns: 1fr;
             }
 
-            .playbill-widget {
-                padding: 1.6rem;
+            .afisha-card-body {
+                padding: 1.4rem 1.4rem 1.6rem;
             }
 
             .repertoire-card {
@@ -833,21 +937,21 @@
                 padding: 0.45rem 1.2rem;
             }
 
-            .playbill {
+            .afisha {
                 padding: 1.8rem 1.2rem;
-                gap: 1.6rem;
+                gap: 1.4rem;
             }
 
-            .playbill-widget {
-                padding: 1.4rem;
+            .afisha-card-body {
+                padding: 1.25rem 1.25rem 1.4rem;
             }
 
-            .playbill-widget-description {
+            .afisha-card-title {
+                font-size: 1rem;
+            }
+
+            .afisha-card-meta {
                 font-size: 0.88rem;
-            }
-
-            .playbill-widget-frame {
-                min-height: var(--widget-frame-height, 320px);
             }
 
             .repertoire-media {
@@ -871,7 +975,6 @@
                 gap: 0.75rem;
             }
         }
-
 
     </style>
 </head>
@@ -927,22 +1030,27 @@
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
         </section>
 
-        <section class="playbill" id="playbill">
-            <div class="playbill-header">
+        <section class="afisha" id="playbill" data-afisha>
+            <div class="afisha-header">
                 <h2 class="section-title">Афиша</h2>
-
-                <p class="playbill-description">Актуальные показы AmmA Production автоматически подгружаются из сервиса Intickets. Ниже представлена единая афиша со всеми событиями центра.</p>
+                <p class="afisha-description">Предстоящие спектакли AmmA Production синхронизируются с Intickets через наш серверный прокси. Используйте поиск и сортировку, чтобы быстрее найти нужное событие.</p>
             </div>
-            <div class="playbill-widgets" data-intickets-widgets>
-                <div class="playbill-widget">
-                    <h3 class="playbill-widget-title">Все события AmmA Production</h3>
-                    <p class="playbill-widget-description">Лента событий партнёра обновляется автоматически и включает все активные спектакли.</p>
-                    <div class="playbill-widget-frame" data-intickets-frame data-intickets-src="https://iframeab-pre2514.intickets.ru/events/#abiframe" data-frame-title="Онлайн-афиша AmmA Production" style="--widget-frame-height: 620px;">
-                        <div class="playbill-widget-placeholder">Загружаем события…</div>
-                    </div>
-                </div>
-
+            <div class="afisha-controls">
+                <label class="afisha-field">
+                    <span class="visually-hidden">Поиск по названию спектакля</span>
+                    <input type="search" placeholder="Поиск по названию…" data-afisha-search autocomplete="off">
+                </label>
+                <label class="afisha-field">
+                    <span class="visually-hidden">Сортировка по дате события</span>
+                    <select data-afisha-sort>
+                        <option value="date_asc">Ближайшие сначала</option>
+                        <option value="date_desc">Дальние сначала</option>
+                    </select>
+                </label>
             </div>
+            <div class="afisha-status" data-afisha-status hidden></div>
+            <div class="afisha-grid" data-afisha-grid aria-live="polite" aria-busy="true"></div>
+            <div class="afisha-empty" data-afisha-empty hidden>События не найдены.</div>
         </section>
 
         <section id="repertoire">
@@ -1125,97 +1233,565 @@
 
     <script src="afisha.js" defer></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const slider = document.querySelector('.hero-slider');
-            if (slider) {
-                const slides = Array.from(slider.querySelectorAll('.banner-item'));
-                if (slides.length > 0) {
-                    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                    slides.forEach((slide, index) => {
-                        if (index === 0) {
-                            slide.classList.add('is-active');
-                        } else {
-                            slide.classList.remove('is-active');
-                        }
-                    });
+        const INTICKETS_WIDGET_CONFIG = Object.freeze({
+            baseUrl: 'https://iframeab-pre2514.intickets.ru/',
+            anchor: '#abiframe'
+        });
 
-                    if (!reduceMotion && slides.length > 1) {
-                        let current = 0;
-                        const cycleDuration = 5000;
-                        setInterval(() => {
-                            slides[current].classList.remove('is-active');
-                            current = (current + 1) % slides.length;
-                            slides[current].classList.add('is-active');
-                        }, cycleDuration);
+        const AFISHA_PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80';
+
+        const REPERTOIRE_FIXTURES = [
+            {
+                id: 'repertoire-marath',
+                slug: 'moi-bedny-marath',
+                title: 'Мой бедный Марат',
+                venue: 'Москва',
+                image: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
+                inticketsEventId: '11756122',
+                ticketPath: 'node/11756122',
+                detailsPath: 'event/11756122',
+                seances: [
+                    {
+                        datetime: '2024-04-12T19:00:00+03:00',
+                        seanceId: '60835614'
+                    }
+                ]
+            },
+            {
+                id: 'repertoire-okna',
+                slug: 'okna-gorod-lyubov',
+                title: 'Окна. Город. Любовь...',
+                venue: 'Москва',
+                image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
+                detailsUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
+                seances: [
+                    {
+                        datetime: '2024-04-26T19:00:00+03:00',
+                        directUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
+                    }
+                ]
+            },
+            {
+                id: 'repertoire-ostrov',
+                slug: 'ostrov',
+                title: 'Остров',
+                venue: 'Санкт-Петербург',
+                image: 'https://images.unsplash.com/photo-1462212210333-335063b676d3?auto=format&fit=crop&w=1200&q=80',
+                detailsUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
+                seances: [
+                    {
+                        datetime: '2024-05-14T19:00:00+03:00',
+                        directUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
+                    }
+                ]
+            }
+        ];
+
+        const afishaFallbackEvents = buildFallbackAfishaEvents(REPERTOIRE_FIXTURES);
+
+        function buildFallbackAfishaEvents(fixtures) {
+            if (!Array.isArray(fixtures)) {
+                return [];
+            }
+
+            return fixtures.map((fixture) => {
+                const nextSeance = getNextSeanceEntry(fixture?.seances);
+                const seanceDescriptor = nextSeance
+                    ? {
+                          datetime: nextSeance.datetime ?? null,
+                          seanceId: nextSeance.seanceId ?? null,
+                          directUrl: nextSeance.directUrl ?? null
+                      }
+                    : null;
+
+                const eventIdentifier =
+                    fixture?.inticketsEventIdentifier ??
+                    (fixture?.inticketsEventId ? `node/${fixture.inticketsEventId}` : null) ??
+                    fixture?.eventIdentifier ??
+                    null;
+
+                const ticketSource =
+                    typeof fixture?.ticketPath === 'string' && fixture.ticketPath
+                        ? fixture.ticketPath
+                        : eventIdentifier;
+
+                const detailsSource =
+                    typeof fixture?.detailsPath === 'string' && fixture.detailsPath
+                        ? fixture.detailsPath
+                        : eventIdentifier;
+
+                const ticketUrl =
+                    typeof fixture?.ticketUrl === 'string' && fixture.ticketUrl
+                        ? fixture.ticketUrl
+                        : seanceDescriptor?.directUrl
+                        ? composeInticketsUrl(seanceDescriptor.directUrl, { anchor: true })
+                        : composeInticketsUrl(ticketSource, { seance: seanceDescriptor, anchor: true });
+
+                const detailsUrl =
+                    typeof fixture?.detailsUrl === 'string' && fixture.detailsUrl
+                        ? composeInticketsUrl(fixture.detailsUrl, { anchor: true })
+                        : composeInticketsUrl(detailsSource, { anchor: true });
+
+                return {
+                    id:
+                        fixture?.id ??
+                        fixture?.slug ??
+                        fixture?.inticketsEventId ??
+                        fixture?.title ??
+                        'afisha-event',
+                    title: fixture?.title ?? 'Без названия',
+                    venue: fixture?.venue ?? '',
+                    date: seanceDescriptor?.datetime ?? fixture?.date ?? null,
+                    image: fixture?.image ?? AFISHA_PLACEHOLDER_IMAGE,
+                    ticketUrl,
+                    detailsUrl,
+                    inticketsEventIdentifier: eventIdentifier,
+                    inticketsSeanceId: seanceDescriptor?.seanceId ?? null
+                };
+            });
+        }
+
+        function getNextSeanceEntry(seances) {
+            if (!Array.isArray(seances) || !seances.length) {
+                return null;
+            }
+
+            const normalised = seances
+                .map((entry) => {
+                    if (!entry) {
+                        return null;
+                    }
+
+                    const iso = entry.datetime ?? entry.date ?? null;
+                    const dateObject = iso ? new Date(iso) : null;
+                    const isValidDate = dateObject instanceof Date && !Number.isNaN(dateObject.getTime());
+
+                    if (!isValidDate && !entry.directUrl && !entry.seanceId && !entry.inticketsSeanceId) {
+                        return null;
+                    }
+
+                    return {
+                        datetime: isValidDate ? dateObject.toISOString() : iso,
+                        dateObject: isValidDate ? dateObject : null,
+                        seanceId: entry.seanceId ?? entry.inticketsSeanceId ?? null,
+                        directUrl: entry.directUrl ?? entry.seanceUrl ?? null
+                    };
+                })
+                .filter(Boolean);
+
+            if (!normalised.length) {
+                return null;
+            }
+
+            normalised.sort((a, b) => {
+                const aTime = a.dateObject ? a.dateObject.getTime() : Number.POSITIVE_INFINITY;
+                const bTime = b.dateObject ? b.dateObject.getTime() : Number.POSITIVE_INFINITY;
+                return aTime - bTime;
+            });
+
+            const now = new Date();
+            const upcoming = normalised.find((entry) => entry.dateObject && entry.dateObject.getTime() >= now.getTime());
+            const selected = upcoming || normalised[0];
+
+            return {
+                datetime: selected.datetime ?? null,
+                seanceId: selected.seanceId ?? null,
+                directUrl: selected.directUrl ?? null
+            };
+        }
+
+        function composeInticketsUrl(pathOrUrl, options = {}) {
+            const { seance, anchor = false } = options;
+            const baseUrl = normaliseBaseUrl(INTICKETS_WIDGET_CONFIG.baseUrl);
+            const anchorSuffix =
+                anchor && typeof INTICKETS_WIDGET_CONFIG.anchor === 'string'
+                    ? INTICKETS_WIDGET_CONFIG.anchor
+                    : '';
+            const seanceDescriptor = seance && typeof seance === 'object' ? seance : null;
+
+            let url = pathOrUrl ? String(pathOrUrl) : '';
+
+            if (!url) {
+                if (seanceDescriptor?.seanceId) {
+                    url = `${baseUrl}seance/${seanceDescriptor.seanceId}`;
+                } else if (seanceDescriptor?.datetime) {
+                    const suffix = formatInticketsScheduleSuffix(new Date(seanceDescriptor.datetime));
+                    url = suffix ? `${baseUrl.replace(/\/$/, '')}/${suffix}` : baseUrl || '#';
+                } else {
+                    url = baseUrl || '#';
+                }
+            } else if (!/^https?:/i.test(url)) {
+                url = `${baseUrl}${url.replace(/^\//, '')}`;
+            }
+
+            const hasSeancePath = /\/seance\/\d+/.test(url) || /\d{8}_\d{4}(?:[#/]|$)/.test(url);
+
+            if (seanceDescriptor && !hasSeancePath) {
+                if (seanceDescriptor.seanceId) {
+                    url = `${baseUrl}seance/${seanceDescriptor.seanceId}`;
+                } else if (seanceDescriptor.datetime) {
+                    const suffix = formatInticketsScheduleSuffix(new Date(seanceDescriptor.datetime));
+                    if (suffix) {
+                        const hashIndex = url.indexOf('#');
+                        const basePart = hashIndex >= 0 ? url.slice(0, hashIndex) : url;
+                        const hashPart = hashIndex >= 0 ? url.slice(hashIndex) : '';
+                        url = `${basePart.replace(/\/$/, '')}/${suffix}${hashPart}`;
                     }
                 }
             }
 
-            const widgetFrames = document.querySelectorAll('[data-intickets-frame]');
-            widgetFrames.forEach((frame) => {
-                if (!frame || frame.dataset.inticketsMounted === 'true') {
-                    return;
-                }
+            if (anchorSuffix && !url.includes('#')) {
+                url += anchorSuffix;
+            }
 
-                const sourceUrl = frame.getAttribute('data-intickets-src');
-                if (!sourceUrl) {
-                    return;
-                }
+            return url;
+        }
 
-                const placeholder = frame.querySelector('.playbill-widget-placeholder');
-                if (placeholder) {
-                    placeholder.textContent = placeholder.textContent || 'Загрузка…';
-                }
+        function normaliseBaseUrl(value) {
+            if (!value) {
+                return '';
+            }
 
-                const iframe = document.createElement('iframe');
-                const sanitizedSrc = sourceUrl.includes('#abiframe')
-                    ? sourceUrl
-                    : `${sourceUrl.replace(/#.*$/, '')}#abiframe`;
+            return value.endsWith('/') ? value : `${value}/`;
+        }
 
-                iframe.src = sanitizedSrc;
-                iframe.className = 'playbill-widget-iframe';
-                iframe.title = frame.getAttribute('data-frame-title') || 'Онлайн-виджет Intickets';
-                iframe.loading = 'lazy';
-                iframe.setAttribute('allowtransparency', 'true');
-                iframe.setAttribute('frameborder', '0');
-                iframe.setAttribute('scrolling', 'yes');
-                iframe.style.width = '100%';
-
-                const declaredHeight = getComputedStyle(frame).getPropertyValue('--widget-frame-height').trim();
-                if (declaredHeight) {
-                    iframe.style.height = declaredHeight;
-                    iframe.style.minHeight = declaredHeight;
-                    const numericHeight = parseInt(declaredHeight, 10);
-                    if (!Number.isNaN(numericHeight)) {
-                        iframe.setAttribute('height', String(numericHeight));
-                    }
-                } else {
-                    iframe.style.minHeight = '360px';
-                }
-
-                iframe.addEventListener('load', () => {
-                    frame.classList.add('is-loaded');
-                    if (placeholder) {
-                        placeholder.remove();
-                    }
-                });
-
-                iframe.addEventListener('error', () => {
-                    frame.classList.add('has-error');
-                    if (placeholder) {
-                        placeholder.textContent = 'Не удалось загрузить виджет. Попробуйте обновить страницу.';
-                    } else {
-                        const fallback = document.createElement('div');
-                        fallback.className = 'playbill-widget-placeholder';
-                        fallback.textContent = 'Не удалось загрузить виджет. Попробуйте обновить страницу.';
-                        frame.appendChild(fallback);
-                    }
-                });
-
-                frame.dataset.inticketsMounted = 'true';
-                frame.appendChild(iframe);
-            });
+        document.addEventListener('DOMContentLoaded', function () {
+            initHeroSlider();
+            initAfishaSection();
         });
+
+        function initHeroSlider() {
+            const slider = document.querySelector('.hero-slider');
+            if (!slider) {
+                return;
+            }
+
+            const slides = Array.from(slider.querySelectorAll('.banner-item'));
+            if (!slides.length) {
+                return;
+            }
+
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('is-active', index === 0);
+            });
+
+            if (reduceMotion || slides.length <= 1) {
+                return;
+            }
+
+            let current = 0;
+            const cycleDuration = 5000;
+            setInterval(() => {
+                slides[current].classList.remove('is-active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('is-active');
+            }, cycleDuration);
+        }
+
+        function initAfishaSection() {
+            const section = document.querySelector('[data-afisha]');
+            if (!section) {
+                return;
+            }
+
+            const grid = section.querySelector('[data-afisha-grid]');
+            const empty = section.querySelector('[data-afisha-empty]');
+            const searchField = section.querySelector('[data-afisha-search]');
+            const sortField = section.querySelector('[data-afisha-sort]');
+            const statusField = section.querySelector('[data-afisha-status]');
+
+            if (grid) {
+                renderAfishaSkeleton(grid, 3);
+            }
+
+            let events = [];
+            let fallbackUsed = false;
+
+            if (searchField) {
+                searchField.addEventListener('input', () => renderAfisha());
+            }
+
+            if (sortField) {
+                sortField.addEventListener('change', () => renderAfisha());
+            }
+
+            fetchAfishaEvents();
+
+            async function fetchAfishaEvents() {
+                if (!grid) {
+                    return;
+                }
+
+                grid.setAttribute('aria-busy', 'true');
+
+                try {
+                    const response = await fetch('/api/intickets-events', { cache: 'no-store' });
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status ${response.status}`);
+                    }
+
+                    const payload = await response.json();
+                    const list = Array.isArray(payload?.events) ? payload.events : [];
+
+                    if (!list.length) {
+                        throw new Error('Empty Intickets feed');
+                    }
+
+                    events = list.map(normalizeAfishaEvent);
+                    fallbackUsed = false;
+                } catch (error) {
+                    console.warn('Не удалось загрузить афишу Intickets, используем резервный список.', error);
+                    events = afishaFallbackEvents.map(normalizeAfishaEvent);
+                    fallbackUsed = true;
+                }
+
+                renderAfisha();
+            }
+
+            function renderAfisha() {
+                if (!grid) {
+                    return;
+                }
+
+                const term = (searchField?.value || '').trim().toLowerCase();
+                const sortValue = sortField?.value || 'date_asc';
+
+                const filtered = events.filter((event) => {
+                    const haystack = `${event.title} ${event.venue}`.toLowerCase();
+                    return haystack.includes(term);
+                });
+
+                filtered.sort((a, b) => {
+                    const aTime = a.date ? a.date.getTime() : 0;
+                    const bTime = b.date ? b.date.getTime() : 0;
+                    return sortValue === 'date_desc' ? bTime - aTime : aTime - bTime;
+                });
+
+                if (filtered.length) {
+                    grid.innerHTML = filtered.map(renderAfishaCard).join('');
+                } else {
+                    grid.innerHTML = '';
+                }
+
+                grid.setAttribute('aria-busy', 'false');
+
+                if (empty) {
+                    if (filtered.length > 0) {
+                        empty.hidden = true;
+                    } else {
+                        empty.hidden = false;
+                        empty.textContent = term ? 'По вашему запросу ничего не найдено.' : 'События не найдены.';
+                    }
+                }
+
+                if (statusField) {
+                    if (fallbackUsed) {
+                        statusField.hidden = false;
+                        statusField.textContent = 'Показаны события из резервного списка — проверьте подключение к Intickets.';
+                    } else {
+                        statusField.hidden = true;
+                        statusField.textContent = '';
+                    }
+                }
+            }
+        }
+
+        function normalizeAfishaEvent(raw) {
+            if (!raw) {
+                return {
+                    id: 'unknown',
+                    title: 'Без названия',
+                    venue: '',
+                    date: null,
+                    dateText: 'Дата уточняется',
+                    image: AFISHA_PLACEHOLDER_IMAGE,
+                    ticketUrl: '#',
+                    detailsUrl: '#',
+                    url: '#'
+                };
+            }
+
+            const isoDate = raw.date || raw.datetime_start || raw.starts_at || raw.start_date || raw.seance_date;
+            const parsedDate = isoDate ? new Date(isoDate) : null;
+            const displayDate = parsedDate ? formatAfishaDate(parsedDate) : 'Дата уточняется';
+
+            const seanceDescriptor = createSeanceDescriptor(raw, isoDate);
+            const eventIdentifier =
+                raw.inticketsEventIdentifier ||
+                raw.event_identifier ||
+                raw.eventPath ||
+                raw.event_slug ||
+                (raw.inticketsEventId ? `node/${raw.inticketsEventId}` : null) ||
+                (raw.event_id ? `node/${raw.event_id}` : null);
+
+            const detailsCandidate =
+                raw.detailsUrl ||
+                raw.details_url ||
+                raw.event_url ||
+                raw.url ||
+                raw.link ||
+                eventIdentifier;
+
+            const ticketCandidate =
+                raw.ticketUrl ||
+                raw.ticket_url ||
+                raw.seance_url ||
+                raw.url ||
+                raw.link ||
+                eventIdentifier;
+
+            const ticketUrl =
+                typeof raw.ticketUrl === 'string' && raw.ticketUrl
+                    ? raw.ticketUrl
+                    : seanceDescriptor?.directUrl
+                    ? composeInticketsUrl(seanceDescriptor.directUrl, { anchor: true })
+                    : composeInticketsUrl(ticketCandidate, { seance: seanceDescriptor, anchor: true });
+
+            const detailsUrl =
+                typeof raw.detailsUrl === 'string' && raw.detailsUrl
+                    ? composeInticketsUrl(raw.detailsUrl, { anchor: true })
+                    : composeInticketsUrl(detailsCandidate, { anchor: true });
+
+            const imageSource =
+                raw.image ||
+                raw.poster ||
+                raw.cover ||
+                raw.imageUrl ||
+                raw.photo ||
+                (Array.isArray(raw.photos) ? raw.photos[0]?.url : null) ||
+                AFISHA_PLACEHOLDER_IMAGE;
+
+            return {
+                id: raw.id || raw.event_id || raw.slug || 'unknown',
+                title: raw.title || raw.name || 'Без названия',
+                venue: raw.venue || raw.place || raw.location || '',
+                date: parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime()) ? parsedDate : null,
+                dateText: displayDate,
+                image: imageSource || AFISHA_PLACEHOLDER_IMAGE,
+                ticketUrl: ticketUrl || '#',
+                detailsUrl: detailsUrl || '#',
+                url: (detailsUrl || ticketUrl || '#')
+            };
+        }
+
+        function renderAfishaCard(event) {
+            const safeTitle = escapeHtml(event.title);
+            const safeAlt = escapeAttr(`Афиша спектакля ${event.title}`);
+            const dateLabel = escapeHtml(event.dateText || 'Дата уточняется');
+            const venueLabel = event.venue ? ` · ${escapeHtml(event.venue)}` : '';
+            const cover = escapeAttr(event.image || AFISHA_PLACEHOLDER_IMAGE);
+            const ticketLink = escapeAttr(event.ticketUrl || event.url || '#');
+            const detailsLink = escapeAttr(event.detailsUrl || event.url || '#');
+
+            return `
+                <article class="afisha-card">
+                    <div class="afisha-card-cover">
+                        <img src="${cover}" alt="${safeAlt}" loading="lazy">
+                    </div>
+                    <div class="afisha-card-body">
+                        <h3 class="afisha-card-title">${safeTitle}</h3>
+                        <div class="afisha-card-meta">${dateLabel}${venueLabel}</div>
+                        <div class="afisha-card-actions">
+                            <a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>
+                            <a class="btn btn-ghost" href="${detailsLink}" target="_blank" rel="noopener">Подробнее</a>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderAfishaSkeleton(grid, count) {
+            if (!grid) {
+                return;
+            }
+
+            const skeleton = `
+                <article class="afisha-card afisha-card--skeleton">
+                    <div class="afisha-card-cover"></div>
+                    <div class="afisha-card-body">
+                        <h3 class="afisha-card-title">Загрузка…</h3>
+                        <div class="afisha-card-meta">Скоро появится событие</div>
+                        <div class="afisha-card-actions">
+                            <span class="btn">&nbsp;</span>
+                            <span class="btn btn-ghost">&nbsp;</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+
+            grid.innerHTML = Array.from({ length: count }, () => skeleton).join('');
+        }
+
+
+        function formatInticketsScheduleSuffix(date) {
+            if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+                return '';
+            }
+
+            const pad = (value) => String(value).padStart(2, '0');
+
+            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(
+                date.getMinutes()
+            )}`;
+        }
+
+        function createSeanceDescriptor(raw, isoDate) {
+            const descriptor = {};
+
+            if (isoDate) {
+                descriptor.datetime = isoDate;
+            }
+
+            const seanceId =
+                raw?.inticketsSeanceId ??
+                raw?.seanceId ??
+                raw?.seance_id ??
+                raw?.session_id ??
+                (raw?.seance && raw.seance.id) ??
+                null;
+
+            if (seanceId) {
+                descriptor.seanceId = String(seanceId).trim();
+            }
+
+            const directUrl = raw?.seanceUrl ?? raw?.seance_url ?? null;
+            if (directUrl) {
+                descriptor.directUrl = directUrl;
+            }
+
+            return Object.keys(descriptor).length ? descriptor : null;
+        }
+
+        function formatAfishaDate(date) {
+            try {
+                return date.toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: 'long',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                console.warn('Не удалось отформатировать дату события', error);
+                return 'Дата уточняется';
+            }
+        }
+
+        function escapeHtml(value) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            };
+
+            return String(value ?? '').replace(/[&<>"']/g, (char) => map[char]);
+        }
+
+        function escapeAttr(value) {
+            return escapeHtml(value);
+        }
     </script>
 </body>
 </html>
