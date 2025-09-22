@@ -2,6 +2,10 @@
 
 (function () {
     const BAZA_URL = 'baza_afisha.json';
+    const API_SAVE_URL = '/api/admin/events';
+    const API_UPLOAD_URL = '/api/admin/upload';
+    const UNSAVED_MESSAGE = 'Есть несохранённые изменения';
+    const UPLOAD_MESSAGE = 'Идёт загрузка файлов…';
     const DEFAULT_IMAGE =
         'https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=900&q=80';
 
@@ -9,6 +13,8 @@
         events: [],
         dirty: false,
         loading: false,
+        saving: false,
+        pendingUploads: 0,
     };
 
     const elements = {};
@@ -23,6 +29,7 @@
         elements.status = document.querySelector('[data-admin-status]');
         elements.eventsContainer = document.querySelector('[data-admin-events]');
         elements.addEventButton = document.querySelector('[data-admin-add-event]');
+        elements.saveButton = document.querySelector('[data-admin-save]');
         elements.jsonPreview = document.querySelector('[data-admin-json]');
         elements.heroPreview = document.querySelector('[data-admin-hero-preview]');
         elements.downloadButton = document.querySelector('[data-admin-download]');
@@ -37,6 +44,12 @@
         if (elements.addEventButton) {
             elements.addEventButton.addEventListener('click', () => {
                 addEvent();
+            });
+        }
+
+        if (elements.saveButton) {
+            elements.saveButton.addEventListener('click', () => {
+                saveChanges();
             });
         }
 
@@ -180,6 +193,25 @@
         }
     }
 
+    function setSaving(isSaving) {
+        if (state.saving === isSaving) {
+            return;
+        }
+
+        state.saving = isSaving;
+        updateUnsavedBadge();
+    }
+
+    function beginUpload() {
+        state.pendingUploads += 1;
+        updateUnsavedBadge();
+    }
+
+    function finishUpload() {
+        state.pendingUploads = Math.max(0, state.pendingUploads - 1);
+        updateUnsavedBadge();
+    }
+
     function setStatus(message, type = 'info') {
         if (!elements.status) {
             return;
@@ -265,11 +297,66 @@
                     placeholder: 'https://example.com/tickets',
                 }),
             );
-            form.appendChild(
-                createTextField('Изображение (URL)', event.image, (value) => updateEvent(index, 'image', value), {
-                    type: 'url',
-                }),
-            );
+            const imageField = createTextField('Изображение (URL)', event.image, (value) => updateEvent(index, 'image', value), {
+                type: 'url',
+            });
+            const imageInput = imageField.querySelector('input');
+            const imageActions = document.createElement('div');
+            imageActions.className = 'admin-field__actions';
+
+            const uploadButton = document.createElement('button');
+            uploadButton.type = 'button';
+            uploadButton.className = 'admin-btn admin-btn--ghost';
+            uploadButton.textContent = 'Загрузить изображение…';
+
+            const uploadHint = document.createElement('span');
+            uploadHint.textContent = 'Поддерживаются JPG, PNG и WebP до 5 МБ.';
+
+            const uploadInput = document.createElement('input');
+            uploadInput.type = 'file';
+            uploadInput.accept = 'image/*';
+            uploadInput.hidden = true;
+
+            uploadButton.addEventListener('click', () => {
+                if (!state.pendingUploads && !state.saving) {
+                    uploadInput.click();
+                } else if (state.pendingUploads) {
+                    setStatus('Дождитесь завершения текущей загрузки изображения.', 'info');
+                }
+            });
+
+            uploadInput.addEventListener('change', async (event) => {
+                const file = event.target.files && event.target.files[0];
+                if (!file) {
+                    return;
+                }
+
+                beginUpload();
+                uploadButton.disabled = true;
+                setStatus('Загружаем изображение…');
+
+                try {
+                    const url = await uploadImageFile(file);
+                    if (imageInput) {
+                        imageInput.value = url;
+                    }
+                    updateEvent(index, 'image', url);
+                    setStatus('Изображение загружено и привязано к событию.', 'success');
+                } catch (error) {
+                    console.error(error);
+                    setStatus(error.message || 'Не удалось загрузить изображение. Попробуйте другой файл.', 'error');
+                } finally {
+                    uploadInput.value = '';
+                    uploadButton.disabled = false;
+                    finishUpload();
+                }
+            });
+
+            imageActions.appendChild(uploadButton);
+            imageActions.appendChild(uploadHint);
+            imageField.appendChild(imageActions);
+            imageField.appendChild(uploadInput);
+            form.appendChild(imageField);
             form.appendChild(
                 createTextareaField(
                     'Описание',
@@ -519,7 +606,10 @@
     }
 
     function markDirty() {
-        state.dirty = true;
+        if (!state.dirty) {
+            state.dirty = true;
+            updateUnsavedBadge();
+        }
     }
 
     function renderHeroPreview() {
@@ -597,12 +687,84 @@
         return { events };
     }
 
+    async function saveChanges() {
+        if (state.loading || state.saving) {
+            return;
+        }
+
+        if (state.pendingUploads > 0) {
+            setStatus('Дождитесь завершения загрузки изображений и попробуйте ещё раз.', 'error');
+            return;
+        }
+
+        if (!state.dirty) {
+            setStatus('Нет несохранённых изменений.', 'success');
+            return;
+        }
+
+        setSaving(true);
+        setStatus('Сохраняем изменения…');
+
+        try {
+            const response = await fetch(API_SAVE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(buildPayload()),
+            });
+
+            const responseText = await response.text();
+            let payload = null;
+
+            if (responseText) {
+                try {
+                    payload = JSON.parse(responseText);
+                } catch (error) {
+                    console.error('Не удалось разобрать ответ сервера', error);
+                }
+            }
+
+            if (!response.ok) {
+                const message = payload?.error || `Не удалось сохранить изменения (статус ${response.status})`;
+                throw new Error(message);
+            }
+
+            if (payload && Array.isArray(payload.events)) {
+                state.events = payload.events.map(normalizeEventFromJson);
+            }
+
+            state.dirty = false;
+            render();
+            setStatus('Изменения сохранены и опубликованы.', 'success');
+        } catch (error) {
+            console.error(error);
+            setStatus(error.message || 'Не удалось сохранить изменения. Попробуйте ещё раз.', 'error');
+        } finally {
+            setSaving(false);
+        }
+    }
+
     function updateUnsavedBadge() {
+        if (elements.saveButton) {
+            elements.saveButton.disabled = state.saving || state.pendingUploads > 0 || !state.dirty;
+            elements.saveButton.textContent = state.saving ? 'Сохраняем…' : 'Сохранить изменения';
+        }
+
         if (!elements.unsavedBadge) {
             return;
         }
 
-        elements.unsavedBadge.hidden = !state.dirty;
+        if (state.pendingUploads > 0) {
+            elements.unsavedBadge.hidden = false;
+            elements.unsavedBadge.textContent = UPLOAD_MESSAGE;
+        } else if (state.dirty) {
+            elements.unsavedBadge.hidden = false;
+            elements.unsavedBadge.textContent = UNSAVED_MESSAGE;
+        } else {
+            elements.unsavedBadge.hidden = true;
+            elements.unsavedBadge.textContent = UNSAVED_MESSAGE;
+        }
     }
 
     function downloadJson() {
@@ -658,6 +820,38 @@
             }
         };
         reader.readAsText(file);
+    }
+
+    async function uploadImageFile(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await fetch(API_UPLOAD_URL, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const text = await response.text();
+        let payload = null;
+
+        if (text) {
+            try {
+                payload = JSON.parse(text);
+            } catch (error) {
+                console.error('Не удалось разобрать ответ сервера при загрузке изображения', error);
+            }
+        }
+
+        if (!response.ok) {
+            const message = payload?.error || `Не удалось загрузить изображение (статус ${response.status})`;
+            throw new Error(message);
+        }
+
+        if (!payload?.url) {
+            throw new Error('Сервер не вернул ссылку на загруженный файл.');
+        }
+
+        return payload.url;
     }
 
     function slugify(value) {
