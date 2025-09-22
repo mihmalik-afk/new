@@ -154,8 +154,19 @@ function setupHeroSlider() {
         const dynamicSlides = slider.querySelectorAll('[data-hero-dynamic]');
         dynamicSlides.forEach((slide) => slide.remove());
 
-        if (Array.isArray(eventList) && eventList.length) {
-            const sorted = [...eventList].sort((a, b) => {
+        const heroEvents = Array.isArray(eventList)
+            ? eventList.filter((item) => item && item.showInHero !== false)
+            : [];
+
+        if (heroEvents.length) {
+            const sorted = [...heroEvents].sort((a, b) => {
+                const orderA = Number.isFinite(a.heroOrder) ? a.heroOrder : Number.MAX_SAFE_INTEGER;
+                const orderB = Number.isFinite(b.heroOrder) ? b.heroOrder : Number.MAX_SAFE_INTEGER;
+
+                if (orderA !== orderB) {
+                    return orderA - orderB;
+                }
+
                 const aTime = a.date instanceof Date && !Number.isNaN(a.date.getTime()) ? a.date.getTime() : Number.MAX_SAFE_INTEGER;
                 const bTime = b.date instanceof Date && !Number.isNaN(b.date.getTime()) ? b.date.getTime() : Number.MAX_SAFE_INTEGER;
 
@@ -539,12 +550,17 @@ function normalizeAfishaEvent(raw) {
     const isValidDate = parsedDate instanceof Date && !Number.isNaN(parsedDate?.getTime());
     const cardMeta = buildCardMeta(parsedDate, time, venue);
     const modalMeta = buildModalMeta(parsedDate, time, venue);
-    const description = supplemental.description || '';
-    const creators = Array.isArray(supplemental.creators) ? supplemental.creators : [];
-    const gallery = Array.isArray(supplemental.gallery) ? supplemental.gallery : [];
-    const image = supplemental.image || AFISHA_PLACEHOLDER_IMAGE;
+
+    const description = typeof raw.description === 'string' && raw.description.trim()
+        ? raw.description.trim()
+        : supplemental.description || '';
+    const creators = normalizeCreatorsList(raw.creators, supplemental.creators);
+    const gallery = normalizeGalleryList(raw.gallery, supplemental.gallery);
+    const image = (typeof raw.image === 'string' && raw.image.trim()) || supplemental.image || AFISHA_PLACEHOLDER_IMAGE;
     const ticketUrl =
         raw.link ||
+        raw.ticket ||
+
         raw.url ||
         raw.seance_url ||
         raw.seanceUrl ||
@@ -554,6 +570,10 @@ function normalizeAfishaEvent(raw) {
         raw.ticketUrl ||
         supplemental.ticketUrl ||
         '';
+
+    const showInHero = parseBoolean(raw.showInHero ?? raw.hero ?? true);
+    const heroOrder = toFiniteNumber(raw.heroOrder ?? raw.heroPriority);
+
 
     return {
         id: id || slugify(title),
@@ -567,8 +587,88 @@ function normalizeAfishaEvent(raw) {
         gallery,
         image,
         ticketUrl,
-        venue
+        venue,
+        showInHero,
+        heroOrder
     };
+}
+
+function toFiniteNumber(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+}
+
+function parseBoolean(value) {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (['false', '0', 'нет', 'no', 'off'].includes(normalized)) {
+            return false;
+        }
+        if (['true', '1', 'да', 'yes', 'on'].includes(normalized)) {
+            return true;
+        }
+    }
+
+    return Boolean(value);
+}
+
+function normalizeCreatorsList(primary, fallback) {
+    const source = Array.isArray(primary) && primary.length ? primary : Array.isArray(fallback) ? fallback : [];
+
+    return source
+        .map((entry) => {
+            if (!entry) {
+                return null;
+            }
+
+            if (typeof entry === 'string') {
+                const name = entry.trim();
+                return name ? { role: '', name } : null;
+            }
+
+            if (typeof entry === 'object') {
+                const role = typeof entry.role === 'string' ? entry.role.trim() : '';
+                const name = typeof entry.name === 'string' ? entry.name.trim() : '';
+
+                if (!role && !name) {
+                    return null;
+                }
+
+                return { role, name };
+            }
+
+            return null;
+        })
+        .filter(Boolean);
+}
+
+function normalizeGalleryList(primary, fallback) {
+    const source = Array.isArray(primary) && primary.length ? primary : Array.isArray(fallback) ? fallback : [];
+
+    return source
+        .map((entry) => {
+            if (!entry) {
+                return null;
+            }
+
+            if (typeof entry === 'string') {
+                const src = entry.trim();
+                return src ? { src } : null;
+            }
+
+            if (typeof entry === 'object') {
+                const src = typeof entry.src === 'string' ? entry.src.trim() : '';
+                const caption = typeof entry.caption === 'string' ? entry.caption.trim() : '';
+                return src ? (caption ? { src, caption } : { src }) : null;
+            }
+
+            return null;
+        })
+        .filter(Boolean);
 }
 
 function buildIsoDate(date, time) {
