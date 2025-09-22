@@ -550,6 +550,7 @@ function normalizeAfishaEvent(raw) {
     const isValidDate = parsedDate instanceof Date && !Number.isNaN(parsedDate?.getTime());
     const cardMeta = buildCardMeta(parsedDate, time, venue);
     const modalMeta = buildModalMeta(parsedDate, time, venue);
+
     const description = typeof raw.description === 'string' && raw.description.trim()
         ? raw.description.trim()
         : supplemental.description || '';
@@ -559,6 +560,7 @@ function normalizeAfishaEvent(raw) {
     const ticketUrl =
         raw.link ||
         raw.ticket ||
+
         raw.url ||
         raw.seance_url ||
         raw.seanceUrl ||
@@ -568,8 +570,10 @@ function normalizeAfishaEvent(raw) {
         raw.ticketUrl ||
         supplemental.ticketUrl ||
         '';
+
     const showInHero = parseBoolean(raw.showInHero ?? raw.hero ?? true);
     const heroOrder = toFiniteNumber(raw.heroOrder ?? raw.heroPriority);
+
 
     return {
         id: id || slugify(title),
