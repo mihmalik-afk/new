@@ -6,7 +6,6 @@
     <title>AmmA Production — продюсерский центр</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
@@ -128,7 +127,6 @@
             letter-spacing: 0.2em;
             align-items: center;
             text-align: center;
-
         }
 
         .hero-brand {
@@ -173,25 +171,21 @@
             text-transform: uppercase;
             letter-spacing: 0.18em;
             font-weight: 600;
-
         }
 
         .hero-director-label {
             font-size: 0.7rem;
             color: var(--accent);
-
         }
 
         .hero-director-name {
             font-size: 0.95rem;
             letter-spacing: 0.25em;
             color: var(--accent);
-
             margin-top: 0.4rem;
         }
 
         .hero p {
-
             max-width: 640px;
             color: var(--muted);
             margin: 0 auto;
@@ -201,14 +195,12 @@
             width: 100%;
             max-width: 960px;
             margin: 0 auto;
-
             border: 1px solid rgba(216, 178, 93, 0.4);
             border-radius: 24px;
             overflow: hidden;
             position: relative;
             min-height: 320px;
-            background: radial-gradient(circle at top, rgba(216,178,93,0.2), transparent 60%),
-                        linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.6));
+            background: var(--background-alt);
         }
 
         .banner-item {
@@ -220,19 +212,36 @@
             align-items: center;
             text-align: center;
             padding: 3rem 2rem;
-            gap: 1rem;
+            gap: 1.4rem;
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
             transform: translateY(18px);
             transition: opacity 0.9s ease, transform 0.9s ease;
+            color: var(--text);
+            isolate: isolate;
         }
 
-        .banner-item:first-child {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transform: translateY(0);
+        .banner-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(12, 12, 12, 0.78), rgba(12, 12, 12, 0.55)),
+                var(--slide-bg, radial-gradient(circle at top, rgba(216,178,93,0.2), transparent 70%));
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            transition: transform 1.2s ease;
+        }
+
+        .banner-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
+            z-index: -1;
         }
 
         .banner-item.is-active {
@@ -240,23 +249,33 @@
             visibility: visible;
             pointer-events: auto;
             transform: translateY(0);
+        }
 
+        .banner-item.is-active::before {
+            transform: scale(1.04);
         }
 
         .banner-item-brand {
             gap: 1.6rem;
+            --slide-bg: radial-gradient(circle at 20% 20%, rgba(216, 178, 93, 0.35), transparent 60%),
+                         linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.85));
         }
-
-
         .banner-title {
             font-size: clamp(1.8rem, 4vw, 2.8rem);
             font-weight: 700;
             letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
-        .banner-description {
-            max-width: 480px;
-            color: var(--muted);
+        .banner-date {
+            font-size: 0.85rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            padding: 0.55rem 1.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.65);
+            background: rgba(12, 12, 12, 0.55);
+            color: var(--accent);
         }
 
         .banner-cta {
@@ -275,7 +294,6 @@
             transform: translateY(-4px);
             box-shadow: 0 10px 25px rgba(216, 178, 93, 0.2);
         }
-
 
         section {
             margin-top: 5rem;
@@ -341,7 +359,6 @@
 
         .repertoire-card {
             padding: 1.75rem;
-
             border-radius: 18px;
             background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(0,0,0,0.8));
             border: 1px solid rgba(216, 178, 93, 0.2);
@@ -362,7 +379,6 @@
             width: 100%;
             height: 100%;
             display: block;
-
         }
 
         .repertoire-card span {
@@ -380,7 +396,6 @@
             margin: 0;
             color: var(--muted);
         }
-
 
         .team-grid {
             display: grid;
@@ -478,18 +493,15 @@
 
             .hero {
                 padding: 2.4rem 0 3.2rem;
-
             }
 
             .hero-brand {
                 gap: 0.25em;
                 flex-wrap: wrap;
-
             }
 
             .hero-director {
                 letter-spacing: 0.14em;
-
             }
 
             .banner {
@@ -537,6 +549,12 @@
                 font-size: clamp(1.5rem, 6vw, 2.1rem);
             }
 
+            .banner-date {
+                font-size: 0.72rem;
+                letter-spacing: 0.18em;
+                padding: 0.45rem 1.2rem;
+            }
+
             .repertoire-media {
                 aspect-ratio: 3 / 2;
             }
@@ -548,7 +566,6 @@
             .social-buttons {
                 gap: 0.75rem;
             }
-
         }
     </style>
 </head>
@@ -569,9 +586,8 @@
 
     <main>
         <section class="hero" id="about">
-
             <div class="banner hero-slider" aria-label="Анимированный баннер AmmA Production">
-                <div class="banner-item banner-item-brand">
+                <div class="banner-item banner-item-brand is-active">
                     <h1 class="hero-heading" aria-label="AmmA Production">
                         <span class="hero-brand" aria-hidden="true">
                             <span class="hero-letter hero-letter-large">A</span>
@@ -586,25 +602,23 @@
                         <span class="hero-director-name">Вера Анненкова</span>
                     </div>
                 </div>
-
-                <div class="banner-item">
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">12 апреля 2024</div>
                     <div class="banner-title">«Мой бедный Марат»</div>
-                    <p class="banner-description">История любви и выбора на фоне блокадного Ленинграда. Эмоциональный спектакль о стойкости человеческого духа.</p>
-                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
-                <div class="banner-item">
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">26 апреля 2024</div>
                     <div class="banner-title">«Окна. Город. Любовь...»</div>
-                    <p class="banner-description">Поэтический калейдоскоп о ритме мегаполиса и камерных историях жителей большого города.</p>
-                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
-                <div class="banner-item">
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">14 мая 2024</div>
                     <div class="banner-title">«Остров»</div>
-                    <p class="banner-description">Медитативное путешествие к себе. Спектакль о тишине, выборе и внутренней свободе.</p>
-                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
             </div>
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
-
         </section>
 
         <section>
@@ -651,7 +665,6 @@
                             <path d="M176 212 L190 186 L204 212 Z" fill="#0b0b0b" opacity="0.75" />
                         </svg>
                     </figure>
-
                     <span>Драма</span>
                     <h3>Мой бедный Марат</h3>
                     <p>Пьеса Алексея Арбузова о молодости, любви и надежде, которая не угасает даже в самые тяжёлые времена.</p>
@@ -694,7 +707,6 @@
                             <path d="M36 212 H284" stroke="#d8b25d" stroke-width="4" stroke-linecap="round" stroke-opacity="0.6" />
                         </svg>
                     </figure>
-
                     <span>Поэтический спектакль</span>
                     <h3>Окна. Город. Любовь...</h3>
                     <p>Погружение в городские истории, рассказанные языком пластики, видеоарта и живой музыки.</p>
@@ -727,7 +739,6 @@
                             </g>
                         </svg>
                     </figure>
-
                     <span>Современная притча</span>
                     <h3>Остров</h3>
                     <p>Постановка о поиске себя и силе одиночества, объединяющая перформанс, медиа и авторскую музыку.</p>
@@ -823,6 +834,5 @@
             }, cycleDuration);
         });
     </script>
-
 </body>
 </html>
