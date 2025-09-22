@@ -346,7 +346,337 @@
             background: var(--accent);
             color: var(--background);
         }
+        .playbill {
+            margin-top: 4rem;
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.18);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0));
+            display: flex;
+            flex-direction: column;
+            gap: 2.4rem;
+        }
 
+        .playbill-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .playbill-description {
+            max-width: 540px;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .playbill-grid {
+            display: grid;
+            gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .playbill-card {
+            border-radius: 22px;
+            border: 1px solid rgba(216, 178, 93, 0.18);
+            overflow: hidden;
+            background: rgba(15, 15, 15, 0.8);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            position: relative;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .playbill-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+        }
+
+        .playbill-card-image {
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 0;
+            padding-bottom: 60%;
+            border: none;
+            background-color: transparent;
+            background-image: var(--image), linear-gradient(135deg, rgba(12, 12, 12, 0.1), rgba(12, 12, 12, 0.9));
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .playbill-card-image:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        .playbill-card-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+        }
+
+        .playbill-card-tags {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            z-index: 1;
+        }
+
+        .playbill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            background: rgba(12, 12, 12, 0.72);
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            color: var(--accent);
+        }
+
+        .playbill-card-body {
+            padding: 1.75rem 1.8rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.15rem;
+        }
+
+        .playbill-card h3 {
+            margin: 0;
+            font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .playbill-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.25rem;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .playbill-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .playbill-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+        }
+
+        .playbill-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            padding: 0.9rem 1.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: background 0.3s ease, color 0.3s ease, border 0.3s ease;
+            cursor: pointer;
+        }
+
+        .playbill-button.primary {
+            background: var(--accent);
+            color: var(--background);
+            border: 1px solid transparent;
+        }
+
+        .playbill-button.primary:hover {
+            background: #e1c06f;
+        }
+
+        .playbill-button.secondary {
+            background: transparent;
+            border: 1px solid rgba(216, 178, 93, 0.5);
+            color: var(--accent);
+        }
+
+        .playbill-button.secondary:hover {
+            background: rgba(216, 178, 93, 0.12);
+        }
+
+        .playbill-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.82);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease;
+            z-index: 120;
+        }
+
+        .playbill-modal-backdrop.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .playbill-modal {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(14, 14, 14, 0.95);
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.25);
+            padding: 2.4rem;
+            position: relative;
+            display: grid;
+            gap: 1.6rem;
+        }
+
+        .playbill-modal h3 {
+            margin: 0;
+            font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .playbill-modal-media {
+            position: relative;
+            padding-bottom: 48%;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(160deg, rgba(12, 12, 12, 0.65), rgba(12, 12, 12, 0.95));
+            background-image: var(--image), linear-gradient(160deg, rgba(12, 12, 12, 0.65), rgba(12, 12, 12, 0.95));
+            background-size: cover;
+            background-position: center;
+        }
+
+        .playbill-modal-media::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.7));
+        }
+
+        .playbill-modal-close {
+            position: absolute;
+            top: 1.4rem;
+            right: 1.4rem;
+            background: transparent;
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            color: var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .playbill-modal-close:hover {
+            background: rgba(216, 178, 93, 0.12);
+        }
+
+        .playbill-info {
+            display: grid;
+            gap: 1.2rem;
+            color: var(--muted);
+        }
+
+        .playbill-modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .playbill-modal-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--muted);
+        }
+
+        .playbill-modal-description {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .playbill-creators {
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .playbill-creators dt {
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+        }
+
+        .playbill-creators dd {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .playbill-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.9rem;
+        }
+
+        .playbill-gallery-thumb {
+            position: relative;
+            padding-bottom: 70%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(140deg, rgba(216, 178, 93, 0.12), rgba(12, 12, 12, 0.85));
+        }
+
+        .playbill-gallery-thumb::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: var(--thumb-image);
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1);
+            transform: scale(1.05);
+        }
+
+        .playbill-gallery-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.65));
+        }
+
+        .playbill-widgets {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .playbill-modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+        }
         .intickets-widget {
             margin-top: 1.5rem;
         }
@@ -515,7 +845,20 @@
             .banner-item {
                 padding: 2.4rem 1.6rem;
             }
+            .playbill {
+                padding: 2.4rem 2rem;
+                gap: 2rem;
+            }
 
+            .playbill-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .playbill-modal {
+                padding: 2rem;
+            }
             .repertoire-card {
                 padding: 1.5rem;
             }
@@ -557,7 +900,41 @@
                 letter-spacing: 0.18em;
                 padding: 0.45rem 1.2rem;
             }
+            .playbill {
+                padding: 1.8rem 1.2rem;
+                gap: 1.8rem;
+            }
 
+            .playbill-card-body {
+                padding: 1.35rem 1.4rem 1.6rem;
+            }
+
+            .playbill-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .playbill-modal {
+                padding: 1.8rem 1.4rem;
+            }
+
+            .playbill-modal-close {
+                top: 0.9rem;
+                right: 0.9rem;
+            }
+
+            .playbill-modal-media {
+                padding-bottom: 62%;
+            }
+
+            .playbill-modal-meta {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+
+            .playbill-gallery {
+                grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            }
             .repertoire-media {
                 aspect-ratio: 3 / 2;
             }
@@ -621,10 +998,69 @@
                     <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
                 </div>
             </div>
-           
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
         </section>
 
+        <section class="playbill" id="playbill">
+            <div class="playbill-header">
+                <h2 class="section-title">Афиша</h2>
+                <p class="playbill-description">Выберите спектакль AmmA Production, чтобы узнать подробности о постановке, создателях и составе. Билеты доступны онлайн&nbsp;— достаточно нажать на кнопку.</p>
+            </div>
+            <div class="playbill-grid" data-playbill-grid aria-live="polite"></div>
+            <div class="playbill-widgets">
+                <!-- Подключение скрипта виджета Intickets -->
+                <script src="https://user.intickets.ru/widget/script.js"></script>
+
+                <!-- ===============================
+                     КНОПКА "КУПИТЬ БИЛЕТ"
+                     =============================== -->
+                <div class="intickets-widget"
+                     data-widget="button"
+                     data-event="ВАШ_ID_СОБЫТИЯ"
+                     data-partner="ВАШ_ID_ПАРТНЕРА"
+                     data-lang="ru"
+                     data-color="#000000"
+                     data-bg="#FFD700"
+                     data-font="Arial"
+                     data-width="220"
+                     data-height="60">
+                </div>
+
+                <!-- ===============================
+                     АФИША (ВСЕ СОБЫТИЯ)
+                     =============================== -->
+                <div class="intickets-widget"
+                     data-widget="events"
+                     data-partner="ВАШ_ID_ПАРТНЕРА"
+                     data-lang="ru"
+                     data-color="#000000"
+                     data-bg="#FFD700"
+                     data-font="Arial"
+                     data-width="100%"
+                     data-height="auto">
+                </div>
+            </div>
+        </section>
+
+        <div class="playbill-modal-backdrop" data-playbill-modal aria-hidden="true">
+            <div class="playbill-modal" role="dialog" aria-modal="true" aria-labelledby="playbill-modal-title">
+                <button class="playbill-modal-close" type="button" aria-label="Закрыть подробности спектакля" data-modal-close>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="playbill-modal-media" data-modal-media aria-hidden="true"></div>
+                <h3 id="playbill-modal-title" data-modal-title></h3>
+                <div class="playbill-info">
+                    <div class="playbill-modal-meta" data-modal-meta></div>
+                    <p class="playbill-modal-description" data-modal-description></p>
+                    <dl class="playbill-creators" data-modal-creators></dl>
+                </div>
+                <div class="playbill-gallery" data-modal-gallery></div>
+                <div class="playbill-modal-actions">
+                    <a class="playbill-button primary" href="https://iframeab-pre2514.intickets.ru/shows/#abiframe" target="_blank" rel="noopener" data-modal-ticket>Купить билет</a>
+                    <button class="playbill-button secondary" type="button" data-modal-close-secondary>Закрыть</button>
+                </div>
+            </div>
+        </div>
         <section>
             <div class="about">
                 <div>
@@ -810,32 +1246,337 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const slider = document.querySelector('.hero-slider');
-            if (!slider) return;
+            if (slider) {
+                const slides = Array.from(slider.querySelectorAll('.banner-item'));
+                if (slides.length > 0) {
+                    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    slides.forEach((slide, index) => {
+                        if (index === 0) {
+                            slide.classList.add('is-active');
+                        } else {
+                            slide.classList.remove('is-active');
+                        }
+                    });
 
-            const slides = Array.from(slider.querySelectorAll('.banner-item'));
-            if (slides.length === 0) return;
-
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            slides.forEach((slide, index) => {
-                if (index === 0) {
-                    slide.classList.add('is-active');
-                } else {
-                    slide.classList.remove('is-active');
+                    if (!reduceMotion && slides.length > 1) {
+                        let current = 0;
+                        const cycleDuration = 5000;
+                        setInterval(() => {
+                            slides[current].classList.remove('is-active');
+                            current = (current + 1) % slides.length;
+                            slides[current].classList.add('is-active');
+                        }, cycleDuration);
+                    }
                 }
-            });
-
-            if (reduceMotion || slides.length === 1) {
-                return;
             }
 
-            let current = 0;
-            const cycleDuration = 5000;
+            const playbillShows = [
+                {
+                    id: 'my-poor-marat',
+                    title: 'Мой бедный Марат',
+                    date: '12 апреля 2024',
+                    time: '19:00',
+                    venue: 'Московский театр «Школа современной пьесы»',
+                    age: '16+',
+                    duration: '2 часа 30 минут',
+                    price: 'от 1 500 ₽',
+                    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80',
+                    ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe',
+                    description: 'Лирическая драма о молодых людях, переживающих блокаду Ленинграда и пытающихся сохранить любовь и достоинство.',
+                    creators: [
+                        { role: 'Автор', value: 'Алексей Арбузов' },
+                        { role: 'Режиссёр', value: 'Вера Анненкова' },
+                        { role: 'В ролях', value: 'Михаил Маликов, Аксинья Олейник, Максим Дементьев' }
+                    ],
+                    gallery: [
+                        { src: 'https://images.unsplash.com/photo-1515165562835-c4c24b67ef28?auto=format&fit=crop&w=800&q=80', alt: 'Сцена спектакля «Мой бедный Марат»' },
+                        { src: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80', alt: 'Актёры в драматической сцене спектакля' },
+                        { src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80', alt: 'Эмоциональный эпизод спектакля «Мой бедный Марат»' }
+                    ]
+                },
+                {
+                    id: 'okna-gorod-lyubov',
+                    title: 'Окна. Город. Любовь...',
+                    date: '26 апреля 2024',
+                    time: '20:00',
+                    venue: 'Дом культуры «ГЭС-2»',
+                    age: '16+',
+                    duration: '2 часа',
+                    price: 'от 1 400 ₽',
+                    image: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
+                    ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe',
+                    description: 'Современная постановка о больших городах, где судьбы людей пересекаются в окнах соседних домов и переплетаются в музыке мегаполиса.',
+                    creators: [
+                        { role: 'Пьеса', value: 'Коллектив AmmA Production' },
+                        { role: 'Режиссёр', value: 'Вера Анненкова' },
+                        { role: 'Композитор', value: 'Алина Мазненкова' }
+                    ],
+                    gallery: [
+                        { src: 'https://images.unsplash.com/photo-1520256862855-398228c41684?auto=format&fit=crop&w=800&q=80', alt: 'Огни ночного города на сцене спектакля' },
+                        { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80', alt: 'Герои постановки «Окна. Город. Любовь...»' },
+                        { src: 'https://images.unsplash.com/photo-1497032205916-ac775f0649ae?auto=format&fit=crop&w=800&q=80', alt: 'Пластическая композиция труппы AmmA Production' }
+                    ]
+                },
+                {
+                    id: 'ostrov',
+                    title: 'Остров',
+                    date: '14 мая 2024',
+                    time: '19:30',
+                    venue: 'Сцена на Неглинной',
+                    age: '12+',
+                    duration: '2 часа 10 минут',
+                    price: 'от 1 300 ₽',
+                    image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
+                    ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe',
+                    description: 'Философская история о поиске собственного острова в бурном мире, соединяющая живую музыку, поэзию и видеопроекции.',
+                    creators: [
+                        { role: 'Автор идеи', value: 'Максим Дементьев' },
+                        { role: 'Режиссёр', value: 'Вера Анненкова' },
+                        { role: 'Музыкальное оформление', value: 'Михаил Маликов' }
+                    ],
+                    gallery: [
+                        { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80', alt: 'Таинственный остров в сценографии спектакля' },
+                        { src: 'https://images.unsplash.com/photo-1462212210333-335063b676d4?auto=format&fit=crop&w=800&q=80', alt: 'Актёры на сцене спектакля «Остров»' },
+                        { src: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=800&q=80', alt: 'Световое оформление постановки «Остров»' }
+                    ]
+                }
+            ];
 
-            setInterval(() => {
-                slides[current].classList.remove('is-active');
-                current = (current + 1) % slides.length;
-                slides[current].classList.add('is-active');
-            }, cycleDuration);
+            const playbillGrid = document.querySelector('[data-playbill-grid]');
+            const modalBackdrop = document.querySelector('[data-playbill-modal]');
+
+            if (playbillGrid && modalBackdrop) {
+                const modalTitle = modalBackdrop.querySelector('[data-modal-title]');
+                const modalMeta = modalBackdrop.querySelector('[data-modal-meta]');
+                const modalDescription = modalBackdrop.querySelector('[data-modal-description]');
+                const modalCreators = modalBackdrop.querySelector('[data-modal-creators]');
+                const modalGallery = modalBackdrop.querySelector('[data-modal-gallery]');
+                const modalTicket = modalBackdrop.querySelector('[data-modal-ticket]');
+                const modalMedia = modalBackdrop.querySelector('[data-modal-media]');
+                const closeButtons = modalBackdrop.querySelectorAll('[data-modal-close], [data-modal-close-secondary]');
+                let lastFocusedElement = null;
+                let originalBodyOverflow = '';
+
+                function handleKeydown(event) {
+                    if (event.key === 'Escape') {
+                        event.preventDefault();
+                        closeModal();
+                    }
+                }
+
+                function handleBackdropClick(event) {
+                    if (event.target === modalBackdrop) {
+                        closeModal();
+                    }
+                }
+
+                function closeModal() {
+                    if (!modalBackdrop.classList.contains('is-open')) {
+                        return;
+                    }
+                    modalBackdrop.classList.remove('is-open');
+                    modalBackdrop.setAttribute('aria-hidden', 'true');
+                    document.removeEventListener('keydown', handleKeydown);
+                    document.body.style.overflow = originalBodyOverflow;
+                    originalBodyOverflow = '';
+                    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                        lastFocusedElement.focus();
+                    }
+                }
+
+                function openModal(show) {
+                    lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+                    originalBodyOverflow = document.body.style.overflow;
+
+                    if (modalTitle) {
+                        modalTitle.textContent = show.title;
+                    }
+
+                    if (modalMedia) {
+                        modalMedia.style.setProperty('--image', `url('${show.image}')`);
+                    }
+
+                    if (modalMeta) {
+                        modalMeta.innerHTML = '';
+                        const metaItems = [
+                            { icon: '📅', text: show.date },
+                            { icon: '🕒', text: show.time },
+                            { icon: '📍', text: show.venue },
+                            { icon: '⌛', text: show.duration },
+                            { icon: '🔞', text: show.age },
+                            { icon: '💳', text: show.price }
+                        ];
+
+                        metaItems.forEach((item) => {
+                            if (!item.text) return;
+                            const span = document.createElement('span');
+                            span.textContent = `${item.icon} ${item.text}`;
+                            modalMeta.appendChild(span);
+                        });
+                    }
+
+                    if (modalDescription) {
+                        modalDescription.textContent = show.description || '';
+                    }
+
+                    if (modalCreators) {
+                        modalCreators.innerHTML = '';
+                        if (Array.isArray(show.creators)) {
+                            show.creators.forEach((creator) => {
+                                if (!creator || !creator.role || !creator.value) {
+                                    return;
+                                }
+                                const dt = document.createElement('dt');
+                                dt.textContent = creator.role;
+                                const dd = document.createElement('dd');
+                                dd.textContent = creator.value;
+                                modalCreators.appendChild(dt);
+                                modalCreators.appendChild(dd);
+                            });
+                        }
+                    }
+
+                    if (modalGallery) {
+                        modalGallery.innerHTML = '';
+                        if (Array.isArray(show.gallery) && show.gallery.length > 0) {
+                            modalGallery.removeAttribute('hidden');
+                            show.gallery.forEach((image) => {
+                                if (!image || !image.src) {
+                                    return;
+                                }
+                                const thumb = document.createElement('div');
+                                thumb.className = 'playbill-gallery-thumb';
+                                thumb.style.setProperty('--thumb-image', `url('${image.src}')`);
+                                thumb.setAttribute('role', 'img');
+                                if (image.alt) {
+                                    thumb.setAttribute('aria-label', image.alt);
+                                }
+                                modalGallery.appendChild(thumb);
+                            });
+                        } else {
+                            modalGallery.setAttribute('hidden', '');
+                        }
+                    }
+
+                    if (modalTicket) {
+                        modalTicket.href = show.ticketUrl;
+                        modalTicket.textContent = show.price ? `Купить билет — ${show.price}` : 'Купить билет';
+                    }
+
+                    modalBackdrop.classList.add('is-open');
+                    modalBackdrop.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    document.addEventListener('keydown', handleKeydown);
+                    requestAnimationFrame(() => {
+                        const closeButton = modalBackdrop.querySelector('[data-modal-close]');
+                        if (closeButton) {
+                            closeButton.focus();
+                        }
+                    });
+                }
+
+                closeButtons.forEach((button) => {
+                    button.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        closeModal();
+                    });
+                });
+
+                modalBackdrop.addEventListener('click', handleBackdropClick);
+
+                function createMetaSpan(icon, text) {
+                    if (!text) return null;
+                    const span = document.createElement('span');
+                    span.textContent = `${icon} ${text}`;
+                    return span;
+                }
+
+                function renderCard(show) {
+                    const card = document.createElement('article');
+                    card.className = 'playbill-card';
+
+                    const imageButton = document.createElement('button');
+                    imageButton.type = 'button';
+                    imageButton.className = 'playbill-card-image';
+                    imageButton.style.setProperty('--image', `url('${show.image}')`);
+                    imageButton.setAttribute('aria-label', `Подробнее о спектакле «${show.title}»`);
+
+                    const tagWrap = document.createElement('div');
+                    tagWrap.className = 'playbill-card-tags';
+
+                    if (show.date) {
+                        const dateTag = document.createElement('span');
+                        dateTag.className = 'playbill-tag';
+                        dateTag.textContent = show.date;
+                        tagWrap.appendChild(dateTag);
+                    }
+
+                    if (show.age) {
+                        const ageTag = document.createElement('span');
+                        ageTag.className = 'playbill-tag';
+                        ageTag.textContent = show.age;
+                        tagWrap.appendChild(ageTag);
+                    }
+
+                    if (tagWrap.children.length > 0) {
+                        imageButton.appendChild(tagWrap);
+                    }
+
+                    const body = document.createElement('div');
+                    body.className = 'playbill-card-body';
+
+                    const title = document.createElement('h3');
+                    title.textContent = show.title;
+                    body.appendChild(title);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'playbill-meta';
+
+                    [
+                        createMetaSpan('📅', show.date),
+                        createMetaSpan('🕒', show.time),
+                        createMetaSpan('📍', show.venue),
+                        createMetaSpan('💳', show.price)
+                    ].forEach((item) => {
+                        if (item) {
+                            meta.appendChild(item);
+                        }
+                    });
+
+                    body.appendChild(meta);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'playbill-actions';
+
+                    const buyLink = document.createElement('a');
+                    buyLink.className = 'playbill-button primary';
+                    buyLink.href = show.ticketUrl;
+                    buyLink.target = '_blank';
+                    buyLink.rel = 'noopener';
+                    buyLink.textContent = 'Купить билет';
+
+                    const detailsButton = document.createElement('button');
+                    detailsButton.type = 'button';
+                    detailsButton.className = 'playbill-button secondary';
+                    detailsButton.textContent = 'Подробнее';
+
+                    actions.appendChild(buyLink);
+                    actions.appendChild(detailsButton);
+                    body.appendChild(actions);
+
+                    card.appendChild(imageButton);
+                    card.appendChild(body);
+
+                    const openDetails = () => openModal(show);
+                    imageButton.addEventListener('click', openDetails);
+                    detailsButton.addEventListener('click', openDetails);
+
+                    playbillGrid.appendChild(card);
+                }
+
+                playbillGrid.innerHTML = '';
+                playbillShows.forEach(renderCard);
+            }
         });
     </script>
 </body>
