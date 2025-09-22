@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <script src="//s3.intickets.ru/intickets.js"></script>
     <style>
         :root {
             --background: #0f0f0f;
@@ -504,20 +506,20 @@
 
         .afisha-card-actions {
             margin-top: auto;
-            display: flex;
-            align-items: stretch;
+            display: grid;
+            gap: 0.75rem;
         }
 
         .afisha-card-actions > * {
-            flex: 1;
-            min-height: 3rem;
+            width: 100%;
         }
 
         .afisha-card-actions .btn {
             width: 100%;
         }
 
-        .afisha-card-badge {
+        .afisha-card-badge,
+        .afisha-modal-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -531,6 +533,21 @@
             letter-spacing: 0.08em;
             font-weight: 600;
             white-space: nowrap;
+        }
+
+        .afisha-modal-actions {
+            margin-top: 1.75rem;
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .afisha-modal-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .afisha-modal-badge {
+            width: 100%;
         }
         .afisha-empty {
             padding: 1.6rem;
@@ -1031,7 +1048,7 @@
                 <p class="afisha-modal-description" data-afisha-modal-description></p>
                 <ul class="afisha-modal-creators" data-afisha-modal-creators></ul>
                 <div class="afisha-modal-gallery" data-afisha-modal-gallery></div>
-                <a class="btn" data-afisha-modal-ticket target="_blank" rel="noopener">Купить билет</a>
+                <div class="afisha-modal-actions" data-afisha-modal-actions></div>
             </div>
         </div>
 

@@ -261,6 +261,7 @@
         const venue = typeof raw?.venue === 'string' ? raw.venue.trim() : '';
         const heroOrder = toFiniteNumber(raw?.heroOrder ?? raw?.heroPriority);
         const showInHero = parseBoolean(raw?.showInHero ?? raw?.hero ?? true);
+        const gallery = normalizeGalleryFromJson(raw?.gallery);
 
         return {
             id,
@@ -273,6 +274,7 @@
             description,
             showInHero,
             heroOrder,
+            gallery,
             _idManuallyChanged: Boolean(raw?.id && raw.id !== slugify(title)),
         };
     }
@@ -302,6 +304,48 @@
 
         const match = String(value).match(/^(\d{2}:\d{2})/);
         return match ? match[1] : '';
+    }
+
+    function normalizeGalleryFromJson(value) {
+        if (!Array.isArray(value)) {
+            return [];
+        }
+
+        return value
+            .map((entry) => {
+                if (!entry) {
+                    return null;
+                }
+
+                if (typeof entry === 'string') {
+                    const src = entry.trim();
+                    return src ? { src, caption: '' } : null;
+                }
+
+                if (typeof entry === 'object') {
+                    const src = typeof entry.src === 'string' ? entry.src.trim() : '';
+                    if (!src) {
+                        return null;
+                    }
+
+                    const caption = typeof entry.caption === 'string' ? entry.caption.trim() : '';
+                    return { src, caption };
+                }
+
+                return null;
+            })
+            .filter(Boolean);
+    }
+
+    function cloneGallery(items) {
+        if (!Array.isArray(items)) {
+            return [];
+        }
+
+        return items.map((item) => ({
+            src: typeof item?.src === 'string' ? item.src : '',
+            caption: typeof item?.caption === 'string' ? item.caption : '',
+        }));
     }
 
     function toFiniteNumber(value) {
@@ -542,6 +586,8 @@
                 ),
             );
 
+            form.appendChild(createGalleryEditor(index));
+
             form.appendChild(
                 createCheckboxField('Показывать в слайдере', event.showInHero, (value, input) => {
                     updateEvent(index, 'showInHero', value, { input });
@@ -695,6 +741,250 @@
         return wrapper;
     }
 
+    function createGalleryEditor(eventIndex) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'admin-field admin-field--gallery';
+
+        const title = document.createElement('span');
+        title.className = 'admin-field__label';
+        title.textContent = 'Галерея изображений';
+        wrapper.appendChild(title);
+
+        const help = document.createElement('span');
+        help.className = 'admin-field__help';
+        help.textContent = 'Эти изображения отображаются во всплывающем описании спектакля.';
+        wrapper.appendChild(help);
+
+        const list = document.createElement('div');
+        list.className = 'admin-gallery';
+        wrapper.appendChild(list);
+
+        const actions = document.createElement('div');
+        actions.className = 'admin-gallery-controls';
+
+        const addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'admin-btn admin-btn--ghost';
+        addButton.textContent = 'Добавить изображение';
+        addButton.addEventListener('click', () => {
+            addGalleryItem(eventIndex);
+            renderGalleryItems(list, eventIndex);
+        });
+        actions.appendChild(addButton);
+        wrapper.appendChild(actions);
+
+        renderGalleryItems(list, eventIndex);
+
+        return wrapper;
+    }
+
+    function renderGalleryItems(container, eventIndex) {
+        const event = state.events[eventIndex];
+        if (!event) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const gallery = Array.isArray(event.gallery) ? event.gallery : [];
+        container.innerHTML = '';
+
+        if (!gallery.length) {
+            const empty = document.createElement('p');
+            empty.className = 'admin-gallery-empty';
+            empty.textContent = 'Изображения не добавлены.';
+            container.appendChild(empty);
+            return;
+        }
+
+        gallery.forEach((item, itemIndex) => {
+            const entry = document.createElement('div');
+            entry.className = 'admin-gallery-item';
+            entry.dataset.galleryIndex = String(itemIndex);
+
+            const thumb = document.createElement('div');
+            thumb.className = 'admin-gallery-thumb';
+            if (item?.src) {
+                thumb.style.backgroundImage = `url('${escapeCssUrl(item.src)}')`;
+            }
+            entry.appendChild(thumb);
+
+            const fields = document.createElement('div');
+            fields.className = 'admin-gallery-fields';
+
+            const urlWrapper = document.createElement('label');
+            urlWrapper.className = 'admin-gallery-field';
+            const urlLabel = document.createElement('span');
+            urlLabel.className = 'admin-field__label';
+            urlLabel.textContent = 'Изображение (URL)';
+            urlWrapper.appendChild(urlLabel);
+
+            const urlInput = document.createElement('input');
+            urlInput.className = 'admin-input';
+            urlInput.type = 'url';
+            urlInput.placeholder = 'https://example.com/photo.jpg';
+            urlInput.value = item?.src || '';
+            urlInput.addEventListener('input', (event) => {
+                const value = event.target.value;
+                updateGalleryItemField(eventIndex, itemIndex, 'src', value);
+                thumb.style.backgroundImage = value.trim() ? `url('${escapeCssUrl(value)}')` : '';
+            });
+            urlWrapper.appendChild(urlInput);
+
+            fields.appendChild(urlWrapper);
+
+            const uploadActions = document.createElement('div');
+            uploadActions.className = 'admin-field__actions';
+
+            const uploadButton = document.createElement('button');
+            uploadButton.type = 'button';
+            uploadButton.className = 'admin-btn admin-btn--ghost';
+            uploadButton.textContent = 'Загрузить изображение…';
+
+            const uploadHint = document.createElement('span');
+            uploadHint.textContent = 'Поддерживаются JPG, PNG и WebP до 5 МБ.';
+
+            const uploadInput = document.createElement('input');
+            uploadInput.type = 'file';
+            uploadInput.accept = 'image/*';
+            uploadInput.hidden = true;
+
+            uploadButton.addEventListener('click', () => {
+                if (!state.pendingUploads && !state.saving) {
+                    uploadInput.click();
+                } else if (state.pendingUploads) {
+                    setStatus('Дождитесь завершения текущей загрузки изображения.', 'info');
+                }
+            });
+
+            uploadInput.addEventListener('change', async (event) => {
+                const file = event.target.files && event.target.files[0];
+                if (!file) {
+                    return;
+                }
+
+                if (!ensureAuthToken()) {
+                    setStatus('Чтобы загрузить изображение, укажите ключ доступа администратора.', 'error');
+                    uploadInput.value = '';
+                    return;
+                }
+
+                beginUpload();
+                uploadButton.disabled = true;
+                setStatus('Загружаем изображение…');
+
+                try {
+                    const url = await uploadImageFile(file);
+                    urlInput.value = url;
+                    updateGalleryItemField(eventIndex, itemIndex, 'src', url);
+                    thumb.style.backgroundImage = `url('${escapeCssUrl(url)}')`;
+                    setStatus('Изображение загружено и добавлено в галерею.', 'success');
+                } catch (error) {
+                    console.error(error);
+                    setStatus(error.message || 'Не удалось загрузить изображение. Попробуйте другой файл.', 'error');
+                } finally {
+                    uploadInput.value = '';
+                    uploadButton.disabled = false;
+                    finishUpload();
+                }
+            });
+
+            uploadActions.append(uploadButton, uploadHint);
+            fields.appendChild(uploadActions);
+            fields.appendChild(uploadInput);
+
+            const captionWrapper = document.createElement('label');
+            captionWrapper.className = 'admin-gallery-field';
+            const captionLabel = document.createElement('span');
+            captionLabel.className = 'admin-field__label';
+            captionLabel.textContent = 'Подпись (необязательно)';
+            captionWrapper.appendChild(captionLabel);
+
+            const captionInput = document.createElement('input');
+            captionInput.className = 'admin-input';
+            captionInput.type = 'text';
+            captionInput.placeholder = 'Например, «Кадр из спектакля»';
+            captionInput.value = item?.caption || '';
+            captionInput.addEventListener('input', (event) => {
+                updateGalleryItemField(eventIndex, itemIndex, 'caption', event.target.value);
+            });
+            captionWrapper.appendChild(captionInput);
+            fields.appendChild(captionWrapper);
+
+            const itemActions = document.createElement('div');
+            itemActions.className = 'admin-gallery-item-actions';
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'admin-btn admin-btn--danger';
+            removeButton.textContent = 'Удалить изображение';
+            removeButton.addEventListener('click', () => {
+                removeGalleryItem(eventIndex, itemIndex);
+                renderGalleryItems(container, eventIndex);
+            });
+            itemActions.appendChild(removeButton);
+            fields.appendChild(itemActions);
+
+            entry.appendChild(fields);
+            container.appendChild(entry);
+        });
+    }
+
+    function addGalleryItem(eventIndex) {
+        const event = state.events[eventIndex];
+        if (!event) {
+            return;
+        }
+
+        if (!Array.isArray(event.gallery)) {
+            event.gallery = [];
+        }
+
+        event.gallery.push({ src: '', caption: '' });
+        markDirty();
+        renderJsonPreview();
+    }
+
+    function removeGalleryItem(eventIndex, itemIndex) {
+        const event = state.events[eventIndex];
+        if (!event || !Array.isArray(event.gallery)) {
+            return;
+        }
+
+        event.gallery.splice(itemIndex, 1);
+        markDirty();
+        renderJsonPreview();
+    }
+
+    function updateGalleryItemField(eventIndex, itemIndex, field, value) {
+        const event = state.events[eventIndex];
+        if (!event) {
+            return;
+        }
+
+        if (!Array.isArray(event.gallery)) {
+            event.gallery = [];
+        }
+
+        const item = event.gallery[itemIndex];
+        if (!item) {
+            event.gallery[itemIndex] = { src: '', caption: '' };
+        }
+
+        const target = event.gallery[itemIndex];
+        if (!target) {
+            return;
+        }
+
+        if (field === 'src') {
+            target.src = typeof value === 'string' ? value.trim() : '';
+        } else if (field === 'caption') {
+            target.caption = typeof value === 'string' ? value : '';
+        }
+
+        markDirty();
+        renderJsonPreview();
+    }
+
     function updateEvent(index, field, value, context = {}) {
         const event = state.events[index];
         if (!event) {
@@ -814,6 +1104,7 @@
             id: generateUniqueId(event.id),
             title: `${event.title || 'Событие'} (копия)`,
             _idManuallyChanged: false,
+            gallery: cloneGallery(event.gallery),
         };
 
         state.events.splice(index + 1, 0, clone);
@@ -849,6 +1140,7 @@
             description: '',
             showInHero: true,
             heroOrder: null,
+            gallery: [],
             _idManuallyChanged: false,
         };
 
@@ -1255,5 +1547,9 @@
         return String(value || '')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+    }
+
+    function escapeCssUrl(value) {
+        return String(value || '').replace(/([')\\"])/g, '\\$1');
     }
 })();

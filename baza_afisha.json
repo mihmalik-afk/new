@@ -9,6 +9,20 @@
       "link": "",
       "image": "https://amma-production.ru/img/maxresdefault.png",
       "description": "Легендарная история о дружбе и любви на фоне блокадного города.",
+      "gallery": [
+        {
+          "src": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80",
+          "caption": "Погружение в атмосферу блокадного города"
+        },
+        {
+          "src": "https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=900&q=80",
+          "caption": "Диалог героев на тёмной сцене"
+        },
+        {
+          "src": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=900&q=80",
+          "caption": "Финальный световой акцент спектакля"
+        }
+      ],
       "showInHero": true,
       "heroOrder": 1
     },
@@ -21,6 +35,20 @@
       "link": "https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe",
       "image": "https://amma-production.ru/img/OS_04401.jpg",
       "description": "Ироничная комедия",
+      "gallery": [
+        {
+          "src": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+          "caption": "Городской ритм спектакля"
+        },
+        {
+          "src": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
+          "caption": "Сцена у панорамных окон"
+        },
+        {
+          "src": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=80",
+          "caption": "Пластический дуэт в свете города"
+        }
+      ],
       "showInHero": true,
       "heroOrder": 2
     }
