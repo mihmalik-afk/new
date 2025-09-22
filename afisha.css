@@ -1,0 +1,337 @@
+:root {
+    color-scheme: dark;
+    --afisha-bg: #0b0d10;
+    --afisha-surface: rgba(20, 24, 30, 0.85);
+    --afisha-accent: #f6c945;
+    --afisha-text: #f7f7f7;
+    --afisha-muted: rgba(247, 247, 247, 0.7);
+    --afisha-border: rgba(246, 201, 69, 0.12);
+    --afisha-radius: 18px;
+    --afisha-spacing: clamp(1rem, 2.5vw, 2rem);
+    --afisha-grid-gap: clamp(1.25rem, 3vw, 2.5rem);
+    font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(246, 201, 69, 0.12), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(246, 201, 69, 0.08), transparent 45%),
+        var(--afisha-bg);
+    color: var(--afisha-text);
+    min-height: 100vh;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover,
+a:focus-visible {
+    color: var(--afisha-accent);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.afisha-header {
+    padding: 1.5rem clamp(1rem, 5vw, 3.5rem) 0;
+}
+
+.afisha-header__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.afisha-brand {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.afisha-nav {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+}
+
+.afisha-nav__link {
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--afisha-muted);
+    position: relative;
+    padding-bottom: 0.35rem;
+}
+
+.afisha-nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--afisha-accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.afisha-nav__link:hover::after,
+.afisha-nav__link[aria-current="page"]::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.afisha-main {
+    flex: 1 0 auto;
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: clamp(2rem, 4vw, 4rem) clamp(1.25rem, 5vw, 3rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.afisha-intro {
+    display: grid;
+    gap: 1.5rem;
+    text-align: center;
+    justify-items: center;
+}
+
+.afisha-intro__heading {
+    font-family: 'Cinzel', serif;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    margin: 0;
+}
+
+.afisha-intro__description {
+    margin: 0;
+    max-width: 48ch;
+    color: var(--afisha-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.afisha-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.afisha-control-button {
+    background: transparent;
+    border: 1px solid var(--afisha-border);
+    border-radius: 999px;
+    color: var(--afisha-muted);
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.afisha-control-button:hover,
+.afisha-control-button:focus-visible,
+.afisha-control-button[aria-pressed="true"] {
+    border-color: var(--afisha-accent);
+    color: var(--afisha-text);
+    background: rgba(246, 201, 69, 0.08);
+}
+
+.afisha-grid-section {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.afisha-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.afisha-grid-title {
+    margin: 0;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+}
+
+.afisha-grid-action {
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--afisha-accent);
+}
+
+.afisha-grid {
+    display: grid;
+    gap: var(--afisha-grid-gap);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.afisha-card {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 1rem;
+    background: var(--afisha-surface);
+    border: 1px solid var(--afisha-border);
+    border-radius: var(--afisha-radius);
+    padding: 1.25rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 24px 60px rgba(5, 7, 10, 0.35);
+    transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.afisha-card:hover,
+.afisha-card:focus-within {
+    transform: translateY(-6px);
+    border-color: rgba(246, 201, 69, 0.4);
+}
+
+.afisha-card__poster {
+    position: relative;
+    overflow: hidden;
+    border-radius: calc(var(--afisha-radius) * 0.8);
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(135deg, rgba(246, 201, 69, 0.15), transparent 65%);
+}
+
+.afisha-card__poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.05);
+}
+
+.afisha-card__body {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.afisha-card__title {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.afisha-card__meta {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: var(--afisha-muted);
+}
+
+.afisha-card__meta-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.afisha-card__meta-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(247, 247, 247, 0.55);
+}
+
+.afisha-card__description {
+    margin: 0;
+    color: rgba(247, 247, 247, 0.8);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.afisha-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.afisha-card__price {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--afisha-accent);
+}
+
+.afisha-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(246, 201, 69, 0.25);
+    color: var(--afisha-text);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.afisha-card__link::after {
+    content: '→';
+    font-size: 1.1rem;
+}
+
+.afisha-card__link:hover,
+.afisha-card__link:focus-visible {
+    background: rgba(246, 201, 69, 0.15);
+    border-color: var(--afisha-accent);
+}
+
+.afisha-status {
+    margin: 0;
+    padding: 2rem;
+    text-align: center;
+    background: rgba(20, 24, 30, 0.7);
+    border-radius: var(--afisha-radius);
+    border: 1px dashed rgba(246, 201, 69, 0.3);
+    color: var(--afisha-muted);
+}
+
+.afisha-footer {
+    padding: 2rem clamp(1.25rem, 5vw, 3rem) 3rem;
+    text-align: center;
+    color: rgba(247, 247, 247, 0.6);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+    .afisha-nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .afisha-header__inner {
+        justify-content: center;
+    }
+
+    .afisha-card {
+        padding: 1rem;
+    }
+}
