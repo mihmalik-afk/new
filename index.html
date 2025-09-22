@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmmA Production — продюсерский центр</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <script src="//s3.intickets.ru/intickets.js"></script>
+    <style>
+        :root {
+            --background: #0f0f0f;
+            --background-alt: #171717;
+            --text: #f7f7f7;
+            --muted: #cfcfcf;
+            --accent: #d8b25d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(12, 12, 12, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(216, 178, 93, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.25rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            font-size: 0.95rem;
+            color: var(--muted);
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -0.35rem;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--text);
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        .hero {
+            position: relative;
+            padding: 2.5rem 0 4.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2rem;
+        }
+
+        .hero-heading {
+            margin: 0;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35em;
+            font-size: clamp(3.4rem, 7vw, 5.4rem);
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        .hero-letter {
+            display: inline-block;
+        }
+
+        .hero-letter-large {
+            font-size: 1em;
+        }
+
+        .hero-letter-small {
+            font-size: 0.72em;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-production {
+            font-size: clamp(1.2rem, 3vw, 1.9rem);
+            letter-spacing: 0.75em;
+            text-transform: uppercase;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(247, 247, 247, 0.25);
+        }
+
+        .hero-director {
+            margin-top: 1.4rem;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 600;
+        }
+
+        .hero-director-label {
+            font-size: 0.7rem;
+            color: var(--accent);
+        }
+
+        .hero-director-name {
+            font-size: 0.95rem;
+            letter-spacing: 0.25em;
+            color: var(--accent);
+            margin-top: 0.4rem;
+        }
+
+        .hero p {
+            max-width: 640px;
+            color: var(--muted);
+            margin: 0 auto;
+        }
+
+        .banner {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            border: 1px solid rgba(216, 178, 93, 0.4);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            min-height: 320px;
+            background: var(--background-alt);
+        }
+
+        .banner-item {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            gap: 1.4rem;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(18px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+            color: var(--text);
+            isolate: isolate;
+        }
+
+        .banner-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(12, 12, 12, 0.78), rgba(12, 12, 12, 0.55)),
+                var(--slide-bg, radial-gradient(circle at top, rgba(216,178,93,0.2), transparent 70%));
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            transition: transform 1.2s ease;
+        }
+
+        .banner-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
+            z-index: -1;
+        }
+
+        .banner-item.is-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .banner-item.is-active::before {
+            transform: scale(1.04);
+        }
+
+        .banner-item-brand {
+            gap: 1.6rem;
+            --slide-bg: radial-gradient(circle at 20% 20%, rgba(216, 178, 93, 0.35), transparent 60%),
+                         linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.85));
+        }
+
+        .banner-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .banner-date {
+            font-size: 0.85rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            padding: 0.55rem 1.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.65);
+            background: rgba(12, 12, 12, 0.55);
+            color: var(--accent);
+        }
+
+        .banner-cta {
+            padding: 0.85rem 2.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.7);
+            color: var(--background);
+            background: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .banner-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(216, 178, 93, 0.2);
+        }
+
+        section {
+            margin-top: 5rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .about {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        .about p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .widget {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+            border-radius: 18px;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            background: var(--background-alt);
+        }
+
+        .widget a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1.8rem;
+            border-radius: 999px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .widget a:hover {
+            background: var(--accent);
+            color: var(--background);
+        }
+
+        .playbill {
+            margin-top: 4rem;
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.18);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0));
+            display: flex;
+            flex-direction: column;
+            gap: 2.4rem;
+        }
+
+        .playbill-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .playbill-description {
+            max-width: 540px;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .playbill-grid {
+            display: grid;
+            gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .playbill-empty {
+            grid-column: 1 / -1;
+            padding: 2.5rem 1.5rem;
+            border-radius: 18px;
+            border: 1px dashed rgba(216, 178, 93, 0.4);
+            text-align: center;
+            color: var(--muted);
+            background: rgba(15, 15, 15, 0.65);
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+        }
+
+        .playbill-card {
+            border-radius: 22px;
+            border: 1px solid rgba(216, 178, 93, 0.18);
+            overflow: hidden;
+            background: rgba(15, 15, 15, 0.8);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            position: relative;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .playbill-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+        }
+
+        .playbill-card-image {
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 0;
+            padding-bottom: 60%;
+            border: none;
+            background-color: transparent;
+            background-image: var(--image), linear-gradient(135deg, rgba(12, 12, 12, 0.1), rgba(12, 12, 12, 0.9));
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .playbill-card-image:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        .playbill-card-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+        }
+
+        .playbill-card-tags {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            z-index: 1;
+        }
+
+        .playbill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            background: rgba(12, 12, 12, 0.72);
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            color: var(--accent);
+        }
+
+        .playbill-card-body {
+            padding: 1.75rem 1.8rem 2rem;
+            display: grid;
+            grid-template-rows: min-content 1fr min-content;
+            align-items: start;
+            gap: 1.1rem;
+        }
+
+        .playbill-card-body > *:nth-child(2) {
+            align-self: stretch;
+        }
+
+        .playbill-card-body > *:last-child {
+            align-self: end;
+        }
+
+        .playbill-card h3 {
+            margin: 0;
+            font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .playbill-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.25rem;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .playbill-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .playbill-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+        }
+
+        .playbill-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            padding: 0.9rem 1.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: background 0.3s ease, color 0.3s ease, border 0.3s ease;
+            cursor: pointer;
+        }
+
+        .playbill-button.primary {
+            background: var(--accent);
+            color: var(--background);
+            border: 1px solid transparent;
+        }
+
+        .playbill-button.primary:hover {
+            background: #e1c06f;
+        }
+
+        .playbill-button.secondary {
+            background: transparent;
+            border: 1px solid rgba(216, 178, 93, 0.5);
+            color: var(--accent);
+        }
+
+        .playbill-button.secondary:hover {
+            background: rgba(216, 178, 93, 0.12);
+        }
+
+        .playbill-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.82);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease;
+            z-index: 120;
+        }
+
+        .playbill-modal-backdrop.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .playbill-modal {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(14, 14, 14, 0.95);
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.25);
+            padding: 2.4rem;
+            position: relative;
+            display: grid;
+            gap: 1.6rem;
+        }
+
+        .playbill-modal h3 {
+            margin: 0;
+            font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .playbill-modal-media {
+            position: relative;
+            padding-bottom: 48%;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(160deg, rgba(12, 12, 12, 0.65), rgba(12, 12, 12, 0.95));
+            background-image: var(--image), linear-gradient(160deg, rgba(12, 12, 12, 0.65), rgba(12, 12, 12, 0.95));
+            background-size: cover;
+            background-position: center;
+        }
+
+        .playbill-modal-media::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.7));
+        }
+
+        .playbill-modal-close {
+            position: absolute;
+            top: 1.4rem;
+            right: 1.4rem;
+            background: transparent;
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            color: var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .playbill-modal-close:hover {
+            background: rgba(216, 178, 93, 0.12);
+        }
+
+        .playbill-info {
+            display: grid;
+            gap: 1.2rem;
+            color: var(--muted);
+        }
+
+        .playbill-modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .playbill-modal-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--muted);
+        }
+
+        .playbill-modal-description {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .playbill-creators {
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .playbill-creators dt {
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+        }
+
+        .playbill-creators dd {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .playbill-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.9rem;
+        }
+
+        .playbill-gallery-thumb {
+            position: relative;
+            padding-bottom: 70%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(140deg, rgba(216, 178, 93, 0.12), rgba(12, 12, 12, 0.85));
+        }
+
+        .playbill-gallery-thumb::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: var(--thumb-image);
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1);
+            transform: scale(1.05);
+        }
+
+        .playbill-gallery-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.65));
+        }
+
+        .playbill-widgets {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .playbill-modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+        }
+
+        .intickets-widget {
+            margin-top: 1.5rem;
+        }
+
+        .intickets-widget + .intickets-widget {
+            margin-top: 1rem;
+        }
+
+        .repertoire-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .repertoire-card {
+            padding: 1.75rem;
+            border-radius: 18px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(0,0,0,0.8));
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .repertoire-media {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(247, 247, 247, 0.08);
+        }
+
+        .repertoire-media svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .repertoire-card span {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+        }
+
+        .repertoire-card h3 {
+            margin: 0;
+        }
+
+        .repertoire-card p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .team-card {
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            border-radius: 18px;
+            padding: 1.8rem;
+            background: var(--background-alt);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-card strong {
+            letter-spacing: 0.05em;
+            font-size: 1.1rem;
+        }
+
+        .team-card span {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .contacts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(216, 178, 93, 0.12), rgba(0,0,0,0.75));
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .contact-info a {
+            color: var(--accent);
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.4rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.5);
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .social-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .social-button:hover {
+            transform: translateY(-3px);
+            background: rgba(216, 178, 93, 0.15);
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--muted);
+            border-top: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            header {
+                position: static;
+            }
+
+            .hero {
+                padding: 2.4rem 0 3.2rem;
+            }
+
+            .hero-brand {
+                gap: 0.25em;
+                flex-wrap: wrap;
+            }
+
+            .hero-director {
+                letter-spacing: 0.14em;
+            }
+
+            .banner {
+                border-radius: 16px;
+                min-height: 280px;
+            }
+
+            .banner-item {
+                padding: 2.4rem 1.6rem;
+            }
+
+            .playbill {
+                padding: 2.4rem 2rem;
+                gap: 2rem;
+            }
+
+            .playbill-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .playbill-modal {
+                padding: 2rem;
+            }
+
+            .repertoire-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 560px) {
+            main {
+                padding: 0 1rem 3.5rem;
+            }
+
+            .hero-brand {
+                font-size: clamp(2.4rem, 14vw, 3.2rem);
+                letter-spacing: 0.12em;
+            }
+
+            .hero-production {
+                letter-spacing: 0.45em;
+                font-size: clamp(1rem, 6vw, 1.35rem);
+            }
+
+            .hero-director-name {
+                letter-spacing: 0.18em;
+            }
+
+            .banner {
+                min-height: 250px;
+            }
+
+            .banner-item {
+                padding: 2rem 1.25rem;
+            }
+
+            .banner-title {
+                font-size: clamp(1.5rem, 6vw, 2.1rem);
+            }
+
+            .banner-date {
+                font-size: 0.72rem;
+                letter-spacing: 0.18em;
+                padding: 0.45rem 1.2rem;
+            }
+
+            .playbill {
+                padding: 1.8rem 1.2rem;
+                gap: 1.8rem;
+            }
+
+            .playbill-card-body {
+                padding: 1.35rem 1.4rem 1.6rem;
+            }
+
+            .playbill-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .playbill-modal {
+                padding: 1.8rem 1.4rem;
+            }
+
+            .playbill-modal-close {
+                top: 0.9rem;
+                right: 0.9rem;
+            }
+
+            .playbill-modal-media {
+                padding-bottom: 62%;
+            }
+
+            .playbill-modal-meta {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+
+            .playbill-gallery {
+                grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            }
+
+            .repertoire-media {
+                aspect-ratio: 3 / 2;
+            }
+
+            .contacts {
+                padding: 1.8rem;
+            }
+
+            .social-buttons {
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <div class="logo">AmmA Production</div>
+            <nav>
+                <ul>
+                    <li><a href="#about">О центре</a></li>
+                    <li><a href="#repertoire">Репертуар</a></li>
+                    <li><a href="#team">Команда</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="about">
+            <div class="banner hero-slider" aria-label="Анимированный баннер AmmA Production">
+                <div class="banner-item banner-item-brand is-active">
+                    <h1 class="hero-heading" aria-label="AmmA Production">
+                        <span class="hero-brand" aria-hidden="true">
+                            <span class="hero-letter hero-letter-large">A</span>
+                            <span class="hero-letter hero-letter-small">M</span>
+                            <span class="hero-letter hero-letter-small">M</span>
+                            <span class="hero-letter hero-letter-large">A</span>
+                        </span>
+                        <span class="hero-production" aria-hidden="true">PRODUCTION</span>
+                    </h1>
+                    <div class="hero-director" aria-label="Художественный руководитель — Вера Анненкова">
+                        <span class="hero-director-label">Художественный руководитель</span>
+                        <span class="hero-director-name">Вера Анненкова</span>
+                    </div>
+                </div>
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">12 апреля 2024</div>
+                    <div class="banner-title">«Мой бедный Марат»</div>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
+                </div>
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">26 апреля 2024</div>
+                    <div class="banner-title">«Окна. Город. Любовь...»</div>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
+                </div>
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">14 мая 2024</div>
+                    <div class="banner-title">«Остров»</div>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
+                </div>
+            </div>
+            <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
+        </section>
+
+        <section class="playbill" id="playbill">
+            <div class="playbill-header">
+                <h2 class="section-title">Афиша</h2>
+                <p class="playbill-description">Выберите спектакль AmmA Production, чтобы узнать подробности о постановке, создателях и составе. Билеты доступны онлайн&nbsp;— достаточно нажать на кнопку.</p>
+            </div>
+            <div class="playbill-grid" data-playbill-grid aria-live="polite"></div>
+            <div class="playbill-widgets">
+                <!-- Подключение скрипта виджета Intickets -->
+                <script src="https://user.intickets.ru/widget/script.js"></script>
+
+                <!-- ===============================
+                     КНОПКА "КУПИТЬ БИЛЕТ"
+                     =============================== -->
+                <div class="intickets-widget"
+                     data-widget="button"
+                     data-event="ВАШ_ID_СОБЫТИЯ"
+                     data-partner="ВАШ_ID_ПАРТНЕРА"
+                     data-lang="ru"
+                     data-color="#000000"
+                     data-bg="#FFD700"
+                     data-font="Arial"
+                     data-width="220"
+                     data-height="60">
+                </div>
+
+                <!-- ===============================
+                     АФИША (ВСЕ СОБЫТИЯ)
+                     =============================== -->
+                <div class="intickets-widget"
+                     data-widget="events"
+                     data-partner="ВАШ_ID_ПАРТНЕРА"
+                     data-lang="ru"
+                     data-color="#000000"
+                     data-bg="#FFD700"
+                     data-font="Arial"
+                     data-width="100%"
+                     data-height="auto">
+                </div>
+            </div>
+        </section>
+
+        <div class="playbill-modal-backdrop" data-playbill-modal aria-hidden="true">
+            <div class="playbill-modal" role="dialog" aria-modal="true" aria-labelledby="playbill-modal-title">
+                <button class="playbill-modal-close" type="button" aria-label="Закрыть подробности спектакля" data-modal-close>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="playbill-modal-media" data-modal-media aria-hidden="true"></div>
+                <h3 id="playbill-modal-title" data-modal-title></h3>
+                <div class="playbill-info">
+                    <div class="playbill-modal-meta" data-modal-meta></div>
+                    <p class="playbill-modal-description" data-modal-description></p>
+                    <dl class="playbill-creators" data-modal-creators></dl>
+                </div>
+                <div class="playbill-gallery" data-modal-gallery></div>
+                <div class="playbill-modal-actions">
+                    <a class="playbill-button primary" href="https://iframeab-pre2514.intickets.ru/shows/#abiframe" target="_blank" rel="noopener" data-modal-ticket>Купить билет</a>
+                    <button class="playbill-button secondary" type="button" data-modal-close-secondary>Закрыть</button>
+                </div>
+            </div>
+        </div>
+
+        <section>
+            <div class="about">
+                <div>
+                    <h2 class="section-title">О центре</h2>
+                    <p>AmmA Production сопровождает культурные проекты на всех этапах — от идеи до премьерного поклона. Наша команда курирует постановки, гастроли, медиасопровождение и работу с партнёрами, создавая актуальные театральные события.</p>
+                </div>
+                <div class="widget">
+                    <h3 style="margin:0; font-size:1.2rem; text-transform:uppercase; letter-spacing:0.08em;">Онлайн-билеты</h3>
+                    <p style="margin:0; color:var(--muted);">Используйте готовый виджет для моментальной покупки билетов на спектакли нашего репертуара.</p>
+                    <a href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="repertoire">
+            <h2 class="section-title">Текущий репертуар</h2>
+            <div class="repertoire-grid">
+                <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-marat" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-marat">Стилизованная афиша спектакля «Мой бедный Марат»</title>
+                            <defs>
+                                <linearGradient id="marat-bg" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#1c1c1c" />
+                                    <stop offset="100%" stop-color="#0b0b0b" />
+                                </linearGradient>
+                                <linearGradient id="marat-accent" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" />
+                                    <stop offset="100%" stop-color="#8f6a1f" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#marat-bg)" />
+                            <g opacity="0.25" stroke="#f7f7f7" stroke-opacity="0.4" stroke-width="2">
+                                <line x1="28" y1="52" x2="292" y2="52" />
+                                <line x1="28" y1="118" x2="292" y2="118" />
+                                <line x1="28" y1="184" x2="292" y2="184" />
+                            </g>
+                            <path d="M36 212 L160 38 L284 212 Z" fill="url(#marat-accent)" fill-opacity="0.68" />
+                            <path d="M72 212 L160 108 L248 212 Z" fill="none" stroke="#d8b25d" stroke-width="4" stroke-opacity="0.7" />
+                            <circle cx="160" cy="126" r="26" fill="#0f0f0f" stroke="#d8b25d" stroke-width="3" />
+                            <path d="M126 212 L150 166 L170 212 Z" fill="#101010" opacity="0.85" />
+                            <path d="M176 212 L190 186 L204 212 Z" fill="#0b0b0b" opacity="0.75" />
+                        </svg>
+                    </figure>
+                    <span>Драма</span>
+                    <h3>Мой бедный Марат</h3>
+                    <p>Пьеса Алексея Арбузова о молодости, любви и надежде, которая не угасает даже в самые тяжёлые времена.</p>
+                </div>
+                <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-okna" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-okna">Стилизованная афиша спектакля «Окна. Город. Любовь...»</title>
+                            <defs>
+                                <linearGradient id="okna-bg" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#1e1e1e" />
+                                    <stop offset="100%" stop-color="#090909" />
+                                </linearGradient>
+                                <linearGradient id="okna-highlight" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" stop-opacity="0.9" />
+                                    <stop offset="100%" stop-color="#b48b3f" stop-opacity="0.6" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#okna-bg)" />
+                            <g stroke="#f7f7f7" stroke-width="3" stroke-opacity="0.08">
+                                <line x1="40" y1="30" x2="280" y2="30" />
+                                <line x1="40" y1="90" x2="280" y2="90" />
+                                <line x1="40" y1="150" x2="280" y2="150" />
+                                <line x1="40" y1="210" x2="280" y2="210" />
+                                <line x1="40" y1="30" x2="40" y2="210" />
+                                <line x1="110" y1="30" x2="110" y2="210" />
+                                <line x1="190" y1="30" x2="190" y2="210" />
+                                <line x1="280" y1="30" x2="280" y2="210" />
+                            </g>
+                            <g fill="url(#okna-highlight)" fill-opacity="0.85">
+                                <rect x="56" y="48" width="40" height="60" rx="6" />
+                                <rect x="126" y="110" width="48" height="70" rx="6" />
+                                <rect x="206" y="60" width="52" height="82" rx="6" />
+                            </g>
+                            <g fill="#d8b25d" fill-opacity="0.4">
+                                <rect x="62" y="164" width="28" height="36" rx="4" />
+                                <rect x="138" y="70" width="26" height="32" rx="4" />
+                                <rect x="216" y="162" width="34" height="44" rx="4" />
+                            </g>
+                            <path d="M36 212 H284" stroke="#d8b25d" stroke-width="4" stroke-linecap="round" stroke-opacity="0.6" />
+                        </svg>
+                    </figure>
+                    <span>Поэтический спектакль</span>
+                    <h3>Окна. Город. Любовь...</h3>
+                    <p>Погружение в городские истории, рассказанные языком пластики, видеоарта и живой музыки.</p>
+                </div>
+                <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-ostrov" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-ostrov">Стилизованная афиша спектакля «Остров»</title>
+                            <defs>
+                                <linearGradient id="ostrov-sky" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#161616" />
+                                    <stop offset="100%" stop-color="#050505" />
+                                </linearGradient>
+                                <linearGradient id="ostrov-glow" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" stop-opacity="0.85" />
+                                    <stop offset="100%" stop-color="#8d6f2c" stop-opacity="0.6" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#ostrov-sky)" />
+                            <circle cx="236" cy="64" r="34" fill="url(#ostrov-glow)" fill-opacity="0.75" />
+                            <path d="M0 188 Q80 144 160 176 T320 188 V240 H0 Z" fill="#0c0c0c" />
+                            <path d="M92 188 Q120 150 160 164 Q200 178 228 188 Z" fill="#111" />
+                            <path d="M128 186 Q160 148 188 184 Z" fill="#d8b25d" fill-opacity="0.45" />
+                            <g stroke="#d8b25d" stroke-width="3" stroke-opacity="0.6" fill="none">
+                                <path d="M40 212 C80 204 120 204 160 212" />
+                                <path d="M160 212 C200 220 240 220 280 212" />
+                            </g>
+                            <g stroke="#f7f7f7" stroke-opacity="0.12" stroke-width="2" fill="none">
+                                <path d="M24 138 Q112 96 160 120 Q208 144 296 108" />
+                            </g>
+                        </svg>
+                    </figure>
+                    <span>Современная притча</span>
+                    <h3>Остров</h3>
+                    <p>Постановка о поиске себя и силе одиночества, объединяющая перформанс, медиа и авторскую музыку.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="team">
+            <h2 class="section-title">Команда</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <strong>Вера Анненкова</strong>
+                    <span>Художественный руководитель</span>
+                </div>
+                <div class="team-card">
+                    <strong>Михаил Маликов</strong>
+                    <span>Продюсер</span>
+                </div>
+                <div class="team-card">
+                    <strong>Алина Мазненкова</strong>
+                    <span>PR и коммуникации</span>
+                </div>
+                <div class="team-card">
+                    <strong>Максим Дементьев</strong>
+                    <span>Технический директор</span>
+                </div>
+                <div class="team-card">
+                    <strong>Аксинья Олейник</strong>
+                    <span>Куратор проектов</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacts">
+            <h2 class="section-title">Контакты</h2>
+            <div class="contacts">
+                <div class="contact-info">
+                    <div><strong>Телефон:</strong> <a href="tel:+79991234567">+7 (999) 123-45-67</a></div>
+                    <div><strong>Email:</strong> <a href="mailto:info@amma-production.ru">info@amma-production.ru</a></div>
+                    <div><strong>Адрес:</strong> Москва, Большая театральная, 12</div>
+                    <div><strong>График:</strong> Пн–Пт 10:00–19:00</div>
+                </div>
+                <div>
+                    <h3 style="margin-top:0; text-transform:uppercase; letter-spacing:0.08em;">Свяжитесь с нами</h3>
+                    <p style="color:var(--muted); margin-top:0;">Менеджеры AmmA Production готовы помочь с организацией показов, партнёрскими предложениями и покупкой билетов.</p>
+                    <div class="social-buttons">
+                        <a class="social-button" href="https://wa.me/79991234567" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3C9.4 3 4 8.29 4 14.82c0 2.48.79 4.79 2.14 6.69L4 29l7.74-2.06c1.83 1 3.94 1.57 6.3 1.57 6.63 0 12.04-5.29 12.04-11.82C30.09 8.29 22.67 3 16.04 3zm0 20.97c-2.03 0-3.92-.56-5.52-1.53l-.39-.24-4.59 1.22 1.23-4.35-.26-.45a9.43 9.43 0 01-1.45-4.99c0-5.3 4.42-9.62 9.98-9.62s9.98 4.32 9.98 9.62-4.42 9.62-9.98 9.62zm5.76-7.18c-.31-.15-1.84-.9-2.12-1-.28-.1-.49-.15-.7.15-.21.31-.81 1-.99 1.2-.18.21-.37.23-.68.08-.31-.16-1.29-.47-2.46-1.5-.91-.81-1.53-1.81-1.71-2.12-.18-.31-.02-.48.13-.63.14-.14.31-.37.47-.55.15-.18.21-.31.31-.52.1-.21.05-.39-.02-.55-.08-.15-.7-1.68-.96-2.3-.25-.6-.51-.52-.7-.53l-.6-.01c-.21 0-.55.08-.84.39-.28.31-1.1 1.08-1.1 2.63s1.13 3.06 1.29 3.27c.16.21 2.23 3.38 5.41 4.73.76.33 1.35.53 1.81.68.76.24 1.45.21 2 .13.61-.09 1.84-.75 2.1-1.48.26-.73.26-1.36.18-1.48-.08-.13-.28-.21-.6-.37z"></path></svg>
+                            WhatsApp
+                        </a>
+                        <a class="social-button" href="https://t.me/amma_production" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M28.44 5.23L3.46 14.97c-1.69.66-1.68 1.58-.31 2.02l6.21 1.94 2.39 7.64c.29.81.15 1.14.99 1.14.65 0 .94-.3 1.31-.65l3.15-3.06 6.56 4.83c1.2.66 2.07.32 2.37-1.11l4.29-20.13c.44-1.76-.67-2.55-1.98-2.03zM25.4 9.3l-11.2 10.4c-.49.44-.18.69.29 1.11l3.36 2.86c.56.52 1.14.16 1.31-.29l2.53-7.56 4.59-4.35c.23-.21-.05-.5-.88-.17z"></path></svg>
+                            Telegram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © 2024 AmmA Production. Все права защищены.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slider = document.querySelector('.hero-slider');
+            if (slider) {
+                const slides = Array.from(slider.querySelectorAll('.banner-item'));
+                if (slides.length > 0) {
+                    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    slides.forEach((slide, index) => {
+                        if (index === 0) {
+                            slide.classList.add('is-active');
+                        } else {
+                            slide.classList.remove('is-active');
+                        }
+                    });
+
+                    if (!reduceMotion && slides.length > 1) {
+                        let current = 0;
+                        const cycleDuration = 5000;
+                        setInterval(() => {
+                            slides[current].classList.remove('is-active');
+                            current = (current + 1) % slides.length;
+                            slides[current].classList.add('is-active');
+                        }, cycleDuration);
+                    }
+                }
+            }
+
+            const allowedTitles = new Set([
+                'Мой бедный Марат',
+                'Окна. Город. Любовь...',
+                'Остров'
+            ]);
+
+            const allowedTitleKeys = new Set(
+                Array.from(allowedTitles).map((title) =>
+                    title
+                        .toLowerCase()
+                        .replace(/[\s\u2026\.]+/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                )
+            );
+
+            const fallbackShows = [
+                {
+                    id: 'my-poor-marat',
+                    title: 'Мой бедный Марат',
+                    date: '12 апреля 2024',
+                    time: '19:00',
+                    venue: 'Московский театр «Школа современной пьесы»',
+                    age: '16+',
+                    duration: '2 часа 30 минут',
+                    price: 'от 1 500 ₽',
+                    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80',
+                    ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe',
+                    description: 'Лирическая драма о молодых людях, переживающих блокаду Ленинграда и пытающихся сохранить любовь и достоинство.',
+                    creators: [
+                        { role: 'Автор', value: 'Алексей Арбузов' },
+                        { role: 'Режиссёр', value: 'Вера Анненкова' },
+                        { role: 'В ролях', value: 'Михаил Маликов, Аксинья Олейник, Максим Дементьев' }
+                    ],
+                    gallery: [
+                        { src: 'https://images.unsplash.com/photo-1515165562835-c4c24b67ef28?auto=format&fit=crop&w=800&q=80', alt: 'Сцена спектакля «Мой бедный Марат»' },
+                        { src: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80', alt: 'Актёры в драматической сцене спектакля' },
+                        { src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80', alt: 'Эмоциональный эпизод спектакля «Мой бедный Марат»' }
+                    ]
+                },
+                {
+                    id: 'okna-gorod-lyubov',
+                    title: 'Окна. Город. Любовь...',
+                    date: '26 апреля 2024',
+                    time: '20:00',
+                    venue: 'Дом культуры «ГЭС-2»',
+                    age: '16+',
+                    duration: '2 часа',
+                    price: 'от 1 400 ₽',
+                    image: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
+                    ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe',
+                    description: 'Современная постановка о больших городах, где судьбы людей пересекаются в окнах соседних домов и переплетаются в музыке мегаполиса.',
+                    creators: [
+                        { role: 'Пьеса', value: 'Коллектив AmmA Production' },
+                        { role: 'Режиссёр', value: 'Вера Анненкова' },
+                        { role: 'Композитор', value: 'Алина Мазненкова' }
+                    ],
+                    gallery: [
+                        { src: 'https://images.unsplash.com/photo-1520256862855-398228c41684?auto=format&fit=crop&w=800&q=80', alt: 'Огни ночного города на сцене спектакля' },
+                        { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80', alt: 'Герои постановки «Окна. Город. Любовь...»' },
+                        { src: 'https://images.unsplash.com/photo-1497032205916-ac775f0649ae?auto=format&fit=crop&w=800&q=80', alt: 'Пластическая композиция труппы AmmA Production' }
+                    ]
+                },
+                {
+                    id: 'ostrov',
+                    title: 'Остров',
+                    date: '14 мая 2024',
+                    time: '19:30',
+                    venue: 'Сцена на Неглинной',
+                    age: '12+',
+                    duration: '2 часа 10 минут',
+                    price: 'от 1 300 ₽',
+                    image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
+                    ticketUrl: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe',
+                    description: 'Философская история о поиске собственного острова в бурном мире, соединяющая живую музыку, поэзию и видеопроекции.',
+                    creators: [
+                        { role: 'Автор идеи', value: 'Максим Дементьев' },
+                        { role: 'Режиссёр', value: 'Вера Анненкова' },
+                        { role: 'Музыкальное оформление', value: 'Михаил Маликов' }
+                    ],
+                    gallery: [
+                        { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80', alt: 'Таинственный остров в сценографии спектакля' },
+                        { src: 'https://images.unsplash.com/photo-1462212210333-335063b676d4?auto=format&fit=crop&w=800&q=80', alt: 'Актёры на сцене спектакля «Остров»' },
+                        { src: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=800&q=80', alt: 'Световое оформление постановки «Остров»' }
+                    ]
+                }
+            ];
+
+            const playbillGrid = document.querySelector('[data-playbill-grid]');
+            const modalBackdrop = document.querySelector('[data-playbill-modal]');
+
+            if (playbillGrid && modalBackdrop) {
+                const modalTitle = modalBackdrop.querySelector('[data-modal-title]');
+                const modalMeta = modalBackdrop.querySelector('[data-modal-meta]');
+                const modalDescription = modalBackdrop.querySelector('[data-modal-description]');
+                const modalCreators = modalBackdrop.querySelector('[data-modal-creators]');
+                const modalGallery = modalBackdrop.querySelector('[data-modal-gallery]');
+                const modalTicket = modalBackdrop.querySelector('[data-modal-ticket]');
+                const modalMedia = modalBackdrop.querySelector('[data-modal-media]');
+                const closeButtons = modalBackdrop.querySelectorAll('[data-modal-close], [data-modal-close-secondary]');
+                let lastFocusedElement = null;
+                let originalBodyOverflow = '';
+
+                function handleKeydown(event) {
+                    if (event.key === 'Escape') {
+                        event.preventDefault();
+                        closeModal();
+                    }
+                }
+
+                function handleBackdropClick(event) {
+                    if (event.target === modalBackdrop) {
+                        closeModal();
+                    }
+                }
+
+                function closeModal() {
+                    if (!modalBackdrop.classList.contains('is-open')) {
+                        return;
+                    }
+                    modalBackdrop.classList.remove('is-open');
+                    modalBackdrop.setAttribute('aria-hidden', 'true');
+                    document.removeEventListener('keydown', handleKeydown);
+                    document.body.style.overflow = originalBodyOverflow;
+                    originalBodyOverflow = '';
+                    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                        lastFocusedElement.focus();
+                    }
+                }
+
+                function openModal(show) {
+                    lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+                    originalBodyOverflow = document.body.style.overflow;
+
+                    if (modalTitle) {
+                        modalTitle.textContent = show.title;
+                    }
+
+                    if (modalMedia) {
+                        if (show.image) {
+                            modalMedia.style.setProperty('--image', `url('${show.image}')`);
+                        } else {
+                            modalMedia.style.removeProperty('--image');
+                        }
+                    }
+
+                    if (modalMeta) {
+                        modalMeta.innerHTML = '';
+                        const metaItems = [
+                            { icon: '📅', text: show.date },
+                            { icon: '🕒', text: show.time },
+                            { icon: '📍', text: show.venue },
+                            { icon: '⌛', text: show.duration },
+                            { icon: '🔞', text: show.age },
+                            { icon: '💳', text: show.price }
+                        ];
+
+                        metaItems.forEach((item) => {
+                            if (!item.text) return;
+                            const span = document.createElement('span');
+                            span.textContent = `${item.icon} ${item.text}`;
+                            modalMeta.appendChild(span);
+                        });
+                    }
+
+                    if (modalDescription) {
+                        modalDescription.textContent = show.description || '';
+                    }
+
+                    if (modalCreators) {
+                        modalCreators.innerHTML = '';
+                        if (Array.isArray(show.creators)) {
+                            show.creators.forEach((creator) => {
+                                if (!creator || !creator.role || !creator.value) {
+                                    return;
+                                }
+                                const dt = document.createElement('dt');
+                                dt.textContent = creator.role;
+                                const dd = document.createElement('dd');
+                                dd.textContent = creator.value;
+                                modalCreators.appendChild(dt);
+                                modalCreators.appendChild(dd);
+                            });
+                        }
+                    }
+
+                    if (modalGallery) {
+                        modalGallery.innerHTML = '';
+                        if (Array.isArray(show.gallery) && show.gallery.length > 0) {
+                            modalGallery.removeAttribute('hidden');
+                            show.gallery.forEach((image) => {
+                                if (!image || !image.src) {
+                                    return;
+                                }
+                                const thumb = document.createElement('div');
+                                thumb.className = 'playbill-gallery-thumb';
+                                thumb.style.setProperty('--thumb-image', `url('${image.src}')`);
+                                thumb.setAttribute('role', 'img');
+                                if (image.alt) {
+                                    thumb.setAttribute('aria-label', image.alt);
+                                }
+                                modalGallery.appendChild(thumb);
+                            });
+                        } else {
+                            modalGallery.setAttribute('hidden', '');
+                        }
+                    }
+
+                    if (modalTicket) {
+                        modalTicket.href = show.ticketUrl || 'https://iframeab-pre2514.intickets.ru/events/#abiframe';
+                        modalTicket.textContent = show.price ? `Купить билет — ${show.price}` : 'Купить билет';
+                    }
+
+                    modalBackdrop.classList.add('is-open');
+                    modalBackdrop.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    document.addEventListener('keydown', handleKeydown);
+                    requestAnimationFrame(() => {
+                        const closeButton = modalBackdrop.querySelector('[data-modal-close]');
+                        if (closeButton) {
+                            closeButton.focus();
+                        }
+                    });
+                }
+
+                closeButtons.forEach((button) => {
+                    button.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        closeModal();
+                    });
+                });
+
+                modalBackdrop.addEventListener('click', handleBackdropClick);
+
+                function createMetaSpan(icon, text) {
+                    if (!text) return null;
+                    const span = document.createElement('span');
+                    span.textContent = `${icon} ${text}`;
+                    return span;
+                }
+
+                const textContainer = document.createElement('div');
+
+                function sanitizeText(value) {
+                    if (!value) {
+                        return '';
+                    }
+                    textContainer.innerHTML = String(value);
+                    return textContainer.textContent.trim();
+                }
+
+                function ensureUrl(value) {
+                    if (!value) {
+                        return '';
+                    }
+                    try {
+                        return new URL(value, 'https://iframeab-pre2514.intickets.ru').toString();
+                    } catch (error) {
+                        return '';
+                    }
+                }
+
+                function normalizeShow(raw) {
+                    if (!raw || typeof raw !== 'object') {
+                        return null;
+                    }
+
+                    const primarySeance = Array.isArray(raw.seances) && raw.seances.length > 0
+                        ? raw.seances[0]
+                        : Array.isArray(raw.sessions) && raw.sessions.length > 0
+                            ? raw.sessions[0]
+                            : null;
+
+                    const title = sanitizeText(raw.title || raw.name || raw.caption || (primarySeance && primarySeance.title));
+                    const titleKey = title
+                        .toLowerCase()
+                        .replace(/[\s\u2026\.]+/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                    if (!title || !allowedTitleKeys.has(titleKey)) {
+                        return null;
+                    }
+
+                    const rawDate = raw.date || raw.start_date || raw.starts_at || raw.event_date || (primarySeance && (primarySeance.date || primarySeance.starts_at));
+                    const rawTime = raw.time || raw.start_time || raw.starts_at || (primarySeance && (primarySeance.time || primarySeance.start_time || primarySeance.starts_at));
+
+                    const venue = sanitizeText(
+                        (raw.venue && (raw.venue.name || raw.venue.title)) ||
+                        raw.venue_name ||
+                        raw.place ||
+                        (primarySeance && (primarySeance.venue_name || primarySeance.place))
+                    );
+
+                    const age = sanitizeText(raw.age || raw.age_limit || raw.age_category || (raw.labels && raw.labels.age));
+                    const duration = sanitizeText(raw.duration || raw.duration_text || (primarySeance && primarySeance.duration));
+
+                    const priceFrom = raw.min_price || raw.price_from || raw.price || (raw.prices && (raw.prices.min || raw.prices.from));
+                    const priceTo = raw.max_price || (raw.prices && raw.prices.max);
+                    let price = '';
+                    if (priceFrom && priceTo && priceFrom !== priceTo) {
+                        price = `от ${priceFrom} ₽`;
+                    } else if (priceFrom) {
+                        price = `от ${priceFrom} ₽`;
+                    } else if (priceTo) {
+                        price = `${priceTo} ₽`;
+                    }
+
+                    const possibleImages = [];
+                    if (raw.images) {
+                        if (Array.isArray(raw.images)) {
+                            raw.images.forEach((img) => {
+                                if (!img) return;
+                                if (typeof img === 'string') {
+                                    possibleImages.push(img);
+                                } else if (img.url) {
+                                    possibleImages.push(img.url);
+                                } else if (img.src) {
+                                    possibleImages.push(img.src);
+                                }
+                            });
+                        } else if (typeof raw.images === 'object') {
+                            Object.values(raw.images).forEach((img) => {
+                                if (!img) return;
+                                if (typeof img === 'string') {
+                                    possibleImages.push(img);
+                                } else if (img.url) {
+                                    possibleImages.push(img.url);
+                                }
+                            });
+                        }
+                    }
+                    if (raw.poster) {
+                        if (typeof raw.poster === 'string') {
+                            possibleImages.unshift(raw.poster);
+                        } else if (raw.poster.url) {
+                            possibleImages.unshift(raw.poster.url);
+                        }
+                    }
+                    if (primarySeance && primarySeance.poster) {
+                        possibleImages.push(primarySeance.poster);
+                    }
+
+                    const image = ensureUrl(possibleImages.find(Boolean));
+
+                    const linkCandidates = [
+                        raw.url,
+                        raw.link,
+                        raw.booking_url,
+                        raw.purchase_url,
+                        raw.buy_url,
+                        raw.widget_url,
+                        primarySeance && (primarySeance.url || primarySeance.booking_url || primarySeance.purchase_url)
+                    ];
+                    const ticketUrl = ensureUrl(linkCandidates.find(Boolean));
+
+                    const description = sanitizeText(raw.description || raw.short_description || raw.annotation || raw.note);
+
+                    const gallery = [];
+                    if (Array.isArray(raw.gallery)) {
+                        raw.gallery.forEach((item) => {
+                            if (typeof item === 'string') {
+                                gallery.push({ src: ensureUrl(item) });
+                            } else if (item && (item.src || item.url)) {
+                                gallery.push({ src: ensureUrl(item.src || item.url), alt: sanitizeText(item.alt || item.title) });
+                            }
+                        });
+                    }
+
+                    const creators = [];
+                    if (Array.isArray(raw.creators)) {
+                        raw.creators.forEach((creator) => {
+                            if (!creator) return;
+                            const role = sanitizeText(creator.role || creator.title || creator.name);
+                            const value = sanitizeText(creator.value || creator.person || creator.description);
+                            if (role && value) {
+                                creators.push({ role, value });
+                            }
+                        });
+                    }
+
+                    const id = raw.id || raw.alias || raw.slug || (ticketUrl ? ticketUrl.split('/').pop() : title.toLowerCase().replace(/[^a-zа-я0-9]+/gi, '-'));
+
+                    return {
+                        id,
+                        title,
+                        date: sanitizeText(rawDate),
+                        time: sanitizeText(rawTime),
+                        venue,
+                        age,
+                        duration,
+                        price,
+                        image,
+                        ticketUrl: ticketUrl || 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
+                        description,
+                        creators,
+                        gallery
+                    };
+                }
+
+                function createEmptyState(message) {
+                    const empty = document.createElement('div');
+                    empty.className = 'playbill-empty';
+                    empty.textContent = message;
+                    return empty;
+                }
+
+                function renderCard(show) {
+                    const card = document.createElement('article');
+                    card.className = 'playbill-card';
+
+                    const imageButton = document.createElement('button');
+                    imageButton.type = 'button';
+                    imageButton.className = 'playbill-card-image';
+                    if (show.image) {
+                        imageButton.style.setProperty('--image', `url('${show.image}')`);
+                    }
+                    imageButton.setAttribute('aria-label', `Подробнее о спектакле «${show.title}»`);
+
+                    const tagWrap = document.createElement('div');
+                    tagWrap.className = 'playbill-card-tags';
+
+                    if (show.date) {
+                        const dateTag = document.createElement('span');
+                        dateTag.className = 'playbill-tag';
+                        dateTag.textContent = show.date;
+                        tagWrap.appendChild(dateTag);
+                    }
+
+                    if (show.age) {
+                        const ageTag = document.createElement('span');
+                        ageTag.className = 'playbill-tag';
+                        ageTag.textContent = show.age;
+                        tagWrap.appendChild(ageTag);
+                    }
+
+                    if (tagWrap.children.length > 0) {
+                        imageButton.appendChild(tagWrap);
+                    }
+
+                    const body = document.createElement('div');
+                    body.className = 'playbill-card-body';
+
+                    const title = document.createElement('h3');
+                    title.textContent = show.title;
+                    body.appendChild(title);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'playbill-meta';
+
+                    [
+                        createMetaSpan('📅', show.date),
+                        createMetaSpan('🕒', show.time),
+                        createMetaSpan('📍', show.venue),
+                        createMetaSpan('💳', show.price)
+                    ].forEach((item) => {
+                        if (item) {
+                            meta.appendChild(item);
+                        }
+                    });
+
+                    body.appendChild(meta);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'playbill-actions';
+
+                    const buyLink = document.createElement('a');
+                    buyLink.className = 'playbill-button primary';
+                    buyLink.href = show.ticketUrl || 'https://iframeab-pre2514.intickets.ru/events/#abiframe';
+                    buyLink.target = '_blank';
+                    buyLink.rel = 'noopener';
+                    buyLink.textContent = 'Купить билет';
+
+                    const detailsButton = document.createElement('button');
+                    detailsButton.type = 'button';
+                    detailsButton.className = 'playbill-button secondary';
+                    detailsButton.textContent = 'Подробнее';
+
+                    actions.appendChild(buyLink);
+                    actions.appendChild(detailsButton);
+                    body.appendChild(actions);
+
+                    card.appendChild(imageButton);
+                    card.appendChild(body);
+
+                    const openDetails = () => openModal(show);
+                    imageButton.addEventListener('click', openDetails);
+                    detailsButton.addEventListener('click', openDetails);
+
+                    playbillGrid.appendChild(card);
+                }
+
+                function extractEventArray(payload, depth = 0) {
+                    if (!payload || depth > 4) {
+                        return [];
+                    }
+                    if (Array.isArray(payload)) {
+                        return payload;
+                    }
+                    if (typeof payload === 'object') {
+                        for (const key of ['events', 'items', 'data', 'result', 'list']) {
+                            if (payload[key]) {
+                                const nested = extractEventArray(payload[key], depth + 1);
+                                if (nested.length) {
+                                    return nested;
+                                }
+                            }
+                        }
+                        for (const value of Object.values(payload)) {
+                            const nested = extractEventArray(value, depth + 1);
+                            if (nested.length) {
+                                return nested;
+                            }
+                        }
+                    }
+                    return [];
+                }
+
+                function parseJsonWithFallback(rawText) {
+                    if (!rawText) {
+                        return null;
+                    }
+                    const trimmed = rawText.trim();
+                    if (!trimmed) {
+                        return null;
+                    }
+                    try {
+                        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                            return JSON.parse(trimmed);
+                        }
+                        const jsonpMatch = trimmed.match(/^[^(]+\((.*)\)\s*;?$/s);
+                        if (jsonpMatch) {
+                            return JSON.parse(jsonpMatch[1]);
+                        }
+                    } catch (error) {
+                        console.warn('Не удалось разобрать ответ Intickets', error);
+                    }
+                    return null;
+                }
+
+                async function fetchInticketsShows() {
+                    const endpoints = [
+                        'https://iframeab-pre2514.intickets.ru/api/public/events?format=json',
+                        'https://iframeab-pre2514.intickets.ru/api/events?format=json',
+                        'https://iframeab-pre2514.intickets.ru/events/?format=json',
+                        'https://iframeab-pre2514.intickets.ru/widget/events?format=json'
+                    ];
+
+                    for (const endpoint of endpoints) {
+                        try {
+                            const response = await fetch(endpoint, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json, text/javascript, */*;q=0.1'
+                                },
+                                mode: 'cors',
+                                credentials: 'omit'
+                            });
+
+                            if (!response.ok) {
+                                continue;
+                            }
+
+                            const text = await response.text();
+                            const payload = parseJsonWithFallback(text);
+                            if (!payload) {
+                                continue;
+                            }
+
+                            const rawEvents = extractEventArray(payload);
+                            if (!rawEvents || rawEvents.length === 0) {
+                                continue;
+                            }
+
+                            const normalized = rawEvents
+                                .map(normalizeShow)
+                                .filter(Boolean);
+
+                            if (normalized.length > 0) {
+                                return normalized;
+                            }
+                        } catch (error) {
+                            console.warn('Ошибка загрузки Intickets', endpoint, error);
+                        }
+                    }
+
+                    return [];
+                }
+
+                function renderShows(shows) {
+                    playbillGrid.innerHTML = '';
+                    if (!shows || shows.length === 0) {
+                        playbillGrid.appendChild(createEmptyState('Актуальные события появятся здесь после обновления афиши.'));
+                        return;
+                    }
+                    shows.forEach(renderCard);
+                }
+
+                async function loadShows() {
+                    const remoteShows = await fetchInticketsShows();
+                    if (remoteShows.length > 0) {
+                        renderShows(remoteShows);
+                    } else {
+                        renderShows(fallbackShows);
+                        playbillGrid.appendChild(createEmptyState('Автоматическая загрузка афиши временно недоступна — отображаются сохранённые мероприятия.'));
+                    }
+                }
+
+                playbillGrid.innerHTML = '';
+                playbillGrid.appendChild(createEmptyState('Загружаем афишу Intickets…'));
+                loadShows().catch(() => {
+                    renderShows(fallbackShows);
+                    playbillGrid.appendChild(createEmptyState('Автоматическая загрузка афиши временно недоступна — отображаются сохранённые мероприятия.'));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
