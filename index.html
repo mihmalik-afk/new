@@ -729,7 +729,6 @@
                 align-items: flex-start;
                 gap: 0.75rem;
             }
-
             .afisha-grid {
                 grid-template-columns: 1fr;
             }
@@ -1558,6 +1557,7 @@
 
             grid.innerHTML = Array.from({ length: count }, () => skeleton).join('');
         }
+
 
         function formatInticketsScheduleSuffix(date) {
             if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
