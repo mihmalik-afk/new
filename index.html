@@ -372,6 +372,7 @@
             color: var(--muted);
             margin: 0;
         }
+
         .playbill-widgets {
             display: grid;
             gap: 1.5rem;
@@ -401,6 +402,7 @@
             color: var(--muted);
             font-size: 0.92rem;
         }
+
         .playbill-widget-frame {
             position: relative;
             border-radius: 16px;
@@ -761,7 +763,8 @@
         <section class="playbill" id="playbill">
             <div class="playbill-header">
                 <h2 class="section-title">Афиша</h2>
-                <p class="playbill-description">Актуальные показы AmmA Production автоматически подгружаются из сервиса Intickets. Выберите нужный формат, чтобы сразу перейти к покупке билетов.</p>
+
+                <p class="playbill-description">Актуальные показы AmmA Production автоматически подгружаются из сервиса Intickets. Ниже представлена единая афиша со всеми событиями центра.</p>
             </div>
             <div class="playbill-widgets" data-intickets-widgets>
                 <div class="playbill-widget">
@@ -771,20 +774,7 @@
                         <div class="playbill-widget-placeholder">Загружаем события…</div>
                     </div>
                 </div>
-                <div class="playbill-widget">
-                    <h3 class="playbill-widget-title">Спектакль «Мой бедный Марат»</h3>
-                    <p class="playbill-widget-description">Карточка спектакля подтягивает описание, даты и состав напрямую из Intickets.</p>
-                    <div class="playbill-widget-frame" data-intickets-frame data-intickets-src="https://iframeab-pre2514.intickets.ru/event/11756122/#abiframe" data-frame-title="Спектакль «Мой бедный Марат»" style="--widget-frame-height: 560px;">
-                        <div class="playbill-widget-placeholder">Загружаем карточку спектакля…</div>
-                    </div>
-                </div>
-                <div class="playbill-widget">
-                    <h3 class="playbill-widget-title">Ближайший показ</h3>
-                    <p class="playbill-widget-description">Сеанс синхронизирован с Intickets: расписание и доступность билетов обновляются автоматически.</p>
-                    <div class="playbill-widget-frame" data-intickets-frame data-intickets-src="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" data-frame-title="Сеанс AmmA Production" style="--widget-frame-height: 420px;">
-                        <div class="playbill-widget-placeholder">Загружаем информацию о сеансе…</div>
-                    </div>
-                </div>
+
             </div>
         </section>
         <section>
