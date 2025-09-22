@@ -18,6 +18,7 @@ if (!ADMIN_TOKEN) {
     console.warn('Административные API защищены и выключены: задайте переменную окружения ADMIN_TOKEN, чтобы включить сохранение.');
 }
 
+
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 app.use(express.json({ limit: '2mb' }));
@@ -91,6 +92,7 @@ app.post('/api/admin/events', requireAdminToken, async (req, res) => {
 });
 
 app.post('/api/admin/upload', requireAdminToken, upload.single('image'), (req, res) => {
+=======
     if (!req.file) {
         res.status(400).json({ error: 'Файл не получен.' });
         return;
