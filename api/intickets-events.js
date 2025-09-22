@@ -1,3 +1,4 @@
+
 const DEFAULT_CACHE_SECONDS = 60;
 
 function buildResponse(res, statusCode, payload) {
@@ -75,3 +76,4 @@ function normaliseEvents(payload) {
         url: event?.url ?? event?.seance_url ?? event?.link ?? null
     }));
 }
+
