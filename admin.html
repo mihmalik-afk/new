@@ -128,6 +128,13 @@
             box-shadow: 0 8px 20px rgba(216, 178, 93, 0.15);
         }
 
+        .admin-btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
         .admin-btn:focus-visible {
             outline: 2px solid rgba(216, 178, 93, 0.65);
             outline-offset: 2px;
@@ -236,6 +243,15 @@
         }
 
         .admin-field__help {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .admin-field__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
             font-size: 0.75rem;
             color: var(--muted);
         }
@@ -368,18 +384,19 @@
             <p>Страница загружает <code>baza_afisha.json</code> и помогает подготовить новый файл. После правок скачайте экспорт и замените исходный файл в проекте.</p>
             <div class="controls">
                 <button type="button" class="admin-btn" data-admin-add-event>Добавить событие</button>
+                <button type="button" class="admin-btn" data-admin-save>Сохранить изменения</button>
                 <button type="button" class="admin-btn" data-admin-download>Скачать JSON</button>
                 <button type="button" class="admin-btn admin-btn--ghost" data-admin-copy>Скопировать JSON</button>
                 <button type="button" class="admin-btn admin-btn--ghost" data-admin-import>Импортировать файл…</button>
                 <button type="button" class="admin-btn admin-btn--ghost" data-admin-reload>Сбросить изменения</button>
             </div>
             <div class="admin-status" data-admin-status>Ожидание загрузки данных…</div>
-            <p class="note">Сохранение происходит вручную: скачайте файл или скопируйте JSON и замените им содержимое <code>baza_afisha.json</code>.</p>
+            <p class="note">Нажмите «Сохранить изменения», чтобы записать события напрямую в <code>baza_afisha.json</code> и обновить сайт. Для резервного копирования по-прежнему доступны выгрузка файла и копирование JSON.</p>
         </section>
 
         <section class="panel">
             <h2>События афиши</h2>
-            <p>Укажите название, дату, площадку, ссылку на покупку и изображение. Если ссылка пустая, на сайте появится плашка «Скоро в продаже». Чтобы убрать событие из слайдера на главной, снимите флажок «Показывать в слайдере».</p>
+            <p>Укажите название, дату, площадку, ссылку на покупку и изображение. Изображения можно загрузить со своего устройства — адрес подставится автоматически. Если ссылка пустая, на сайте появится плашка «Скоро в продаже». Чтобы убрать событие из слайдера на главной, снимите флажок «Показывать в слайдере».</p>
             <div class="admin-events" data-admin-events></div>
         </section>
 
