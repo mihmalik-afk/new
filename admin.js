@@ -4,6 +4,9 @@
     const BAZA_URL = 'baza_afisha.json';
     const API_SAVE_URL = '/api/admin/events';
     const API_UPLOAD_URL = '/api/admin/upload';
+
+    const ADMIN_AUTH_STORAGE_KEY = 'amma-admin-token';
+
     const UNSAVED_MESSAGE = 'Есть несохранённые изменения';
     const UPLOAD_MESSAGE = 'Идёт загрузка файлов…';
     const DEFAULT_IMAGE =
@@ -15,6 +18,8 @@
         loading: false,
         saving: false,
         pendingUploads: 0,
+        authToken: '',
+
     };
 
     const elements = {};
@@ -22,6 +27,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         cacheElements();
         bindGlobalActions();
+        hydrateAuthToken();
         loadInitialData();
     });
 
@@ -38,6 +44,7 @@
         elements.importButton = document.querySelector('[data-admin-import]');
         elements.importInput = document.querySelector('[data-admin-import-input]');
         elements.unsavedBadge = document.querySelector('[data-admin-unsaved]');
+        elements.authButton = document.querySelector('[data-admin-auth]');
     }
 
     function bindGlobalActions() {
@@ -78,12 +85,23 @@
             elements.importInput.addEventListener('change', handleImportFile);
         }
 
+        if (elements.authButton) {
+            elements.authButton.addEventListener('click', () => {
+                promptForAuthToken();
+            });
+        }
+
         window.addEventListener('beforeunload', (event) => {
             if (state.dirty) {
                 event.preventDefault();
                 event.returnValue = '';
             }
         });
+    }
+
+    function hydrateAuthToken() {
+        state.authToken = getStoredAuthToken();
+        updateAuthButton();
     }
 
     async function loadInitialData() {
@@ -308,27 +326,10 @@
                     { fieldName: 'venue' },
                 ),
             );
-            form.appendChild(
-                createTextField(
-                    'Ссылка на билеты',
-                    event.link,
-                    (value, input) => updateEvent(index, 'link', value, { input }),
-                    {
-                        type: 'url',
-                        placeholder: 'https://example.com/tickets',
-                        fieldName: 'link',
-                    },
-                ),
-            );
-            const imageField = createTextField(
-                'Изображение (URL)',
-                event.image,
-                (value, input) => updateEvent(index, 'image', value, { input }),
-                {
-                    type: 'url',
-                    fieldName: 'image',
-                },
-            );
+
+            const imageField = createTextField('Изображение (URL)', event.image, (value) => updateEvent(index, 'image', value), {
+                type: 'url',
+            });
             const imageInput = imageField.querySelector('input');
             const imageActions = document.createElement('div');
             imageActions.className = 'admin-field__actions';
@@ -360,6 +361,11 @@
                     return;
                 }
 
+                if (!ensureAuthToken()) {
+                    setStatus('Чтобы загрузить изображение, укажите ключ доступа администратора.', 'error');
+                    uploadInput.value = '';
+                    return;
+                }
                 beginUpload();
                 uploadButton.disabled = true;
                 setStatus('Загружаем изображение…');
@@ -828,6 +834,12 @@
             return;
         }
 
+        const token = ensureAuthToken();
+        if (!token) {
+            setStatus('Чтобы сохранить изменения, укажите ключ доступа администратора.', 'error');
+            return;
+        }
+
         setSaving(true);
         setStatus('Сохраняем изменения…');
 
@@ -836,6 +848,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...buildAuthHeaders(),
                 },
                 body: JSON.stringify(buildPayload()),
             });
@@ -949,11 +962,16 @@
     }
 
     async function uploadImageFile(file) {
+        const headers = buildAuthHeaders();
+        if (!headers.Authorization) {
+            throw new Error('Не указан ключ доступа администратора.');
+        }
         const formData = new FormData();
         formData.append('image', file);
 
         const response = await fetch(API_UPLOAD_URL, {
-            method: 'POST',
+            method: 'POST',e
+            headers,
             body: formData,
         });
 
@@ -978,6 +996,99 @@
         }
 
         return payload.url;
+    }
+
+    function ensureAuthToken() {
+        if (state.authToken) {
+            return state.authToken;
+        }
+
+        const input = window.prompt('Введите ключ доступа администратора. Его можно получить у разработчика сайта.', '');
+        if (input === null) {
+            return '';
+        }
+
+        const normalized = input.trim();
+        if (!normalized) {
+            clearAuthToken();
+            return '';
+        }
+
+        setAuthToken(normalized);
+        setStatus('Ключ доступа сохранён в этом браузере.', 'success');
+        return state.authToken;
+    }
+
+    function promptForAuthToken() {
+        const current = state.authToken;
+        const message = current
+            ? 'Введите новый ключ доступа администратора. Чтобы удалить сохранённый ключ, оставьте поле пустым.'
+            : 'Введите ключ доступа администратора. Его можно получить у разработчика сайта.';
+        const input = window.prompt(message, current || '');
+        if (input === null) {
+            return;
+        }
+
+        const normalized = input.trim();
+        if (!normalized) {
+            clearAuthToken();
+            setStatus('Сохранённый ключ доступа удалён. Укажите новый, чтобы продолжить сохранение.', 'info');
+            return;
+        }
+
+        setAuthToken(normalized);
+        setStatus('Ключ доступа обновлён.', 'success');
+    }
+
+    function clearAuthToken() {
+        setAuthToken('');
+    }
+
+    function setAuthToken(token) {
+        state.authToken = token;
+
+        try {
+            if (token) {
+                window.localStorage.setItem(ADMIN_AUTH_STORAGE_KEY, token);
+            } else {
+                window.localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
+            }
+        } catch (error) {
+            console.warn('Не удалось сохранить ключ администратора в localStorage', error);
+        }
+
+        updateAuthButton();
+    }
+
+    function getStoredAuthToken() {
+        try {
+            return window.localStorage.getItem(ADMIN_AUTH_STORAGE_KEY) || '';
+        } catch (error) {
+            console.warn('Не удалось получить ключ администратора из localStorage', error);
+            return '';
+        }
+    }
+
+    function updateAuthButton() {
+        if (!elements.authButton) {
+            return;
+        }
+
+        if (state.authToken) {
+            elements.authButton.textContent = 'Сменить ключ доступа';
+            elements.authButton.classList.remove('admin-btn--danger');
+        } else {
+            elements.authButton.textContent = 'Указать ключ доступа';
+            elements.authButton.classList.add('admin-btn--danger');
+        }
+    }
+
+    function buildAuthHeaders() {
+        if (!state.authToken) {
+            return {};
+        }
+
+        return { Authorization: `Bearer ${state.authToken}` };
     }
 
     function slugify(value) {

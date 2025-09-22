@@ -12,10 +12,37 @@ const ROOT_DIR = __dirname;
 const DATA_FILE = path.join(ROOT_DIR, 'baza_afisha.json');
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads');
 const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5 MB
+const ADMIN_TOKEN = typeof process.env.ADMIN_TOKEN === 'string' ? process.env.ADMIN_TOKEN.trim() : '';
+
+if (!ADMIN_TOKEN) {
+    console.warn('Административные API защищены и выключены: задайте переменную окружения ADMIN_TOKEN, чтобы включить сохранение.');
+}
+
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 app.use(express.json({ limit: '2mb' }));
+
+app.use((req, res, next) => {
+    if (!ADMIN_TOKEN && req.path.startsWith('/api/admin/')) {
+        res.status(503).json({ error: 'Административные API выключены: не настроен ключ доступа.' });
+        return;
+    }
+
+    next();
+});
+
+function requireAdminToken(req, res, next) {
+    const authHeader = req.get('authorization') || '';
+    const match = authHeader.match(/^Bearer\s+(.+)$/i);
+    if (match && match[1] === ADMIN_TOKEN) {
+        next();
+        return;
+    }
+
+    res.set('WWW-Authenticate', 'Bearer');
+    res.status(401).json({ error: 'Неавторизованный доступ. Укажите действительный ключ администратора.' });
+}
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
@@ -47,7 +74,7 @@ const upload = multer({
 app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '30d', index: false }));
 app.use(express.static(ROOT_DIR));
 
-app.post('/api/admin/events', async (req, res) => {
+app.post('/api/admin/events', requireAdminToken, async (req, res) => {
     if (!req.body || !Array.isArray(req.body.events)) {
         res.status(400).json({ error: 'Поле events обязательно и должно быть массивом.' });
         return;
@@ -64,7 +91,8 @@ app.post('/api/admin/events', async (req, res) => {
     }
 });
 
-app.post('/api/admin/upload', upload.single('image'), (req, res) => {
+app.post('/api/admin/upload', requireAdminToken, upload.single('image'), (req, res) => {
+=======
     if (!req.file) {
         res.status(400).json({ error: 'Файл не получен.' });
         return;
