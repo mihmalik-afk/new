@@ -256,6 +256,15 @@ body {
     color: rgba(247, 247, 247, 0.55);
 }
 
+.afisha-card__meta-value {
+    color: inherit;
+}
+
+.afisha-card__meta-value--date {
+    color: var(--afisha-accent);
+    font-weight: 600;
+}
+
 .afisha-card__description {
     margin: 0;
     color: rgba(247, 247, 247, 0.8);

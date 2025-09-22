@@ -31,6 +31,66 @@
             color: var(--text);
         }
 
+        body[data-admin-locked] {
+            overflow: hidden;
+        }
+
+        .admin-auth {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            background: rgba(8, 8, 8, 0.85);
+            backdrop-filter: blur(18px);
+            z-index: 999;
+        }
+
+        .admin-auth[hidden] {
+            display: none;
+        }
+
+        .admin-auth__card {
+            width: min(420px, 100%);
+            padding: clamp(1.75rem, 4vw, 2.75rem);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.65));
+            display: grid;
+            gap: 1.25rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .admin-auth__title {
+            margin: 0;
+            font-size: clamp(1.4rem, 4vw, 1.75rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .admin-auth__subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .admin-auth__fields {
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .admin-auth__error {
+            margin: 0;
+            color: var(--danger);
+            font-size: 0.9rem;
+        }
+
+        .admin-auth__actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
         header {
             padding: 1.75rem clamp(1rem, 3vw, 2.5rem);
             border-bottom: 1px solid var(--border);
@@ -370,7 +430,29 @@
         }
     </style>
 </head>
-<body>
+<body data-admin-locked>
+    <div class="admin-auth" data-admin-auth-overlay role="dialog" aria-modal="true" aria-labelledby="admin-auth-title">
+        <form class="admin-auth__card" data-admin-auth-form novalidate>
+            <div>
+                <h1 class="admin-auth__title" id="admin-auth-title">Вход в админ-панель</h1>
+                <p class="admin-auth__subtitle">Введите логин и пароль, чтобы управлять событиями и файлами афиши.</p>
+            </div>
+            <div class="admin-auth__fields">
+                <label class="admin-field">
+                    <span class="admin-field__label">Логин</span>
+                    <input class="admin-input" type="text" autocomplete="username" data-admin-auth-login required>
+                </label>
+                <label class="admin-field">
+                    <span class="admin-field__label">Пароль</span>
+                    <input class="admin-input" type="password" autocomplete="current-password" data-admin-auth-password required>
+                </label>
+            </div>
+            <p class="admin-auth__error" data-admin-auth-error hidden></p>
+            <div class="admin-auth__actions">
+                <button type="submit" class="admin-btn">Войти</button>
+            </div>
+        </form>
+    </div>
     <header>
         <div class="header-inner">
             <div class="title">AmmA Production · Админ-панель</div>

@@ -241,7 +241,12 @@
         labelEl.textContent = label;
 
         const valueEl = document.createElement('span');
+        valueEl.className = 'afisha-card__meta-value';
         valueEl.textContent = value;
+
+        if (typeof label === 'string' && label.trim().toLowerCase() === 'дата') {
+            valueEl.classList.add('afisha-card__meta-value--date');
+        }
 
         row.append(labelEl, valueEl);
         return row;
