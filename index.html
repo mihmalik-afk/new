@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmmA Production — продюсерский центр</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets-button-simple.min.css">
+    <script src="//s3.intickets.ru/intickets.js"></script>
+    <style>
+        :root {
+            --background: #0f0f0f;
+            --background-alt: #171717;
+            --text: #f7f7f7;
+            --muted: #cfcfcf;
+            --accent: #d8b25d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(12, 12, 12, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(216, 178, 93, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.25rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            font-size: 0.95rem;
+            color: var(--muted);
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -0.35rem;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--text);
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        .hero {
+            position: relative;
+            padding: 2.5rem 0 4.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2rem;
+        }
+
+        .hero-heading {
+            margin: 0;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35em;
+            font-size: clamp(3.4rem, 7vw, 5.4rem);
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        .hero-letter {
+            display: inline-block;
+        }
+
+        .hero-letter-large {
+            font-size: 1em;
+        }
+
+        .hero-letter-small {
+            font-size: 0.72em;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-production {
+            font-size: clamp(1.2rem, 3vw, 1.9rem);
+            letter-spacing: 0.75em;
+            text-transform: uppercase;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(247, 247, 247, 0.25);
+        }
+
+        .hero-director {
+            margin-top: 1.4rem;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 600;
+        }
+
+        .hero-director-label {
+            font-size: 0.7rem;
+            color: var(--accent);
+        }
+
+        .hero-director-name {
+            font-size: 0.95rem;
+            letter-spacing: 0.25em;
+            color: var(--accent);
+            margin-top: 0.4rem;
+        }
+
+        .hero p {
+            max-width: 640px;
+            color: var(--muted);
+            margin: 0 auto;
+        }
+
+        .banner {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            border: 1px solid rgba(216, 178, 93, 0.4);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            min-height: 320px;
+            background: var(--background-alt);
+        }
+
+        .banner-item {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            gap: 1.4rem;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(18px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+            color: var(--text);
+            isolate: isolate;
+        }
+
+        .banner-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(12, 12, 12, 0.78), rgba(12, 12, 12, 0.55)),
+                var(--slide-bg, radial-gradient(circle at top, rgba(216,178,93,0.2), transparent 70%));
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            transition: transform 1.2s ease;
+        }
+
+        .banner-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
+            z-index: -1;
+        }
+
+        .banner-item.is-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .banner-item.is-active::before {
+            transform: scale(1.04);
+        }
+
+        .banner-item-brand {
+            gap: 1.6rem;
+            --slide-bg: radial-gradient(circle at 20% 20%, rgba(216, 178, 93, 0.35), transparent 60%),
+                         linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.85));
+        }
+
+        .banner-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .banner-date {
+            font-size: 0.85rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            padding: 0.55rem 1.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.65);
+            background: rgba(12, 12, 12, 0.55);
+            color: var(--accent);
+        }
+
+        .banner-cta {
+            padding: 0.85rem 2.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.7);
+            color: var(--background);
+            background: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .banner-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(216, 178, 93, 0.2);
+        }
+
+        section {
+            margin-top: 5rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .about {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        .about p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .widget {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+            border-radius: 18px;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            background: var(--background-alt);
+        }
+
+        .widget a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1.8rem;
+            border-radius: 999px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .widget a:hover {
+            background: var(--accent);
+            color: var(--background);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            background: var(--accent);
+            border: 1px solid rgba(216, 178, 93, 0.8);
+            color: var(--background);
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(216, 178, 93, 0.25);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid rgba(216, 178, 93, 0.75);
+            outline-offset: 2px;
+        }
+
+        .afisha {
+            margin-top: 4rem;
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.18);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0));
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        .afisha-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .afisha-description {
+            margin: 0;
+            max-width: 560px;
+            color: var(--muted);
+        }
+
+        .afisha-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .afisha-field {
+            position: relative;
+            flex: 1 1 220px;
+        }
+
+        .afisha-field input,
+        .afisha-field select {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(216, 178, 93, 0.28);
+            background: rgba(17, 17, 17, 0.92);
+            color: var(--text);
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+        }
+
+        .afisha-status {
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(216, 178, 93, 0.28);
+            background: rgba(216, 178, 93, 0.1);
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .afisha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .afisha-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            border: 1px solid rgba(216, 178, 93, 0.18);
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.65));
+            overflow: hidden;
+            min-height: 100%;
+            transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .afisha-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(216, 178, 93, 0.45);
+            box-shadow: 0 18px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .afisha-card-cover {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background: rgba(15, 15, 15, 0.72);
+            overflow: hidden;
+            border: none;
+            padding: 0;
+            display: block;
+            cursor: pointer;
+        }
+
+        .afisha-card-cover img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .afisha-card-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(216, 178, 93, 0.08), rgba(0, 0, 0, 0.55));
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .afisha-card:hover .afisha-card-cover img,
+        .afisha-card-cover:focus-visible img {
+            transform: scale(1.05);
+        }
+
+        .afisha-card:hover .afisha-card-cover::after,
+        .afisha-card-cover:focus-visible::after {
+            opacity: 1;
+        }
+
+        .afisha-card-cover:focus-visible {
+            outline: none;
+            box-shadow: inset 0 0 0 2px rgba(216, 178, 93, 0.6);
+        }
+
+        .afisha-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            padding: 1.6rem 1.6rem 1.8rem;
+        }
+
+        .afisha-card-title {
+            margin: 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .afisha-card-meta {
+            color: var(--muted);
+            font-size: 0.92rem;
+            letter-spacing: 0.04em;
+        }
+
+        .afisha-card-actions {
+            margin-top: auto;
+            display: flex;
+        }
+
+        .afisha-card-actions .btn {
+            width: 100%;
+        }
+
+        .afisha-empty {
+            padding: 1.6rem;
+            border-radius: 18px;
+            border: 1px dashed rgba(216, 178, 93, 0.4);
+            text-align: center;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+        }
+
+        .afisha-card.afisha-card--skeleton {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .afisha-card.afisha-card--skeleton::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(247, 247, 247, 0), rgba(247, 247, 247, 0.12), rgba(247, 247, 247, 0));
+            animation: shimmer 1.6s infinite;
+        }
+
+        .afisha-card.afisha-card--skeleton * {
+            visibility: hidden;
+        }
+
+        .afisha-modal {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 2.5rem 1.5rem;
+            background: rgba(10, 10, 10, 0.72);
+            backdrop-filter: blur(12px);
+            z-index: 250;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .afisha-modal.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .afisha-modal-dialog {
+            position: relative;
+            width: min(100%, 780px);
+            border-radius: 24px;
+            border: 1px solid rgba(216, 178, 93, 0.4);
+            background: linear-gradient(160deg, rgba(26, 26, 26, 0.95), rgba(0, 0, 0, 0.86));
+            padding: 2.25rem 2.5rem 2.5rem;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            transform: translateY(40px) scale(0.96);
+            opacity: 0;
+            transition: transform 0.45s ease, opacity 0.45s ease;
+        }
+
+        .afisha-modal.is-visible .afisha-modal-dialog {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .afisha-modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.45);
+            background: rgba(216, 178, 93, 0.12);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .afisha-modal-close:hover {
+            transform: translateY(-2px);
+            border-color: rgba(216, 178, 93, 0.75);
+        }
+
+        .afisha-modal-close:focus-visible {
+            outline: 2px solid rgba(216, 178, 93, 0.8);
+            outline-offset: 2px;
+        }
+
+        .afisha-modal-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .afisha-modal-title {
+            margin: 0;
+            font-size: clamp(1.6rem, 3vw, 2.1rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .afisha-modal-meta {
+            color: var(--accent);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .afisha-modal-description {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.98rem;
+        }
+
+        .afisha-modal-creators {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .afisha-modal-creators li {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.75rem;
+            color: var(--text);
+        }
+
+        .afisha-modal-role {
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .afisha-modal-name {
+            color: var(--muted);
+        }
+
+        .afisha-modal-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .afisha-modal-gallery figure {
+            margin: 0;
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(17, 17, 17, 0.8);
+        }
+
+        .afisha-modal-gallery img {
+            display: block;
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .afisha-modal-gallery figcaption {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 0.35rem 0.75rem;
+            background: linear-gradient(180deg, rgba(15, 15, 15, 0), rgba(15, 15, 15, 0.75));
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(247, 247, 247, 0.85);
+        }
+
+        .afisha-modal .btn {
+            align-self: flex-start;
+            padding-inline: 1.6rem;
+        }
+
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .repertoire-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .repertoire-card {
+            padding: 1.75rem;
+            border-radius: 18px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(0,0,0,0.8));
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .repertoire-media {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(247, 247, 247, 0.08);
+        }
+
+        .repertoire-media svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .repertoire-card span {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+        }
+
+        .repertoire-card h3 {
+            margin: 0;
+        }
+
+        .repertoire-card p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .team-card {
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            border-radius: 18px;
+            padding: 1.8rem;
+            background: var(--background-alt);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-card strong {
+            letter-spacing: 0.05em;
+            font-size: 1.1rem;
+        }
+
+        .team-card span {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .contacts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(216, 178, 93, 0.2);
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(216, 178, 93, 0.12), rgba(0,0,0,0.75));
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .contact-info a {
+            color: var(--accent);
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.4rem;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 178, 93, 0.5);
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .social-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .social-button:hover {
+            transform: translateY(-3px);
+            background: rgba(216, 178, 93, 0.15);
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--muted);
+            border-top: 1px solid rgba(216, 178, 93, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            header {
+                position: static;
+            }
+
+            .hero {
+                padding: 2.4rem 0 3.2rem;
+            }
+
+            .hero-brand {
+                gap: 0.25em;
+                flex-wrap: wrap;
+            }
+
+            .hero-director {
+                letter-spacing: 0.14em;
+            }
+
+            .banner {
+                border-radius: 16px;
+                min-height: 280px;
+            }
+
+            .banner-item {
+                padding: 2.4rem 1.6rem;
+            }
+
+            .afisha {
+                padding: 2.4rem 2rem;
+                gap: 1.6rem;
+            }
+
+            .afisha-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .afisha-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .afisha-card-body {
+                padding: 1.4rem 1.4rem 1.6rem;
+            }
+
+            .afisha-modal {
+                padding: 2rem 1.25rem;
+            }
+
+            .afisha-modal-dialog {
+                padding: 1.85rem 1.8rem 2.1rem;
+            }
+
+            .afisha-modal-gallery img {
+                height: 120px;
+            }
+
+            .repertoire-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 560px) {
+            main {
+                padding: 0 1rem 3.5rem;
+            }
+
+            .hero-brand {
+                font-size: clamp(2.4rem, 14vw, 3.2rem);
+                letter-spacing: 0.12em;
+            }
+
+            .hero-production {
+                letter-spacing: 0.45em;
+                font-size: clamp(1rem, 6vw, 1.35rem);
+            }
+
+            .hero-director-name {
+                letter-spacing: 0.18em;
+            }
+
+            .banner {
+                min-height: 250px;
+            }
+
+            .banner-item {
+                padding: 2rem 1.25rem;
+            }
+
+            .banner-title {
+                font-size: clamp(1.5rem, 6vw, 2.1rem);
+            }
+
+            .banner-date {
+                font-size: 0.72rem;
+                letter-spacing: 0.18em;
+                padding: 0.45rem 1.2rem;
+            }
+
+            .afisha {
+                padding: 1.8rem 1.2rem;
+                gap: 1.4rem;
+            }
+
+            .afisha-card-body {
+                padding: 1.25rem 1.25rem 1.4rem;
+            }
+
+            .afisha-card-title {
+                font-size: 1rem;
+            }
+
+            .afisha-card-meta {
+                font-size: 0.88rem;
+            }
+
+            .afisha-modal-dialog {
+                padding: 1.6rem 1.35rem 1.8rem;
+            }
+
+            .afisha-modal-close {
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+
+            .afisha-modal-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .afisha-modal-gallery img {
+                height: 160px;
+            }
+
+            .repertoire-media {
+                aspect-ratio: 3 / 2;
+            }
+
+            .contacts {
+                padding: 1.8rem;
+            }
+
+            .social-buttons {
+                gap: 0.75rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <div class="logo">AmmA Production</div>
+            <nav>
+                <ul>
+                    <li><a href="#about">О центре</a></li>
+                    <li><a href="#repertoire">Репертуар</a></li>
+                    <li><a href="#team">Команда</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="about">
+            <div class="banner hero-slider" aria-label="Анимированный баннер AmmA Production">
+                <div class="banner-item banner-item-brand is-active">
+                    <h1 class="hero-heading" aria-label="AmmA Production">
+                        <span class="hero-brand" aria-hidden="true">
+                            <span class="hero-letter hero-letter-large">A</span>
+                            <span class="hero-letter hero-letter-small">M</span>
+                            <span class="hero-letter hero-letter-small">M</span>
+                            <span class="hero-letter hero-letter-large">A</span>
+                        </span>
+                        <span class="hero-production" aria-hidden="true">PRODUCTION</span>
+                    </h1>
+                    <div class="hero-director" aria-label="Художественный руководитель — Вера Анненкова">
+                        <span class="hero-director-label">Художественный руководитель</span>
+                        <span class="hero-director-name">Вера Анненкова</span>
+                    </div>
+                </div>
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">12 апреля 2024</div>
+                    <div class="banner-title">«Мой бедный Марат»</div>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
+                </div>
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">26 апреля 2024</div>
+                    <div class="banner-title">«Окна. Город. Любовь...»</div>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
+                </div>
+                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="banner-date">14 мая 2024</div>
+                    <div class="banner-title">«Остров»</div>
+                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
+                </div>
+            </div>
+            <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
+        </section>
+
+        <section class="afisha" id="playbill" data-afisha>
+            <div class="afisha-header">
+                <h2 class="section-title">Афиша</h2>
+                <p class="afisha-description">Расписание спектаклей формируется автоматически из файла <strong>baza_afisha.json</strong>. Обновите дату, время или ссылку в базе — и афиша мгновенно изменится на сайте.</p>
+            </div>
+            <div class="afisha-controls">
+                <label class="afisha-field">
+                    <span class="visually-hidden">Поиск по названию спектакля</span>
+                    <input type="search" placeholder="Поиск по названию…" data-afisha-search autocomplete="off">
+                </label>
+                <label class="afisha-field">
+                    <span class="visually-hidden">Сортировка по дате события</span>
+                    <select data-afisha-sort>
+                        <option value="date_asc">Ближайшие сначала</option>
+                        <option value="date_desc">Дальние сначала</option>
+                    </select>
+                </label>
+            </div>
+            <div class="afisha-status" data-afisha-status hidden></div>
+            <div class="afisha-grid" data-afisha-grid aria-live="polite" aria-busy="true"></div>
+            <div class="afisha-empty" data-afisha-empty hidden>События не найдены.</div>
+        </section>
+        <div class="afisha-modal" data-afisha-modal hidden>
+            <div class="afisha-modal-dialog" data-afisha-modal-dialog role="dialog" aria-modal="true" aria-labelledby="afisha-modal-title" tabindex="-1">
+                <button type="button" class="afisha-modal-close" data-afisha-modal-close aria-label="Закрыть окно афиши">&times;</button>
+                <div class="afisha-modal-header">
+                    <h3 class="afisha-modal-title" id="afisha-modal-title"></h3>
+                    <div class="afisha-modal-meta" data-afisha-modal-meta></div>
+                </div>
+                <p class="afisha-modal-description" data-afisha-modal-description></p>
+                <ul class="afisha-modal-creators" data-afisha-modal-creators></ul>
+                <div class="afisha-modal-gallery" data-afisha-modal-gallery></div>
+                <a class="btn" data-afisha-modal-ticket target="_blank" rel="noopener">Купить билет</a>
+            </div>
+        </div>
+        <section>
+            <div class="about">
+                <div>
+                    <h2 class="section-title">О центре</h2>
+                    <p>AmmA Production сопровождает культурные проекты на всех этапах — от идеи до премьерного поклона. Наша команда курирует постановки, гастроли, медиасопровождение и работу с партнёрами, создавая актуальные театральные события.</p>
+                </div>
+                <div class="widget">
+                    <h3 style="margin:0; font-size:1.2rem; text-transform:uppercase; letter-spacing:0.08em;">Онлайн-билеты</h3>
+                    <p style="margin:0; color:var(--muted);">Используйте готовый виджет для моментальной покупки билетов на спектакли нашего репертуара.</p>
+                    <a href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe">Купить билет</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="repertoire">
+            <h2 class="section-title">Текущий репертуар</h2>
+            <div class="repertoire-grid">
+                <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-marat" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-marat">Стилизованная афиша спектакля «Мой бедный Марат»</title>
+                            <defs>
+                                <linearGradient id="marat-bg" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#1c1c1c" />
+                                    <stop offset="100%" stop-color="#0b0b0b" />
+                                </linearGradient>
+                                <linearGradient id="marat-accent" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" />
+                                    <stop offset="100%" stop-color="#8f6a1f" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#marat-bg)" />
+                            <g opacity="0.25" stroke="#f7f7f7" stroke-opacity="0.4" stroke-width="2">
+                                <line x1="28" y1="52" x2="292" y2="52" />
+                                <line x1="28" y1="118" x2="292" y2="118" />
+                                <line x1="28" y1="184" x2="292" y2="184" />
+                            </g>
+                            <path d="M36 212 L160 38 L284 212 Z" fill="url(#marat-accent)" fill-opacity="0.68" />
+                            <path d="M72 212 L160 108 L248 212 Z" fill="none" stroke="#d8b25d" stroke-width="4" stroke-opacity="0.7" />
+                            <circle cx="160" cy="126" r="26" fill="#0f0f0f" stroke="#d8b25d" stroke-width="3" />
+                            <path d="M126 212 L150 166 L170 212 Z" fill="#101010" opacity="0.85" />
+                            <path d="M176 212 L190 186 L204 212 Z" fill="#0b0b0b" opacity="0.75" />
+                        </svg>
+                    </figure>
+                    <span>Драма</span>
+                    <h3>Мой бедный Марат</h3>
+                    <p>Пьеса Алексея Арбузова о молодости, любви и надежде, которая не угасает даже в самые тяжёлые времена.</p>
+                </div>
+                <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-okna" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-okna">Стилизованная афиша спектакля «Окна. Город. Любовь...»</title>
+                            <defs>
+                                <linearGradient id="okna-bg" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#1e1e1e" />
+                                    <stop offset="100%" stop-color="#090909" />
+                                </linearGradient>
+                                <linearGradient id="okna-highlight" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" stop-opacity="0.9" />
+                                    <stop offset="100%" stop-color="#b48b3f" stop-opacity="0.6" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#okna-bg)" />
+                            <g stroke="#f7f7f7" stroke-width="3" stroke-opacity="0.08">
+                                <line x1="40" y1="30" x2="280" y2="30" />
+                                <line x1="40" y1="90" x2="280" y2="90" />
+                                <line x1="40" y1="150" x2="280" y2="150" />
+                                <line x1="40" y1="210" x2="280" y2="210" />
+                                <line x1="40" y1="30" x2="40" y2="210" />
+                                <line x1="110" y1="30" x2="110" y2="210" />
+                                <line x1="190" y1="30" x2="190" y2="210" />
+                                <line x1="280" y1="30" x2="280" y2="210" />
+                            </g>
+                            <g fill="url(#okna-highlight)" fill-opacity="0.85">
+                                <rect x="56" y="48" width="40" height="60" rx="6" />
+                                <rect x="126" y="110" width="48" height="70" rx="6" />
+                                <rect x="206" y="60" width="52" height="82" rx="6" />
+                            </g>
+                            <g fill="#d8b25d" fill-opacity="0.4">
+                                <rect x="62" y="164" width="28" height="36" rx="4" />
+                                <rect x="138" y="70" width="26" height="32" rx="4" />
+                                <rect x="216" y="162" width="34" height="44" rx="4" />
+                            </g>
+                            <path d="M36 212 H284" stroke="#d8b25d" stroke-width="4" stroke-linecap="round" stroke-opacity="0.6" />
+                        </svg>
+                    </figure>
+                    <span>Поэтический спектакль</span>
+                    <h3>Окна. Город. Любовь...</h3>
+                    <p>Погружение в городские истории, рассказанные языком пластики, видеоарта и живой музыки.</p>
+                </div>
+                <div class="repertoire-card">
+                    <figure class="repertoire-media">
+                        <svg viewBox="0 0 320 240" role="img" aria-labelledby="poster-ostrov" xmlns="http://www.w3.org/2000/svg">
+                            <title id="poster-ostrov">Стилизованная афиша спектакля «Остров»</title>
+                            <defs>
+                                <linearGradient id="ostrov-sky" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#161616" />
+                                    <stop offset="100%" stop-color="#050505" />
+                                </linearGradient>
+                                <linearGradient id="ostrov-glow" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#d8b25d" stop-opacity="0.85" />
+                                    <stop offset="100%" stop-color="#8d6f2c" stop-opacity="0.6" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="320" height="240" fill="url(#ostrov-sky)" />
+                            <circle cx="236" cy="64" r="34" fill="url(#ostrov-glow)" fill-opacity="0.75" />
+                            <path d="M0 188 Q80 144 160 176 T320 188 V240 H0 Z" fill="#0c0c0c" />
+                            <path d="M92 188 Q120 150 160 164 Q200 178 228 188 Z" fill="#111" />
+                            <path d="M128 186 Q160 148 188 184 Z" fill="#d8b25d" fill-opacity="0.45" />
+                            <g stroke="#d8b25d" stroke-width="3" stroke-opacity="0.6" fill="none">
+                                <path d="M40 212 C80 204 120 204 160 212" />
+                                <path d="M160 212 C200 220 240 220 280 212" />
+                            </g>
+                            <g stroke="#f7f7f7" stroke-opacity="0.12" stroke-width="2" fill="none">
+                                <path d="M24 138 Q112 96 160 120 Q208 144 296 108" />
+                            </g>
+                        </svg>
+                    </figure>
+                    <span>Современная притча</span>
+                    <h3>Остров</h3>
+                    <p>Постановка о поиске себя и силе одиночества, объединяющая перформанс, медиа и авторскую музыку.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="team">
+            <h2 class="section-title">Команда</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <strong>Вера Анненкова</strong>
+                    <span>Художественный руководитель</span>
+                </div>
+                <div class="team-card">
+                    <strong>Михаил Маликов</strong>
+                    <span>Продюсер</span>
+                </div>
+                <div class="team-card">
+                    <strong>Алина Мазненкова</strong>
+                    <span>PR и коммуникации</span>
+                </div>
+                <div class="team-card">
+                    <strong>Максим Дементьев</strong>
+                    <span>Технический директор</span>
+                </div>
+                <div class="team-card">
+                    <strong>Аксинья Олейник</strong>
+                    <span>Куратор проектов</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacts">
+            <h2 class="section-title">Контакты</h2>
+            <div class="contacts">
+                <div class="contact-info">
+                    <div><strong>Телефон:</strong> <a href="tel:+79991234567">+7 (999) 123-45-67</a></div>
+                    <div><strong>Email:</strong> <a href="mailto:info@amma-production.ru">info@amma-production.ru</a></div>
+                    <div><strong>Адрес:</strong> Москва, Большая театральная, 12</div>
+                    <div><strong>График:</strong> Пн–Пт 10:00–19:00</div>
+                </div>
+                <div>
+                    <h3 style="margin-top:0; text-transform:uppercase; letter-spacing:0.08em;">Свяжитесь с нами</h3>
+                    <p style="color:var(--muted); margin-top:0;">Менеджеры AmmA Production готовы помочь с организацией показов, партнёрскими предложениями и покупкой билетов.</p>
+                    <div class="social-buttons">
+                        <a class="social-button" href="https://wa.me/79991234567" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3C9.4 3 4 8.29 4 14.82c0 2.48.79 4.79 2.14 6.69L4 29l7.74-2.06c1.83 1 3.94 1.57 6.3 1.57 6.63 0 12.04-5.29 12.04-11.82C30.09 8.29 22.67 3 16.04 3zm0 20.97c-2.03 0-3.92-.56-5.52-1.53l-.39-.24-4.59 1.22 1.23-4.35-.26-.45a9.43 9.43 0 01-1.45-4.99c0-5.3 4.42-9.62 9.98-9.62s9.98 4.32 9.98 9.62-4.42 9.62-9.98 9.62zm5.76-7.18c-.31-.15-1.84-.9-2.12-1-.28-.1-.49-.15-.7.15-.21.31-.81 1-.99 1.2-.18.21-.37.23-.68.08-.31-.16-1.29-.47-2.46-1.5-.91-.81-1.53-1.81-1.71-2.12-.18-.31-.02-.48.13-.63.14-.14.31-.37.47-.55.15-.18.21-.31.31-.52.1-.21.05-.39-.02-.55-.08-.15-.7-1.68-.96-2.3-.25-.6-.51-.52-.7-.53l-.6-.01c-.21 0-.55.08-.84.39-.28.31-1.1 1.08-1.1 2.63s1.13 3.06 1.29 3.27c.16.21 2.23 3.38 5.41 4.73.76.33 1.35.53 1.81.68.76.24 1.45.21 2 .13.61-.09 1.84-.75 2.1-1.48.26-.73.26-1.36.18-1.48-.08-.13-.28-.21-.6-.37z"></path></svg>
+                            WhatsApp
+                        </a>
+                        <a class="social-button" href="https://t.me/amma_production" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M28.44 5.23L3.46 14.97c-1.69.66-1.68 1.58-.31 2.02l6.21 1.94 2.39 7.64c.29.81.15 1.14.99 1.14.65 0 .94-.3 1.31-.65l3.15-3.06 6.56 4.83c1.2.66 2.07.32 2.37-1.11l4.29-20.13c.44-1.76-.67-2.55-1.98-2.03zM25.4 9.3l-11.2 10.4c-.49.44-.18.69.29 1.11l3.36 2.86c.56.52 1.14.16 1.31-.29l2.53-7.56 4.59-4.35c.23-.21-.05-.5-.88-.17z"></path></svg>
+                            Telegram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © 2024 AmmA Production. Все права защищены.
+    </footer>
+
+    <script src="main.js"></script>
+
+</body>
+</html>
