@@ -252,6 +252,7 @@
             const details = document.createElement('details');
             details.className = 'admin-event';
             details.dataset.eventId = event.id || `event-${index}`;
+            details.dataset.eventIndex = String(index);
             if (expanded.has(details.dataset.eventId) || state.events.length === 1) {
                 details.open = true;
             }
@@ -267,15 +268,23 @@
             const form = document.createElement('div');
             form.className = 'admin-event__form';
 
-            form.appendChild(createTextField('Название', event.title, (value) => updateEvent(index, 'title', value)));
+            form.appendChild(
+                createTextField(
+                    'Название',
+                    event.title,
+                    (value, input) => updateEvent(index, 'title', value, { input }),
+                    { fieldName: 'title' },
+                ),
+            );
             form.appendChild(
                 createTextField(
                     'Дата',
                     event.date,
-                    (value) => updateEvent(index, 'date', value),
+                    (value, input) => updateEvent(index, 'date', value, { input }),
                     {
                         type: 'date',
                         placeholder: '2025-12-31',
+                        fieldName: 'date',
                     },
                 ),
             );
@@ -283,23 +292,43 @@
                 createTextField(
                     'Время',
                     event.time,
-                    (value) => updateEvent(index, 'time', value),
+                    (value, input) => updateEvent(index, 'time', value, { input }),
                     {
                         type: 'time',
                         placeholder: '19:00',
+                        fieldName: 'time',
                     },
                 ),
             );
-            form.appendChild(createTextField('Площадка', event.venue, (value) => updateEvent(index, 'venue', value)));
             form.appendChild(
-                createTextField('Ссылка на билеты', event.link, (value) => updateEvent(index, 'link', value), {
-                    type: 'url',
-                    placeholder: 'https://example.com/tickets',
-                }),
+                createTextField(
+                    'Площадка',
+                    event.venue,
+                    (value, input) => updateEvent(index, 'venue', value, { input }),
+                    { fieldName: 'venue' },
+                ),
             );
-            const imageField = createTextField('Изображение (URL)', event.image, (value) => updateEvent(index, 'image', value), {
-                type: 'url',
-            });
+            form.appendChild(
+                createTextField(
+                    'Ссылка на билеты',
+                    event.link,
+                    (value, input) => updateEvent(index, 'link', value, { input }),
+                    {
+                        type: 'url',
+                        placeholder: 'https://example.com/tickets',
+                        fieldName: 'link',
+                    },
+                ),
+            );
+            const imageField = createTextField(
+                'Изображение (URL)',
+                event.image,
+                (value, input) => updateEvent(index, 'image', value, { input }),
+                {
+                    type: 'url',
+                    fieldName: 'image',
+                },
+            );
             const imageInput = imageField.querySelector('input');
             const imageActions = document.createElement('div');
             imageActions.className = 'admin-field__actions';
@@ -361,34 +390,44 @@
                 createTextareaField(
                     'Описание',
                     event.description,
-                    (value) => updateEvent(index, 'description', value),
+                    (value, input) => updateEvent(index, 'description', value, { input }),
                     {
                         placeholder: 'Краткое описание спектакля…',
                         rows: 3,
+                        fieldName: 'description',
                     },
                 ),
             );
 
-            form.appendChild(createCheckboxField('Показывать в слайдере', event.showInHero, (value) => {
-                updateEvent(index, 'showInHero', value);
-            }));
+            form.appendChild(
+                createCheckboxField('Показывать в слайдере', event.showInHero, (value, input) => {
+                    updateEvent(index, 'showInHero', value, { input });
+                }, { fieldName: 'showInHero' }),
+            );
 
             form.appendChild(
                 createTextField(
                     'Порядок в слайдере',
                     event.heroOrder ?? '',
-                    (value) => updateEvent(index, 'heroOrder', value),
+                    (value, input) => updateEvent(index, 'heroOrder', value, { input }),
                     {
                         type: 'number',
                         placeholder: 'Например, 1',
+                        fieldName: 'heroOrder',
                     },
                 ),
             );
 
             form.appendChild(
-                createTextField('Уникальный ID', event.id, (value) => updateEvent(index, 'id', value), {
-                    helpText: 'Используется для внутренних ссылок и совпадения с расширенными данными.',
-                }),
+                createTextField(
+                    'Уникальный ID',
+                    event.id,
+                    (value, input) => updateEvent(index, 'id', value, { input }),
+                    {
+                        helpText: 'Используется для внутренних ссылок и совпадения с расширенными данными.',
+                        fieldName: 'id',
+                    },
+                ),
             );
 
             const actions = document.createElement('div');
@@ -429,7 +468,7 @@
     }
 
     function createTextField(label, value, onInput, options = {}) {
-        const { type = 'text', placeholder = '', helpText = '' } = options;
+        const { type = 'text', placeholder = '', helpText = '', fieldName = '' } = options;
 
         const wrapper = document.createElement('label');
         wrapper.className = 'admin-field';
@@ -444,8 +483,11 @@
         input.type = type;
         input.value = value ?? '';
         input.placeholder = placeholder;
+        if (fieldName) {
+            input.dataset.fieldName = fieldName;
+        }
         input.addEventListener('input', (event) => {
-            onInput(event.target.value);
+            onInput(event.target.value, event.target);
         });
         wrapper.appendChild(input);
 
@@ -460,7 +502,7 @@
     }
 
     function createTextareaField(label, value, onInput, options = {}) {
-        const { rows = 4, placeholder = '' } = options;
+        const { rows = 4, placeholder = '', fieldName = '' } = options;
 
         const wrapper = document.createElement('label');
         wrapper.className = 'admin-field';
@@ -475,23 +517,31 @@
         textarea.rows = rows;
         textarea.placeholder = placeholder;
         textarea.value = value ?? '';
+        if (fieldName) {
+            textarea.dataset.fieldName = fieldName;
+        }
         textarea.addEventListener('input', (event) => {
-            onInput(event.target.value);
+            onInput(event.target.value, event.target);
         });
         wrapper.appendChild(textarea);
 
         return wrapper;
     }
 
-    function createCheckboxField(label, checked, onToggle) {
+    function createCheckboxField(label, checked, onToggle, options = {}) {
+        const { fieldName = '' } = options;
+
         const wrapper = document.createElement('label');
         wrapper.className = 'admin-checkbox';
 
         const input = document.createElement('input');
         input.type = 'checkbox';
         input.checked = Boolean(checked);
+        if (fieldName) {
+            input.dataset.fieldName = fieldName;
+        }
         input.addEventListener('change', (event) => {
-            onToggle(event.target.checked);
+            onToggle(event.target.checked, event.target);
         });
         wrapper.appendChild(input);
 
@@ -502,36 +552,112 @@
         return wrapper;
     }
 
-    function updateEvent(index, field, value) {
+    function updateEvent(index, field, value, context = {}) {
         const event = state.events[index];
         if (!event) {
             return;
         }
 
+        const { input } = context || {};
+
         if (field === 'title') {
             const previousTitle = event.title;
+            const previousId = event.id;
             event.title = value;
             const previousSlug = slugify(previousTitle);
-            const currentSlug = slugify(event.id);
+            const currentSlug = slugify(previousId);
             const generatedSlug = slugify(value);
-            if (!event._idManuallyChanged && (!event.id || event.id === previousSlug || event.id === currentSlug)) {
-                event.id = generatedSlug || event.id;
+            const shouldUpdateId =
+                !event._idManuallyChanged && (!previousId || previousId === previousSlug || previousId === currentSlug);
+
+            if (shouldUpdateId) {
+                const nextId = generatedSlug || previousId;
+                if (nextId !== previousId) {
+                    event.id = nextId;
+                    syncEventField(index, 'id', event.id);
+                }
             }
+            syncEventField(index, 'title', event.title, { skipElement: input });
         } else if (field === 'id') {
             const sanitized = slugify(value);
             event.id = sanitized;
             event._idManuallyChanged = Boolean(sanitized);
+            syncEventField(index, 'id', event.id);
         } else if (field === 'heroOrder') {
             const numeric = toFiniteNumber(value);
             event.heroOrder = numeric;
+            syncEventField(index, 'heroOrder', event.heroOrder);
         } else if (field === 'showInHero') {
             event.showInHero = Boolean(value);
+            syncEventField(index, 'showInHero', event.showInHero);
         } else {
             event[field] = value;
+            syncEventField(index, field, event[field], { skipElement: input });
         }
 
         markDirty();
-        render();
+        refreshEventSummary(index, input);
+        renderHeroPreview();
+        renderJsonPreview();
+    }
+
+    function findEventElement(index, referenceElement) {
+        if (referenceElement && typeof referenceElement.closest === 'function') {
+            const byReference = referenceElement.closest('.admin-event');
+            if (byReference) {
+                return byReference;
+            }
+        }
+
+        if (!elements.eventsContainer) {
+            return null;
+        }
+
+        return elements.eventsContainer.querySelector(`.admin-event[data-event-index="${index}"]`);
+    }
+
+    function syncEventField(index, fieldName, value, options = {}) {
+        const { skipElement } = options || {};
+        const eventElement = findEventElement(index, skipElement);
+        if (!eventElement) {
+            return;
+        }
+
+        const field = eventElement.querySelector(`[data-field-name="${fieldName}"]`);
+        if (!field || field === skipElement) {
+            return;
+        }
+
+        if (field.type === 'checkbox') {
+            field.checked = Boolean(value);
+            return;
+        }
+
+        field.value = value === null || value === undefined ? '' : value;
+    }
+
+    function refreshEventSummary(index, referenceElement) {
+        const event = state.events[index];
+        if (!event) {
+            return;
+        }
+
+        const eventElement = findEventElement(index, referenceElement);
+        if (!eventElement) {
+            return;
+        }
+
+        eventElement.dataset.eventId = event.id || `event-${index}`;
+
+        const summaryTitle = eventElement.querySelector('.admin-event__summary-title');
+        if (summaryTitle) {
+            summaryTitle.textContent = event.title || 'Без названия';
+        }
+
+        const summaryMeta = eventElement.querySelector('.admin-event__summary-meta');
+        if (summaryMeta) {
+            summaryMeta.innerHTML = formatSummaryMeta(event);
+        }
     }
 
     function duplicateEvent(index) {
