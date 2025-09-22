@@ -252,7 +252,7 @@ function setupAfishaModal() {
     const descEl = modal.querySelector('[data-afisha-modal-description]');
     const creatorsEl = modal.querySelector('[data-afisha-modal-creators]');
     const galleryEl = modal.querySelector('[data-afisha-modal-gallery]');
-    const ticketEl = modal.querySelector('[data-afisha-modal-ticket]');
+    const actionsEl = modal.querySelector('[data-afisha-modal-actions]');
     const closeTriggers = modal.querySelectorAll('[data-afisha-modal-close]');
     let restoreFocusTo = null;
 
@@ -290,15 +290,7 @@ function setupAfishaModal() {
 
         renderCreators(details.creators || []);
         renderGallery(details.gallery || [], title);
-
-        if (ticketEl) {
-            if (details.ticketUrl) {
-                ticketEl.href = details.ticketUrl;
-                ticketEl.hidden = false;
-            } else {
-                ticketEl.hidden = true;
-            }
-        }
+        renderActions(details.ticketButtons || [], details.ticketUrl);
 
         modal.hidden = false;
 
@@ -320,6 +312,9 @@ function setupAfishaModal() {
             () => {
                 modal.hidden = true;
                 document.removeEventListener('keydown', handleKeyDown);
+                if (actionsEl) {
+                    actionsEl.innerHTML = '';
+                }
                 if (restoreFocusTo && typeof restoreFocusTo.focus === 'function') {
                     restoreFocusTo.focus();
                 }
@@ -386,6 +381,16 @@ function setupAfishaModal() {
 
         galleryEl.innerHTML = markup;
         galleryEl.hidden = !markup;
+    }
+
+    function renderActions(buttons, ticketUrl) {
+        if (!actionsEl) {
+            return;
+        }
+
+        const markup = createTicketActionsMarkup({ ticketButtons: buttons, ticketUrl }, { variant: 'modal' });
+        actionsEl.innerHTML = markup;
+        actionsEl.hidden = false;
     }
 
     return { open, close };
@@ -557,10 +562,9 @@ function normalizeAfishaEvent(raw) {
     const creators = normalizeCreatorsList(raw.creators, supplemental.creators);
     const gallery = normalizeGalleryList(raw.gallery, supplemental.gallery);
     const image = (typeof raw.image === 'string' && raw.image.trim()) || supplemental.image || AFISHA_PLACEHOLDER_IMAGE;
-    const ticketUrl =
+    const primaryTicketUrl =
         raw.link ||
         raw.ticket ||
-
         raw.url ||
         raw.seance_url ||
         raw.seanceUrl ||
@@ -570,6 +574,16 @@ function normalizeAfishaEvent(raw) {
         raw.ticketUrl ||
         supplemental.ticketUrl ||
         '';
+    const ticketButtons = normalizeTicketButtons(
+        raw.ticketButtons ?? raw.buttons ?? raw.tickets,
+        supplemental.ticketButtons,
+        primaryTicketUrl,
+    );
+    const ticketUrl = ticketButtons.length
+        ? ticketButtons[0].url
+        : typeof primaryTicketUrl === 'string'
+        ? primaryTicketUrl.trim()
+        : '';
 
     const showInHero = parseBoolean(raw.showInHero ?? raw.hero ?? true);
     const heroOrder = toFiniteNumber(raw.heroOrder ?? raw.heroPriority);
@@ -587,6 +601,7 @@ function normalizeAfishaEvent(raw) {
         gallery,
         image,
         ticketUrl,
+        ticketButtons,
         venue,
         showInHero,
         heroOrder
@@ -669,6 +684,73 @@ function normalizeGalleryList(primary, fallback) {
             return null;
         })
         .filter(Boolean);
+}
+
+function normalizeTicketButtons(primary, fallback, fallbackUrl) {
+    const source = Array.isArray(primary) && primary.length ? primary : Array.isArray(fallback) ? fallback : [];
+    const seen = new Set();
+
+    const normalized = source
+        .map((entry) => {
+            if (!entry) {
+                return null;
+            }
+
+            if (typeof entry === 'string') {
+                const url = entry.trim();
+                if (!url) {
+                    return null;
+                }
+
+                return { url, label: 'Купить билет' };
+            }
+
+            if (typeof entry === 'object') {
+                const rawUrl =
+                    typeof entry.url === 'string'
+                        ? entry.url
+                        : typeof entry.href === 'string'
+                        ? entry.href
+                        : '';
+                const url = rawUrl.trim();
+                if (!url) {
+                    return null;
+                }
+
+                const rawLabel =
+                    typeof entry.label === 'string'
+                        ? entry.label
+                        : typeof entry.title === 'string'
+                        ? entry.title
+                        : 'Купить билет';
+                const label = rawLabel.trim() || 'Купить билет';
+
+                return { url, label };
+            }
+
+            return null;
+        })
+        .filter((item) => {
+            if (!item) {
+                return false;
+            }
+
+            if (seen.has(item.url)) {
+                return false;
+            }
+
+            seen.add(item.url);
+            return true;
+        });
+
+    if (!normalized.length && typeof fallbackUrl === 'string') {
+        const url = fallbackUrl.trim();
+        if (url && !seen.has(url)) {
+            normalized.push({ url, label: 'Купить билет' });
+        }
+    }
+
+    return normalized;
 }
 
 function buildIsoDate(date, time) {
@@ -838,13 +920,9 @@ function renderAfishaCard(event) {
     const safeTitle = escapeHtml(event.title);
     const safeAlt = escapeAttr(`Афиша спектакля ${event.title}`);
     const cover = escapeAttr(event.image || AFISHA_PLACEHOLDER_IMAGE);
-    const hasTicket = Boolean(event.ticketUrl);
-    const ticketLink = hasTicket ? escapeAttr(event.ticketUrl) : '';
     const triggerId = escapeAttr(event.id || 'event');
     const openLabel = escapeAttr(`Открыть описание спектакля «${event.title}»`);
-    const actionMarkup = hasTicket
-        ? `<a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>`
-        : '<span class="afisha-card-badge" aria-label="Билеты появятся позже">Скоро в продаже</span>';
+    const actionMarkup = createTicketActionsMarkup(event, { variant: 'card' });
 
     const dateLabel =
         event.date instanceof Date && !Number.isNaN(event.date.getTime())
@@ -886,6 +964,28 @@ function renderAfishaCard(event) {
             </div>
         </article>
     `;
+}
+
+function createTicketActionsMarkup(event, options = {}) {
+    const { variant = 'card' } = options || {};
+    const buttons = buildTicketButtonList(event?.ticketButtons, event?.ticketUrl);
+
+    if (buttons.length) {
+        return buttons
+            .map((button) => {
+                const href = escapeAttr(button.url);
+                const label = escapeHtml(button.label || 'Купить билет');
+                return `<a class="btn" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+            })
+            .join('');
+    }
+
+    const badgeClass = variant === 'modal' ? 'afisha-modal-badge' : 'afisha-card-badge';
+    return `<span class="${badgeClass}" aria-label="Билеты появятся позже">Скоро в продаже</span>`;
+}
+
+function buildTicketButtonList(buttons, fallbackUrl) {
+    return normalizeTicketButtons(buttons, [], fallbackUrl);
 }
 
 function renderAfishaSkeleton(grid, count) {

@@ -143,6 +143,7 @@ function sanitizeEvent(rawEvent, index) {
         description: typeof rawEvent?.description === 'string' ? rawEvent.description.trim() : '',
         showInHero: Boolean(rawEvent?.showInHero ?? true),
         heroOrder,
+        gallery: sanitizeGallery(rawEvent?.gallery),
     };
 }
 
@@ -186,6 +187,37 @@ function sanitizeHeroOrder(value) {
 
     const number = Number(value);
     return Number.isFinite(number) ? number : null;
+}
+
+function sanitizeGallery(value) {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .map((entry) => {
+            if (!entry) {
+                return null;
+            }
+
+            if (typeof entry === 'string') {
+                const src = entry.trim();
+                return src ? { src } : null;
+            }
+
+            if (typeof entry === 'object') {
+                const src = typeof entry.src === 'string' ? entry.src.trim() : '';
+                if (!src) {
+                    return null;
+                }
+
+                const caption = typeof entry.caption === 'string' ? entry.caption.trim() : '';
+                return caption ? { src, caption } : { src };
+            }
+
+            return null;
+        })
+        .filter(Boolean);
 }
 
 function ensureUniqueIds(events) {

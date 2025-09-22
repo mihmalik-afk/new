@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <script src="//s3.intickets.ru/intickets.js"></script>
     <style>
         :root {
             color-scheme: dark;
@@ -348,6 +350,70 @@
             accent-color: var(--accent);
         }
 
+        .admin-field--gallery {
+            padding: 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.35);
+            display: grid;
+            gap: 1rem;
+        }
+
+        .admin-gallery {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .admin-gallery-empty {
+            margin: 0;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .admin-gallery-item {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1rem;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .admin-gallery-thumb {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .admin-gallery-fields {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .admin-gallery-field {
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .admin-gallery-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .admin-gallery-item-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
         .admin-event__actions {
             display: flex;
             flex-wrap: wrap;
@@ -418,6 +484,14 @@
             .admin-event__summary {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .admin-gallery-item {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-gallery-thumb {
+                aspect-ratio: 3 / 2;
             }
 
             .admin-hero-item {
