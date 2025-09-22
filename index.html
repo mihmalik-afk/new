@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//s3.intickets.ru/intickets.min.css">
+    <link rel="stylesheet" href="//s3.intickets.ru/intickets-button-simple.min.css">
     <script src="//s3.intickets.ru/intickets.js"></script>
     <style>
         :root {
@@ -1067,33 +1068,227 @@
     </footer>
 
     <script>
+        const INTICKETS_WIDGET_CONFIG = Object.freeze({
+            baseUrl: 'https://iframeab-pre2514.intickets.ru/',
+            anchor: '#abiframe'
+        });
+
         const AFISHA_PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80';
-        const afishaFallbackEvents = [
+
+        const REPERTOIRE_FIXTURES = [
             {
-                id: 'fallback-marath',
+                id: 'repertoire-marath',
+                slug: 'moi-bedny-marath',
                 title: 'Мой бедный Марат',
-                date: '2024-04-12T19:00:00+03:00',
                 venue: 'Москва',
                 image: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
-                url: 'https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe'
+                inticketsEventId: '11756122',
+                ticketPath: 'node/11756122',
+                detailsPath: 'event/11756122',
+                seances: [
+                    {
+                        datetime: '2024-04-12T19:00:00+03:00',
+                        seanceId: '60835614'
+                    }
+                ]
             },
             {
-                id: 'fallback-okna',
+                id: 'repertoire-okna',
+                slug: 'okna-gorod-lyubov',
                 title: 'Окна. Город. Любовь...',
-                date: '2024-04-26T19:00:00+03:00',
                 venue: 'Москва',
                 image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
-                url: 'https://iframeab-pre2514.intickets.ru/event/11756122/#abiframe'
+                detailsUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
+                seances: [
+                    {
+                        datetime: '2024-04-26T19:00:00+03:00',
+                        directUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
+                    }
+                ]
             },
             {
-                id: 'fallback-ostrov',
+                id: 'repertoire-ostrov',
+                slug: 'ostrov',
                 title: 'Остров',
-                date: '2024-05-14T19:00:00+03:00',
                 venue: 'Санкт-Петербург',
                 image: 'https://images.unsplash.com/photo-1462212210333-335063b676d3?auto=format&fit=crop&w=1200&q=80',
-                url: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
+                detailsUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe',
+                seances: [
+                    {
+                        datetime: '2024-05-14T19:00:00+03:00',
+                        directUrl: 'https://iframeab-pre2514.intickets.ru/events/#abiframe'
+                    }
+                ]
             }
         ];
+
+        const afishaFallbackEvents = buildFallbackAfishaEvents(REPERTOIRE_FIXTURES);
+
+        function buildFallbackAfishaEvents(fixtures) {
+            if (!Array.isArray(fixtures)) {
+                return [];
+            }
+
+            return fixtures.map((fixture) => {
+                const nextSeance = getNextSeanceEntry(fixture?.seances);
+                const seanceDescriptor = nextSeance
+                    ? {
+                          datetime: nextSeance.datetime ?? null,
+                          seanceId: nextSeance.seanceId ?? null,
+                          directUrl: nextSeance.directUrl ?? null
+                      }
+                    : null;
+
+                const eventIdentifier =
+                    fixture?.inticketsEventIdentifier ??
+                    (fixture?.inticketsEventId ? `node/${fixture.inticketsEventId}` : null) ??
+                    fixture?.eventIdentifier ??
+                    null;
+
+                const ticketSource =
+                    typeof fixture?.ticketPath === 'string' && fixture.ticketPath
+                        ? fixture.ticketPath
+                        : eventIdentifier;
+
+                const detailsSource =
+                    typeof fixture?.detailsPath === 'string' && fixture.detailsPath
+                        ? fixture.detailsPath
+                        : eventIdentifier;
+
+                const ticketUrl =
+                    typeof fixture?.ticketUrl === 'string' && fixture.ticketUrl
+                        ? fixture.ticketUrl
+                        : seanceDescriptor?.directUrl
+                        ? composeInticketsUrl(seanceDescriptor.directUrl, { anchor: true })
+                        : composeInticketsUrl(ticketSource, { seance: seanceDescriptor, anchor: true });
+
+                const detailsUrl =
+                    typeof fixture?.detailsUrl === 'string' && fixture.detailsUrl
+                        ? composeInticketsUrl(fixture.detailsUrl, { anchor: true })
+                        : composeInticketsUrl(detailsSource, { anchor: true });
+
+                return {
+                    id:
+                        fixture?.id ??
+                        fixture?.slug ??
+                        fixture?.inticketsEventId ??
+                        fixture?.title ??
+                        'afisha-event',
+                    title: fixture?.title ?? 'Без названия',
+                    venue: fixture?.venue ?? '',
+                    date: seanceDescriptor?.datetime ?? fixture?.date ?? null,
+                    image: fixture?.image ?? AFISHA_PLACEHOLDER_IMAGE,
+                    ticketUrl,
+                    detailsUrl,
+                    inticketsEventIdentifier: eventIdentifier,
+                    inticketsSeanceId: seanceDescriptor?.seanceId ?? null
+                };
+            });
+        }
+
+        function getNextSeanceEntry(seances) {
+            if (!Array.isArray(seances) || !seances.length) {
+                return null;
+            }
+
+            const normalised = seances
+                .map((entry) => {
+                    if (!entry) {
+                        return null;
+                    }
+
+                    const iso = entry.datetime ?? entry.date ?? null;
+                    const dateObject = iso ? new Date(iso) : null;
+                    const isValidDate = dateObject instanceof Date && !Number.isNaN(dateObject.getTime());
+
+                    if (!isValidDate && !entry.directUrl && !entry.seanceId && !entry.inticketsSeanceId) {
+                        return null;
+                    }
+
+                    return {
+                        datetime: isValidDate ? dateObject.toISOString() : iso,
+                        dateObject: isValidDate ? dateObject : null,
+                        seanceId: entry.seanceId ?? entry.inticketsSeanceId ?? null,
+                        directUrl: entry.directUrl ?? entry.seanceUrl ?? null
+                    };
+                })
+                .filter(Boolean);
+
+            if (!normalised.length) {
+                return null;
+            }
+
+            normalised.sort((a, b) => {
+                const aTime = a.dateObject ? a.dateObject.getTime() : Number.POSITIVE_INFINITY;
+                const bTime = b.dateObject ? b.dateObject.getTime() : Number.POSITIVE_INFINITY;
+                return aTime - bTime;
+            });
+
+            const now = new Date();
+            const upcoming = normalised.find((entry) => entry.dateObject && entry.dateObject.getTime() >= now.getTime());
+            const selected = upcoming || normalised[0];
+
+            return {
+                datetime: selected.datetime ?? null,
+                seanceId: selected.seanceId ?? null,
+                directUrl: selected.directUrl ?? null
+            };
+        }
+
+        function composeInticketsUrl(pathOrUrl, options = {}) {
+            const { seance, anchor = false } = options;
+            const baseUrl = normaliseBaseUrl(INTICKETS_WIDGET_CONFIG.baseUrl);
+            const anchorSuffix =
+                anchor && typeof INTICKETS_WIDGET_CONFIG.anchor === 'string'
+                    ? INTICKETS_WIDGET_CONFIG.anchor
+                    : '';
+            const seanceDescriptor = seance && typeof seance === 'object' ? seance : null;
+
+            let url = pathOrUrl ? String(pathOrUrl) : '';
+
+            if (!url) {
+                if (seanceDescriptor?.seanceId) {
+                    url = `${baseUrl}seance/${seanceDescriptor.seanceId}`;
+                } else if (seanceDescriptor?.datetime) {
+                    const suffix = formatInticketsScheduleSuffix(new Date(seanceDescriptor.datetime));
+                    url = suffix ? `${baseUrl.replace(/\/$/, '')}/${suffix}` : baseUrl || '#';
+                } else {
+                    url = baseUrl || '#';
+                }
+            } else if (!/^https?:/i.test(url)) {
+                url = `${baseUrl}${url.replace(/^\//, '')}`;
+            }
+
+            const hasSeancePath = /\/seance\/\d+/.test(url) || /\d{8}_\d{4}(?:[#/]|$)/.test(url);
+
+            if (seanceDescriptor && !hasSeancePath) {
+                if (seanceDescriptor.seanceId) {
+                    url = `${baseUrl}seance/${seanceDescriptor.seanceId}`;
+                } else if (seanceDescriptor.datetime) {
+                    const suffix = formatInticketsScheduleSuffix(new Date(seanceDescriptor.datetime));
+                    if (suffix) {
+                        const hashIndex = url.indexOf('#');
+                        const basePart = hashIndex >= 0 ? url.slice(0, hashIndex) : url;
+                        const hashPart = hashIndex >= 0 ? url.slice(hashIndex) : '';
+                        url = `${basePart.replace(/\/$/, '')}/${suffix}${hashPart}`;
+                    }
+                }
+            }
+
+            if (anchorSuffix && !url.includes('#')) {
+                url += anchorSuffix;
+            }
+
+            return url;
+        }
+
+        function normaliseBaseUrl(value) {
+            if (!value) {
+                return '';
+            }
+
+            return value.endsWith('/') ? value : `${value}/`;
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             initHeroSlider();
@@ -1246,6 +1441,8 @@
                     date: null,
                     dateText: 'Дата уточняется',
                     image: AFISHA_PLACEHOLDER_IMAGE,
+                    ticketUrl: '#',
+                    detailsUrl: '#',
                     url: '#'
                 };
             }
@@ -1254,14 +1451,62 @@
             const parsedDate = isoDate ? new Date(isoDate) : null;
             const displayDate = parsedDate ? formatAfishaDate(parsedDate) : 'Дата уточняется';
 
+            const seanceDescriptor = createSeanceDescriptor(raw, isoDate);
+            const eventIdentifier =
+                raw.inticketsEventIdentifier ||
+                raw.event_identifier ||
+                raw.eventPath ||
+                raw.event_slug ||
+                (raw.inticketsEventId ? `node/${raw.inticketsEventId}` : null) ||
+                (raw.event_id ? `node/${raw.event_id}` : null);
+
+            const detailsCandidate =
+                raw.detailsUrl ||
+                raw.details_url ||
+                raw.event_url ||
+                raw.url ||
+                raw.link ||
+                eventIdentifier;
+
+            const ticketCandidate =
+                raw.ticketUrl ||
+                raw.ticket_url ||
+                raw.seance_url ||
+                raw.url ||
+                raw.link ||
+                eventIdentifier;
+
+            const ticketUrl =
+                typeof raw.ticketUrl === 'string' && raw.ticketUrl
+                    ? raw.ticketUrl
+                    : seanceDescriptor?.directUrl
+                    ? composeInticketsUrl(seanceDescriptor.directUrl, { anchor: true })
+                    : composeInticketsUrl(ticketCandidate, { seance: seanceDescriptor, anchor: true });
+
+            const detailsUrl =
+                typeof raw.detailsUrl === 'string' && raw.detailsUrl
+                    ? composeInticketsUrl(raw.detailsUrl, { anchor: true })
+                    : composeInticketsUrl(detailsCandidate, { anchor: true });
+
+            const imageSource =
+                raw.image ||
+                raw.poster ||
+                raw.cover ||
+                raw.imageUrl ||
+                raw.photo ||
+                (Array.isArray(raw.photos) ? raw.photos[0]?.url : null) ||
+                AFISHA_PLACEHOLDER_IMAGE;
+
             return {
                 id: raw.id || raw.event_id || raw.slug || 'unknown',
                 title: raw.title || raw.name || 'Без названия',
                 venue: raw.venue || raw.place || raw.location || '',
                 date: parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime()) ? parsedDate : null,
                 dateText: displayDate,
-                image: raw.image || raw.poster || raw.cover || AFISHA_PLACEHOLDER_IMAGE,
-                url: raw.url || raw.seance_url || raw.link || '#'
+                image: imageSource || AFISHA_PLACEHOLDER_IMAGE,
+                ticketUrl: ticketUrl || '#',
+                detailsUrl: detailsUrl || '#',
+                url: (detailsUrl || ticketUrl || '#')
             };
         }
 
@@ -1271,7 +1516,8 @@
             const dateLabel = escapeHtml(event.dateText || 'Дата уточняется');
             const venueLabel = event.venue ? ` · ${escapeHtml(event.venue)}` : '';
             const cover = escapeAttr(event.image || AFISHA_PLACEHOLDER_IMAGE);
-            const link = escapeAttr(event.url || '#');
+            const ticketLink = escapeAttr(event.ticketUrl || event.url || '#');
+            const detailsLink = escapeAttr(event.detailsUrl || event.url || '#');
 
             return `
                 <article class="afisha-card">
@@ -1282,8 +1528,8 @@
                         <h3 class="afisha-card-title">${safeTitle}</h3>
                         <div class="afisha-card-meta">${dateLabel}${venueLabel}</div>
                         <div class="afisha-card-actions">
-                            <a class="btn" href="${link}" target="_blank" rel="noopener">Купить билет</a>
-                            <a class="btn btn-ghost" href="${link}" target="_blank" rel="noopener">Подробнее</a>
+                            <a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>
+                            <a class="btn btn-ghost" href="${detailsLink}" target="_blank" rel="noopener">Подробнее</a>
                         </div>
                     </div>
                 </article>
@@ -1310,6 +1556,46 @@
             `;
 
             grid.innerHTML = Array.from({ length: count }, () => skeleton).join('');
+        }
+
+
+        function formatInticketsScheduleSuffix(date) {
+            if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+                return '';
+            }
+
+            const pad = (value) => String(value).padStart(2, '0');
+
+            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(
+                date.getMinutes()
+            )}`;
+        }
+
+        function createSeanceDescriptor(raw, isoDate) {
+            const descriptor = {};
+
+            if (isoDate) {
+                descriptor.datetime = isoDate;
+            }
+
+            const seanceId =
+                raw?.inticketsSeanceId ??
+                raw?.seanceId ??
+                raw?.seance_id ??
+                raw?.session_id ??
+                (raw?.seance && raw.seance.id) ??
+                null;
+
+            if (seanceId) {
+                descriptor.seanceId = String(seanceId).trim();
+            }
+
+            const directUrl = raw?.seanceUrl ?? raw?.seance_url ?? null;
+            if (directUrl) {
+                descriptor.directUrl = directUrl;
+            }
+
+            return Object.keys(descriptor).length ? descriptor : null;
         }
 
         function formatAfishaDate(date) {
