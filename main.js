@@ -90,38 +90,146 @@ const AFISHA_SUPPLEMENTAL = Object.freeze({
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    initHeroSlider();
+    const heroSlider = setupHeroSlider();
     const modalController = setupAfishaModal();
-    initAfishaSection(modalController);
+    initAfishaSection(modalController, heroSlider);
 });
 
-function initHeroSlider() {
+function setupHeroSlider() {
     const slider = document.querySelector('.hero-slider');
     if (!slider) {
-        return;
-    }
-
-    const slides = Array.from(slider.querySelectorAll('.banner-item'));
-    if (!slides.length) {
-        return;
+        return { update() {} };
     }
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    slides.forEach((slide, index) => {
-        slide.classList.toggle('is-active', index === 0);
-    });
+    const cycleDuration = 5000;
+    let slides = [];
+    let currentIndex = 0;
+    let timerId = null;
 
-    if (reduceMotion || slides.length <= 1) {
-        return;
+    function refreshSlides() {
+        slides = Array.from(slider.querySelectorAll('.banner-item'));
+
+        if (!slides.length) {
+            stop();
+            return;
+        }
+
+        if (!slides[currentIndex]) {
+            currentIndex = 0;
+        }
+
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('is-active', index === currentIndex);
+        });
+
+        if (reduceMotion || slides.length <= 1) {
+            stop();
+        } else {
+            start();
+        }
     }
 
-    let current = 0;
-    const cycleDuration = 5000;
-    setInterval(() => {
-        slides[current].classList.remove('is-active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('is-active');
-    }, cycleDuration);
+    function start() {
+        if (timerId || reduceMotion || slides.length <= 1) {
+            return;
+        }
+
+        timerId = window.setInterval(() => {
+            if (!slides.length) {
+                return;
+            }
+
+            slides[currentIndex]?.classList.remove('is-active');
+            currentIndex = (currentIndex + 1) % slides.length;
+            slides[currentIndex]?.classList.add('is-active');
+        }, cycleDuration);
+    }
+
+    function stop() {
+        if (timerId) {
+            window.clearInterval(timerId);
+            timerId = null;
+        }
+    }
+
+    function update(eventList = []) {
+        const dynamicSlides = slider.querySelectorAll('[data-hero-dynamic]');
+        dynamicSlides.forEach((slide) => slide.remove());
+
+        if (Array.isArray(eventList) && eventList.length) {
+            const sorted = [...eventList].sort((a, b) => {
+                const aTime = a.date instanceof Date && !Number.isNaN(a.date.getTime()) ? a.date.getTime() : Number.MAX_SAFE_INTEGER;
+                const bTime = b.date instanceof Date && !Number.isNaN(b.date.getTime()) ? b.date.getTime() : Number.MAX_SAFE_INTEGER;
+
+                if (aTime === bTime) {
+                    return (a.title || '').localeCompare(b.title || '', 'ru');
+                }
+
+                return aTime - bTime;
+            });
+
+            const fragment = document.createDocumentFragment();
+
+            sorted.slice(0, 3).forEach((event) => {
+                if (!event || !event.title) {
+                    return;
+                }
+
+                const slide = document.createElement('div');
+                slide.className = 'banner-item';
+                slide.setAttribute('data-hero-dynamic', '');
+
+                if (event.image) {
+                    slide.style.setProperty('--slide-bg', `url('${escapeCssUrl(event.image)}')`);
+                }
+
+                const dateEl = document.createElement('div');
+                dateEl.className = 'banner-date';
+                dateEl.textContent = formatHeroDate(event.date, event.time);
+                slide.appendChild(dateEl);
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'banner-title';
+                titleEl.textContent = event.title;
+                slide.appendChild(titleEl);
+
+                if (event.ticketUrl) {
+                    const link = document.createElement('a');
+                    link.className = 'banner-cta';
+                    link.href = event.ticketUrl;
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.textContent = 'Купить билет';
+                    slide.appendChild(link);
+                } else {
+                    const soon = document.createElement('span');
+                    soon.className = 'banner-cta banner-cta--disabled';
+                    soon.textContent = 'Скоро в продаже';
+                    slide.appendChild(soon);
+                }
+
+                fragment.appendChild(slide);
+            });
+
+            slider.appendChild(fragment);
+        }
+
+        stop();
+        const brandSlide = slider.querySelector('[data-hero-brand]');
+        currentIndex = brandSlide ? Array.from(slider.children).indexOf(brandSlide) : 0;
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+
+        refreshSlides();
+    }
+
+    refreshSlides();
+
+    return {
+        update
+    };
 }
 
 function setupAfishaModal() {
@@ -275,7 +383,7 @@ function setupAfishaModal() {
     return { open, close };
 }
 
-function initAfishaSection(modalController) {
+function initAfishaSection(modalController, heroSlider) {
     const section = document.querySelector('[data-afisha]');
     if (!section) {
         return;
@@ -346,6 +454,10 @@ function initAfishaSection(modalController) {
                 statusField.hidden = true;
                 statusField.textContent = '';
             }
+
+            if (heroSlider && typeof heroSlider.update === 'function') {
+                heroSlider.update(events);
+            }
         } catch (error) {
             console.error('Не удалось загрузить baza_afisha.json', error);
             events = [];
@@ -354,6 +466,10 @@ function initAfishaSection(modalController) {
             if (statusField) {
                 statusField.hidden = false;
                 statusField.textContent = 'Не удалось загрузить baza_afisha.json. Проверьте содержимое файла.';
+            }
+
+            if (heroSlider && typeof heroSlider.update === 'function') {
+                heroSlider.update([]);
             }
         }
 
@@ -403,22 +519,27 @@ function normalizeAfishaEvent(raw) {
     const id = raw.id || slugify(raw.title || '');
     const supplemental = AFISHA_SUPPLEMENTAL[id] || {};
     const title = raw.title || supplemental.title || 'Без названия';
-    const isoDate = buildIsoDate(raw.date, raw.time);
+
+    const time = raw.time || '';
+    const venue = raw.venue || supplemental.venue || '';
+    const isoDate = buildIsoDate(raw.date, time);
     const parsedDate = isoDate ? new Date(isoDate) : null;
     const isValidDate = parsedDate instanceof Date && !Number.isNaN(parsedDate?.getTime());
-    const cardMeta = buildCardMeta(parsedDate, raw.time, supplemental.venue);
-    const modalMeta = buildModalMeta(parsedDate, raw.time, supplemental.venue);
+    const cardMeta = buildCardMeta(parsedDate, time, venue);
+    const modalMeta = buildModalMeta(parsedDate, time, venue);
     const description = supplemental.description || '';
     const creators = Array.isArray(supplemental.creators) ? supplemental.creators : [];
     const gallery = Array.isArray(supplemental.gallery) ? supplemental.gallery : [];
     const image = supplemental.image || AFISHA_PLACEHOLDER_IMAGE;
     const ticketUrl = raw.link || supplemental.ticketUrl || '';
-    const venue = supplemental.venue || '';
+
+
 
     return {
         id: id || slugify(title),
         title,
         date: isValidDate ? parsedDate : null,
+        time,
         cardMeta,
         modalMeta,
         description,
@@ -491,14 +612,39 @@ function buildModalMeta(date, time, venue) {
     return parts.join(' · ');
 }
 
+function formatHeroDate(date, time) {
+    const parts = [];
+
+    if (date instanceof Date && !Number.isNaN(date.getTime())) {
+        parts.push(
+            date.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            })
+        );
+    }
+
+    if (time) {
+        parts.push(time);
+    }
+
+    return parts.join(' · ') || 'Дата уточняется';
+}
+
+
 function renderAfishaCard(event) {
     const safeTitle = escapeHtml(event.title);
     const safeAlt = escapeAttr(`Афиша спектакля ${event.title}`);
     const cover = escapeAttr(event.image || AFISHA_PLACEHOLDER_IMAGE);
     const meta = escapeHtml(event.cardMeta || 'Дата уточняется');
-    const ticketLink = escapeAttr(event.ticketUrl || '#');
+    const hasTicket = Boolean(event.ticketUrl);
+    const ticketLink = hasTicket ? escapeAttr(event.ticketUrl) : '';
     const triggerId = escapeAttr(event.id || 'event');
     const openLabel = escapeAttr(`Открыть описание спектакля «${event.title}»`);
+    const actionMarkup = hasTicket
+        ? `<a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>`
+        : '<span class="afisha-card-badge" aria-label="Билеты появятся позже">Скоро в продаже</span>';
 
     return `
         <article class="afisha-card" data-afisha-id="${triggerId}">
@@ -509,7 +655,8 @@ function renderAfishaCard(event) {
                 <h3 class="afisha-card-title">${safeTitle}</h3>
                 <div class="afisha-card-meta">${meta}</div>
                 <div class="afisha-card-actions">
-                    <a class="btn" href="${ticketLink}" target="_blank" rel="noopener">Купить билет</a>
+
+                    ${actionMarkup}
                 </div>
             </div>
         </article>
@@ -561,3 +708,9 @@ function escapeHtml(value) {
 function escapeAttr(value) {
     return escapeHtml(value);
 }
+
+
+function escapeCssUrl(value) {
+    return String(value ?? '').replace(/([')\\"])/g, '\\$1');
+}
+

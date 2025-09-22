@@ -293,6 +293,14 @@
             box-shadow: 0 10px 25px rgba(216, 178, 93, 0.2);
         }
 
+        .banner-cta--disabled {
+            pointer-events: none;
+            background: transparent;
+            color: var(--muted);
+            border-style: dashed;
+            cursor: default;
+        }
+
         section {
             margin-top: 5rem;
         }
@@ -507,13 +515,19 @@
             flex-direction: column;
             gap: 0.85rem;
             padding: 1.6rem 1.6rem 1.8rem;
+            flex: 1;
+            min-height: 220px;
+
         }
 
         .afisha-card-title {
-            margin: 0;
-            font-size: 1.1rem;
+            margin: 0;8
+            font-size: 1rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .afisha-card-meta {
@@ -525,12 +539,33 @@
         .afisha-card-actions {
             margin-top: auto;
             display: flex;
+            align-items: stretch;
+        }
+
+        .afisha-card-actions > * {
+            flex: 1;
+            min-height: 3rem;
         }
 
         .afisha-card-actions .btn {
             width: 100%;
         }
 
+        .afisha-card-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.25rem;
+            border-radius: 999px;
+            border: 1px dashed rgba(216, 178, 93, 0.6);
+            background: rgba(216, 178, 93, 0.08);
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
         .afisha-empty {
             padding: 1.6rem;
             border-radius: 18px;
@@ -913,6 +948,13 @@
 
             .afisha-card-body {
                 padding: 1.4rem 1.4rem 1.6rem;
+                min-height: 200px;
+            }
+
+            .afisha-card-title {
+                font-size: 0.95rem;
+                letter-spacing: 0.05em;
+
             }
 
             .afisha-modal {
@@ -976,10 +1018,11 @@
 
             .afisha-card-body {
                 padding: 1.25rem 1.25rem 1.4rem;
+                min-height: 190px;
             }
 
             .afisha-card-title {
-                font-size: 1rem;
+                font-size: 0.92rem;
             }
 
             .afisha-card-meta {
@@ -1011,7 +1054,6 @@
                 padding: 1.8rem;
             }
 
-
             .social-buttons {
                 gap: 0.75rem;
             }
@@ -1037,7 +1079,7 @@
     <main>
         <section class="hero" id="about">
             <div class="banner hero-slider" aria-label="Анимированный баннер AmmA Production">
-                <div class="banner-item banner-item-brand is-active">
+                <div class="banner-item banner-item-brand is-active" data-hero-brand>
                     <h1 class="hero-heading" aria-label="AmmA Production">
                         <span class="hero-brand" aria-hidden="true">
                             <span class="hero-letter hero-letter-large">A</span>
@@ -1052,24 +1094,6 @@
                         <span class="hero-director-name">Вера Анненкова</span>
                     </div>
                 </div>
-                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80');">
-
-                    <div class="banner-date">12 апреля 2024</div>
-                    <div class="banner-title">«Мой бедный Марат»</div>
-                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
-                </div>
-                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="banner-date">26 апреля 2024</div>
-
-                    <div class="banner-title">«Окна. Город. Любовь...»</div>
-                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
-                </div>
-                <div class="banner-item" style="--slide-bg: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80');">
-
-                    <div class="banner-date">14 мая 2024</div>
-                    <div class="banner-title">«Остров»</div>
-                    <a class="banner-cta" href="https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe" target="_blank" rel="noopener">Купить билет</a>
-                </div>
             </div>
             <p>Продюсерский центр нового поколения, объединяющий драматическое искусство, современный визуальный язык и авторские творческие решения. Мы создаём спектакли, которые говорят с публикой на одном языке и оставляют послевкусие настоящего театра.</p>
         </section>
@@ -1077,7 +1101,6 @@
         <section class="afisha" id="playbill" data-afisha>
             <div class="afisha-header">
                 <h2 class="section-title">Афиша</h2>
-
                 <p class="afisha-description">Расписание спектаклей формируется автоматически из файла <strong>baza_afisha.json</strong>. Обновите дату, время или ссылку в базе — и афиша мгновенно изменится на сайте.</p>
             </div>
             <div class="afisha-controls">
@@ -1289,6 +1312,7 @@
     </main>
 
     <footer>
+
         © 2025 AmmA Production. Все права защищены.
     </footer>
 
