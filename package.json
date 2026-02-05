@@ -4,7 +4,8 @@
   "description": "Одностраничный сайт AmmA Production с локальной админкой и сервером для сохранения афиши.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "check-img-list": "node scripts/check-img-list.js"
   },
   "dependencies": {
     "express": "^4.19.2",

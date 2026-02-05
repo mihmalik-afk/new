@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Вера Анненкова",
+    "role": "Художественный руководитель",
+    "photo": "team-photos/annenkova.jpg"
+  },
+  {
+    "name": "Михаил Маликов",
+    "role": "Актер",
+    "photo": "team-photos/malikov.jpg"
+  },
+  {
+    "name": "Алина Мазненкова",
+    "role": "Актриса",
+    "photo": "team-photos/maznenkova.jpg"
+  },
+  {
+    "name": "Максим Дементьев",
+    "role": "Актер",
+    "photo": "team-photos/dementiev.jpg"
+  },
+  {
+    "name": "Аксинья Олейник",
+    "role": "Актриса",
+    "photo": "team-photos/oleinik.jpg"
+  },
+  {
+    "name": "Аким Гутников",
+    "role": "Звукорежиссёр",
+    "photo": ""
+  },
+  {
+    "name": "Роман Савин",
+    "role": "Художник по свету",
+    "photo": ""
+  },
+  {
+    "name": "Никита Ягодкин",
+    "role": "Главный механик сцены",
+    "photo": ""
+  },
+  {
+    "name": "Марина Ягодкина",
+    "role": "Заведующая бутофорским цехом",
+    "photo": ""
+  },
+  {
+    "name": "Андрей Шестаков",
+    "role": "Механик сцены",
+    "photo": ""
+  }
+]

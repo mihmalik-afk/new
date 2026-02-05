@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Админка — Афиша</title>
+  <style>
+    :root{--bg:#0f0f0f;--card:#171717;--text:#f7f7f7;--muted:#cfcfcf;--accent:#d8b25d}
+    body{font-family:Montserrat,Segoe UI,Arial,sans-serif;margin:0;background:var(--bg);color:var(--text);padding:1rem}
+    .wrap{max-width:1100px;margin:0 auto}
+    h1{margin:0 0 1rem;font-family:Cinzel,serif}
+    .controls{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+    .btn{background:var(--accent);color:#111;border:none;padding:0.6rem 0.9rem;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06)}
+    .card{background:var(--card);padding:1rem;border-radius:12px;border:1px solid rgba(216,178,93,0.08);margin-bottom:1rem}
+  .list{display:grid;gap:0.75rem}
+  .row{display:flex;gap:0.75rem;align-items:flex-start;flex-wrap:wrap}
+  .row > *{flex:1;min-width:220px}
+    input[type=text],textarea{width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text)}
+    textarea{min-height:64px}
+    .meta{font-size:0.85rem;color:var(--muted);margin-bottom:0.5rem}
+    .small{font-size:0.85rem;color:var(--muted)}
+    .actions{display:flex;gap:0.5rem}
+    .danger{background:#7b1b1b}
+    .notice{padding:0.6rem;border-radius:8px;margin-bottom:1rem;background:linear-gradient(90deg,rgba(216,178,93,0.08),rgba(0,0,0,0.2));color:var(--muted)}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+    @media (max-width:720px){.row{flex-direction:column}.row> *{flex:unset}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Админка — Афиша</h1>
+      <div class="controls">
+        <button id="reload" class="btn secondary">Загрузить</button>
+        <button id="saveServer" class="btn">Сохранить на сервер</button>
+        <button id="copyJson" class="btn secondary">Копировать JSON</button>
+        <button id="download" class="btn secondary">Скачать JSON</button>
+      </div>
+    </div>
+
+    <div id="notice" class="notice" hidden></div>
+
+    <section class="card">
+      <h2 class="small">Добавить спектакль</h2>
+      <div class="row new-row">
+        <input id="newTitle" type="text" placeholder="Название">
+        <input id="newDate" type="date" placeholder="Дата">
+        <input id="newTime" type="time" placeholder="Время">
+      </div>
+      <div style="margin-top:0.5rem">
+        <textarea id="newDesc" placeholder="Краткое описание"></textarea>
+      </div>
+      <div style="margin-top:0.5rem;display:flex;gap:0.5rem">
+        <button id="addBtn" class="btn">Добавить</button>
+        <button id="clearNew" class="btn secondary">Очистить</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="small">Существующие спектакли</h2>
+      <div id="list" class="list"></div>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const listEl = document.getElementById('list');
+      const notice = document.getElementById('notice');
+      let data = [];
+
+      function showNotice(msg, timeout=3000){
+        notice.textContent = msg; notice.hidden = false;
+        setTimeout(()=> notice.hidden = true, timeout);
+      }
+
+      async function loadData(){
+        try{
+          const res = await fetch('baza_afisha.json', {cache: 'no-store'});
+          if(!res.ok) throw new Error('Не удалось загрузить baza_afisha.json: '+res.status);
+          data = await res.json();
+          if(!Array.isArray(data)){
+            // If file contains object with array field, try to find events array
+            const maybe = Object.values(data).find(v => Array.isArray(v));
+            if(maybe) data = maybe; else data = [];
+          }
+          renderList();
+          showNotice('Данные загружены');
+        }catch(err){
+          console.error(err); showNotice('Ошибка загрузки: '+err.message,5000);
+        }
+      }
+
+      function attachImageHandlers(container){
+        const imgs = container.querySelectorAll('img[data-preview-for]');
+        imgs.forEach(img=>{
+          img.onerror = () => { img.style.display = 'none'; };
+          img.onload = () => { img.style.display = 'block'; };
+        });
+      }
+
+      function renderList(){
+        listEl.innerHTML = '';
+        if(!data.length){ listEl.innerHTML = '<div class="small">Список пуст.</div>'; return }
+          data.forEach((item, idx)=>{
+            const el = document.createElement('div'); el.className='row';
+            // normalize image url: if it's a bare filename, prefix with /uploads/
+            const rawImage = item.image || '';
+            let imageUrl = '';
+            if(rawImage){
+              if(rawImage.startsWith('http') || rawImage.startsWith('/')) imageUrl = rawImage;
+              else imageUrl = '/uploads/' + rawImage;
+            }
+
+            // parse date and time for UI
+            let isoDate = '';
+            let timeVal = '';
+            if(item.date){
+              // item.date may be YYYY-MM-DD or dd.mm.yyyy; try to normalize
+              const isoMatch = String(item.date).match(/^(\d{4}-\d{2}-\d{2})/);
+              if(isoMatch) isoDate = isoMatch[1];
+              else {
+                // try dd.mm.yyyy -> convert
+                const dmatch = String(item.date).match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+                if(dmatch){
+                  const dd = dmatch[1].padStart(2,'0'); const mm = dmatch[2].padStart(2,'0'); const yyyy = dmatch[3];
+                  isoDate = `${yyyy}-${mm}-${dd}`;
+                }
+              }
+            }
+            if(item.time) timeVal = item.time;
+
+            el.innerHTML = `
+              <div style="min-width:220px;max-width:420px">
+                <div class="meta">ID: <span class="small">${item.id ?? idx}</span></div>
+                <input data-idx="${idx}" data-field="title" type="text" value="${escapeHtml(item.title||item.name||'')}">
+                <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+                  <input data-idx="${idx}" data-field="date" type="date" value="${escapeHtml(isoDate)}">
+                  <input data-idx="${idx}" data-field="time" type="time" value="${escapeHtml(timeVal)}">
+                </div>
+                <div style="margin-top:0.5rem">
+                  <div class="small">Изображение</div>
+                  <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.25rem">
+                    <img data-preview-for="${idx}" src="${escapeHtml(imageUrl)}" style="width:120px;height:140px;object-fit:cover;border-radius:8px;display:${imageUrl? 'block':'none'}" alt="">
+                    <div style="flex:1;min-width:0">
+                      <input data-idx="${idx}" data-action="choose-image" type="file" accept="image/*">
+                      <div style="margin-top:6px" class="small">${imageUrl? escapeHtml(imageUrl) : 'Нет изображения'}</div>
+                      <div style="margin-top:6px">
+                        <button data-action="remove-image" data-idx="${idx}" class="btn secondary">Удалить изображение</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="min-width:220px">
+                <textarea data-idx="${idx}" data-field="description">${escapeHtml(item.description||item.desc||'')}</textarea>
+                <div class="actions" style="margin-top:0.5rem">
+                  <button data-action="save" data-idx="${idx}" class="btn">Сохранить</button>
+                  <button data-action="delete" data-idx="${idx}" class="btn danger">Удалить</button>
+                </div>
+              </div>
+            `;
+            listEl.appendChild(el);
+            // attach handlers per-image
+            attachImageHandlers(el);
+          });
+      }
+
+      function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+      // Delegation for save/delete and inline edits
+      listEl.addEventListener('click', (e)=>{
+        const btn = e.target.closest('button'); if(!btn) return;
+        const action = btn.dataset.action; const idx = Number(btn.dataset.idx);
+        if(action==='delete'){
+          if(!confirm('Удалить спектакль?')) return;
+          data.splice(idx,1); renderList();
+        }else if(action==='save'){
+          // gather fields for this idx
+          const title = document.querySelector(`input[data-idx="${idx}"][data-field="title"]`).value.trim();
+          const dateVal = document.querySelector(`input[data-idx="${idx}"][data-field="date"]`).value; // iso YYYY-MM-DD or empty
+          const timeVal = document.querySelector(`input[data-idx="${idx}"][data-field="time"]`).value || '';
+          const desc = document.querySelector(`textarea[data-idx="${idx}"][data-field="description"]`).value.trim();
+          // format date as dd.mm.yyyy if provided
+          let dateFormatted = '';
+          if(dateVal){ const d = new Date(dateVal); const dd = String(d.getDate()).padStart(2,'0'); const mm = String(d.getMonth()+1).padStart(2,'0'); const yyyy = d.getFullYear(); dateFormatted = `${dd}.${mm}.${yyyy}`; }
+          // update data object (preserve other fields)
+          const obj = data[idx] || {};
+          obj.title = title; obj.date = dateFormatted; obj.time = timeVal; obj.description = desc;
+          data[idx] = obj;
+          showNotice('Сохранено в памяти. Не забудьте нажать "Сохранить на сервер" или "Скачать JSON"');
+        }
+      });
+
+      // file input change (upload image)
+      listEl.addEventListener('change', async (e)=>{
+        const input = e.target;
+        if(input && input.dataset.action === 'choose-image'){
+          const idx = Number(input.dataset.idx);
+          const file = input.files && input.files[0];
+          if(!file) return;
+          // simple upload
+          const fd = new FormData(); fd.append('image', file);
+          try{
+            const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+            if(!res.ok) throw new Error('Upload failed: '+res.status);
+            const json = await res.json();
+            // set image url on item and update preview
+            data[idx] = data[idx] || {};
+            data[idx].image = json.url;
+            renderList();
+            showNotice('Изображение загружено и привязано к спектаклю');
+          }catch(err){
+            console.error(err); showNotice('Ошибка загрузки: '+err.message,5000);
+          }
+        }
+      });
+
+      // remove image handler
+      listEl.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('button'); if(!btn) return;
+        if(btn.dataset.action === 'remove-image'){
+          const idx = Number(btn.dataset.idx);
+          const item = data[idx]; if(!item || !item.image){ showNotice('Изображение не задано'); return }
+          if(!confirm('Удалить изображение у спектакля?')) return;
+          try{
+            await fetch('/api/admin/delete-image', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ url: item.image }) });
+          }catch(err){ console.warn('Удаление на сервере не удалось:', err) }
+          // remove locally
+          delete item.image; renderList();
+          showNotice('Изображение удалено (локально). Сохраните изменения.');
+        }
+      });
+
+      // Copy JSON button
+      document.getElementById('copyJson').addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(JSON.stringify(data,null,2));
+          showNotice('JSON скопирован в буфер обмена');
+        }catch(err){ console.error(err); showNotice('Не удалось скопировать: '+err.message,4000); }
+      });
+
+      // Add new event
+      document.getElementById('addBtn').addEventListener('click', ()=>{
+        const title = document.getElementById('newTitle').value.trim();
+        const iso = document.getElementById('newDate').value;
+        const time = document.getElementById('newTime').value || '';
+        const desc = document.getElementById('newDesc').value.trim();
+        if(!title){ alert('Введите название'); return }
+        const id = 'local-'+Date.now();
+        let dateStr = '';
+        if(iso){ const d = new Date(iso); const dd = String(d.getDate()).padStart(2,'0'); const mm = String(d.getMonth()+1).padStart(2,'0'); const yyyy = d.getFullYear(); dateStr = `${dd}.${mm}.${yyyy}`; }
+        data.unshift({id, title, date: dateStr, time: time, description:desc});
+        renderList();
+        document.getElementById('newTitle').value='';document.getElementById('newDate').value='';document.getElementById('newTime').value='';document.getElementById('newDesc').value='';
+        showNotice('Добавлено (изменения в памяти). Сохраните данные.');
+      });
+
+      document.getElementById('clearNew').addEventListener('click', ()=>{
+        document.getElementById('newTitle').value='';document.getElementById('newDate').value='';document.getElementById('newDesc').value='';
+      });
+
+      document.getElementById('reload').addEventListener('click', loadData);
+
+      // Try to POST to server; if fails, show error and keep data in memory
+      async function saveToServer(){
+        try{
+          // Send to the server admin route which expects { events: [...] }
+          const res = await fetch('/api/admin/events', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ events: data })
+          });
+          if(!res.ok){
+            let text = await res.text();
+            throw new Error((res.status ? res.status + ' ' : '') + (text || res.statusText));
+          }
+          showNotice('Успешно сохранено на сервере');
+        }catch(err){
+          console.error(err);
+          showNotice('Сохранение на сервер не удалось: '+err.message,5000);
+        }
+      }
+
+      document.getElementById('saveServer').addEventListener('click', ()=>{
+        saveToServer();
+      });
+
+      // Download JSON fallback for manual replacement
+      function downloadJSON(){
+        const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'baza_afisha.json'; document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+      }
+      document.getElementById('download').addEventListener('click', downloadJSON);
+
+      // Initial load
+      loadData();
+
+      // expose for debug
+      window.adminAfisha = { loadData, downloadJSON };
+    })();
+  </script>
+</body>
+</html>

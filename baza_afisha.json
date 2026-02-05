@@ -3,54 +3,61 @@
     {
       "id": "marat",
       "title": "Мой бедный Марат",
-      "date": "2025-10-31",
+      "date": "2026-02-20",
       "time": "18:00",
       "venue": "Москва · Центр Высоцкого",
-      "link": "",
-      "image": "https://amma-production.ru/img/maxresdefault.png",
-      "description": "Легендарная история о дружбе и любви на фоне блокадного города.",
-      "gallery": [
-        {
-          "src": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80",
-          "caption": "Погружение в атмосферу блокадного города"
-        },
-        {
-          "src": "https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=900&q=80",
-          "caption": "Диалог героев на тёмной сцене"
-        },
-        {
-          "src": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=900&q=80",
-          "caption": "Финальный световой акцент спектакля"
-        }
+      "link": "https://iframeab-pre2514.intickets.ru/seance/69709718/#abiframe",
+      "image": "https://amma-production.ru/img/marat1.png",
+      "gallery": [],
+      "description": "Пронзительная история любви, рождённая в руинах блокадного Ленинграда. Лика, Марат и Леонидик, выжив в войне, мечтают о счастье, но их чувства заперты в неразрешимом треугольнике. Спектакль по драматургии Арбузова раскрывает человеческую природу: жажду любви и сомнения, способные разрушить мечты.",
+      "creators": [
+        { "role": "Режиссер", "name": "Вера Анненкова" },
+        { "role": "Художник по свету", "name": "Роман Савин" },
+        { "role": "Звукорежиссер", "name": "Аким Гутников" },
+        { "role": "В ролях", "name": "Михаил Маликов, Алина Мазненкова, Максим Дементьев, " }
       ],
       "showInHero": true,
-      "heroOrder": 1
+      "heroOrder": 2
+    },
+    {
+      "id": "primadonni",
+      "title": "Примадонны",
+      "date": "2026-01-25",
+      "time": "19:00",
+      "venue": "Москва · Театр в Хамовниках",
+      "link": "https://iframeab-pre11934.intickets.ru/seance/68796513/#abiframe",
+      "image": "https://amma-production.ru/img/Primadonni.png",
+      "description": "Искромётная комедия. Эксклюзивный, предпремьерный показ",
+      "creators": [
+        { "role": "Режиссер", "name": "Вера Анненкова" },
+        { "role": "Художник по свету", "name": "Антон Юдаков" },
+        { "role": "Художник по костюмам", "name": "Клёна Родкевич" },
+        { "role": "Звукорежиссер", "name": "Аким Гутников" },
+        { "role": "В ролях", "name": "Михаил Маликов, Максим Дементьев, Татьяна Кречетова, Татьяна Максимова, Александр Стефанцов, Алексей Нестеренко, Наталья Малинина, Павел Кандин " }
+      ],
+      "gallery": [],
+      "showInHero": true,
+      "heroOrder": 2
     },
     {
       "id": "okna",
-      "title": "Окна. Город. Любовь...",
-      "date": "2025-11-09",
+      "title": "Окна.Город.Любовь...",
+      "date": "2026-02-07",
       "time": "19:00",
-      "venue": "Москва · Арт-пространство «Окна»",
-      "link": "https://iframeab-pre2514.intickets.ru/seance/60835614/#abiframe",
-      "image": "https://amma-production.ru/img/OS_04401.jpg",
-      "description": "Ироничная комедия",
-      "gallery": [
-        {
-          "src": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
-          "caption": "Городской ритм спектакля"
-        },
-        {
-          "src": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
-          "caption": "Сцена у панорамных окон"
-        },
-        {
-          "src": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=80",
-          "caption": "Пластический дуэт в свете города"
-        }
+      "venue": "Москва · Центр Высоцкого",
+      "link": "https://iframeab-pre2514.intickets.ru/seance/69662815/#abiframe",
+      "image": "https://amma-production.ru/img/okna1.jpeg",
+      "gallery": [],
+      "description": "Пронзительная история любви, рождённая в руинах блокадного Ленинграда. Лика, Марат и Леонидик, выжив в войне, мечтают о счастье, но их чувства заперты в неразрешимом треугольнике. Спектакль по драматургии Арбузова раскрывает человеческую природу: жажду любви и сомнения, способные разрушить мечты.",
+      "creators": [
+        { "role": "Режиссер", "name": "Вера Анненкова" },
+        { "role": "Художник по свету", "name": "Роман Савин" },
+        { "role": "Звукорежиссер", "name": "Аким Гутников" },
+        { "role": "В ролях", "name": "Михаил Маликов, Алина Мазненкова, Максим Дементьев, " }
       ],
       "showInHero": true,
       "heroOrder": 2
     }
+    
   ]
 }

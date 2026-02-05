@@ -321,12 +321,20 @@
 
         if (event.url) {
             const link = document.createElement('a');
-            link.className = 'afisha-card__link';
-            link.href = event.url;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.textContent = 'Купить билеты';
-            footer.appendChild(link);
+link.className = 'afisha-card__link';
+link.href = event.url;
+link.target = '_blank';
+link.rel = 'noopener noreferrer';
+link.textContent = 'Купить билеты';
+
+// 🔥 ЦЕЛЬ ЯНДЕКС МЕТРИКИ
+link.addEventListener('click', function (e) {
+    if (typeof ym === 'function') {
+        ym(106581416, 'reachGoal', 'buy_ticket_click');
+    }
+});
+
+footer.appendChild(link);
         }
 
         if (footer.children.length > 0) {

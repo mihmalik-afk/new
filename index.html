@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  
+ <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106581416', 'ym');
+
+    ym(106581416, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/106581416" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AmmA Production — продюсерский центр</title>
@@ -54,6 +70,28 @@
             gap: 1.5rem;
         }
 
+        /* social icons in header */
+        .header-socials {
+            display: inline-flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .header-socials a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.03);
+            color: var(--muted);
+            transition: background 0.2s ease, color 0.2s ease, transform 0.12s ease;
+        }
+
+        .header-socials a:hover { color: var(--text); background: rgba(255,255,255,0.03); transform: translateY(-2px) }
+
         nav ul {
             list-style: none;
             display: flex;
@@ -90,6 +128,87 @@
             transform: scaleX(1);
             transform-origin: left;
         }
+
+        /* Mobile menu button */
+        .mobile-menu-button {
+            display: none;
+            background: transparent;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .mobile-menu-button .hamburger {
+            display: block;
+            width: 26px;
+            height: 2px;
+            background: var(--text);
+            position: relative;
+        }
+
+        .mobile-menu-button .hamburger::before,
+        .mobile-menu-button .hamburger::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 26px;
+            height: 2px;
+            background: var(--text);
+        }
+
+        .mobile-menu-button .hamburger::before { top: -8px; }
+        .mobile-menu-button .hamburger::after { top: 8px; }
+
+        /* Mobile nav panel */
+        .mobile-nav {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            align-items: stretch;
+            justify-content: flex-end;
+        }
+
+        .mobile-nav[aria-hidden="false"] {
+            display: flex;
+        }
+
+        .mobile-nav-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .mobile-nav-panel {
+            width: 280px;
+            max-width: 85%;
+            background: var(--background-alt);
+            padding: 1.25rem;
+            box-shadow: -12px 0 30px rgba(0,0,0,0.6);
+            border-left: 1px solid rgba(216,178,93,0.12);
+            transform: translateX(100%);
+            transition: transform 260ms cubic-bezier(.2,.9,.2,1);
+            position: relative;
+        }
+
+        .mobile-nav[aria-hidden="false"] .mobile-nav-panel {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-panel .mobile-nav-close {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-panel ul { list-style:none; padding: 2rem 0 0; margin:0; display:flex; flex-direction:column; gap:1rem }
+        .mobile-nav-panel a { color: var(--text); font-size:1.05rem }
 
         main {
             max-width: 1100px;
@@ -208,8 +327,6 @@
             transform: translateY(18px);
             transition: opacity 0.9s ease, transform 0.9s ease;
             color: var(--text);
-            
-            : isolate;
         }
 
         .banner-item::before {
@@ -697,36 +814,60 @@
         }
 
         .afisha-modal-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .afisha-modal-gallery figure {
-            margin: 0;
-            position: relative;
-            border-radius: 14px;
-            overflow: hidden;
-            background: rgba(17, 17, 17, 0.8);
-        }
-
-        .afisha-modal-gallery img {
             display: block;
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
         }
 
-        .afisha-modal-gallery figcaption {
-            position: absolute;
-            inset: auto 0 0 0;
-            padding: 0.35rem 0.75rem;
-            background: linear-gradient(180deg, rgba(15, 15, 15, 0), rgba(15, 15, 15, 0.75));
-            font-size: 0.68rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: rgba(247, 247, 247, 0.85);
+        .afisha-modal-gallery .slider {
+            display: flex;
+            transition: transform 600ms cubic-bezier(.2,.9,.2,1);
+            will-change: transform;
         }
+
+        .afisha-modal-gallery .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            padding: 0.5rem;
+            display:flex;align-items:center;justify-content:center;
+        }
+
+        .afisha-modal-gallery .slide img{
+            width:100%;max-height:420px;object-fit:cover;border-radius:12px;display:block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .afisha-modal-gallery .slider-nav{display:flex;gap:0.5rem;justify-content:center;margin-top:0.6rem}
+        .afisha-modal-gallery .slider-nav button{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);color:var(--text);padding:0.4rem 0.6rem;border-radius:6px;cursor:pointer}
+
+        /* Lightbox for gallery */
+        .afisha-lightbox {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+        }
+
+        .afisha-lightbox.is-visible { display:flex }
+
+        .afisha-lightbox .lb-inner {
+            max-width: 95%;
+            max-height: 95%;
+            position: relative;
+        }
+
+        .afisha-lightbox img { display:block; max-width:100%; max-height:100%; border-radius:6px }
+
+        .afisha-lightbox .lb-caption { color:var(--muted); margin-top:0.5rem; text-align:center }
+
+        .afisha-lightbox .lb-close { position:absolute; right:-8px; top:-8px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06); color:var(--text); border-radius:50%; width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer }
+
+        .afisha-lightbox .lb-nav { position:absolute; left:8px; top:50%; transform:translateY(-50%); right:8px; display:flex; justify-content:space-between; pointer-events:none }
+        .afisha-lightbox .lb-nav button { pointer-events:auto; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06); color:var(--text); border-radius:6px; padding:0.4rem 0.6rem; cursor:pointer }
 
         .afisha-modal .btn {
             align-self: flex-start;
@@ -756,7 +897,7 @@
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(5, 1fr);
             gap: 1.25rem;
         }
 
@@ -768,6 +909,10 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            align-items: center;
+            text-align: center;
+            /* ensure child images or long content can't escape the rounded border */
+            overflow: hidden;
         }
 
         .team-card strong {
@@ -778,6 +923,75 @@
         .team-card span {
             color: var(--muted);
             font-size: 0.9rem;
+        }
+
+        /* Make images inside team cards fully responsive and clipped to the card */
+        .team-card img {
+            box-sizing: border-box;
+            max-width: 100%;
+            width: 100%;
+            /* let the browser choose height based on aspect-ratio so the image
+               fills the card predictably without excessive cropping */
+            height: auto !important;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            /* prefer the top of the photo (head/shoulders) to remain visible */
+            object-position: top center;
+            display: block;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        /* Special larger photo for Dementiev */
+        .team-card.dementiev .team-photo {
+            max-height: 420px;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        /* Responsive: prevent team grid from overflowing on small screens */
+        .team-grid,
+        .team-card {
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 900px) {
+            .team-grid {
+                /* allow the grid to wrap to as many columns as fit the screen */
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 1rem;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .team-card {
+                /* reduce padding so cards fit comfortably on small screens */
+                padding: 1rem;
+                align-items: center;
+            }
+
+            .team-card img {
+                /* ensure images scale down and display fully on narrow screens */
+                width: 100%;
+                height: auto;
+                /* allow more vertical space so the whole head/shoulders can fit */
+                max-height: 320px;
+                /* don't crop the image on mobile; show the full photo within the card */
+                aspect-ratio: auto;
+                object-fit: contain;
+                object-position: center;
+                background: var(--background-alt);
+                border-radius: 12px;
+                margin-bottom: 1rem;
+            }
+
+            /* Larger mobile photo for Dementiev specifically */
+            .team-card.dementiev .team-photo {
+                max-height: 380px;
+                object-fit: cover;
+                object-position: center top;
+            }
         }
 
         .contacts {
@@ -842,6 +1056,10 @@
         @media (max-width: 768px) {
             nav ul {
                 display: none;
+            }
+
+            .mobile-menu-button {
+                display: inline-block;
             }
 
             header {
@@ -964,12 +1182,21 @@
             }
 
             .afisha-modal-dialog {
-                padding: 1.6rem 1.35rem 1.8rem;
+                /* add extra top padding so the close button doesn't overlap modal content on small screens */
+                padding: 3rem 1.35rem 1.8rem;
             }
 
             .afisha-modal-close {
                 top: 0.75rem;
                 right: 0.75rem;
+            }
+
+            /* ensure the close button sits visually outside content and doesn't overlay text */
+            .afisha-modal-close {
+                width: 40px;
+                height: 40px;
+                line-height: 36px;
+                transform: none;
             }
 
             .afisha-modal-gallery {
@@ -995,11 +1222,38 @@
     <header>
         <div class="nav-container">
             <nav>
+                <button class="mobile-menu-button" aria-controls="mobile-nav" aria-expanded="false" aria-label="Открыть меню">
+                    <span class="hamburger" aria-hidden="true"></span>
+                </button>
                 <ul>
+                    <li><a href="#playbill">Афиша</a></li>
                     <li><a href="#team">Команда</a></li>
                     <li><a href="#contacts">Контакты</a></li>
                 </ul>
             </nav>
+
+            <!-- header social links -->
+            <div class="header-socials" aria-hidden="false">
+                <a href="https://t.me/ammaproduction" target="_blank" rel="noopener noreferrer" aria-label="Перейти в Телеграм канал AmmA Production">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M21.5 4.5L3.6 10.3c-.8.3-.8.9-.2 1.1l3.7 1.2 1.3 4.1c.3.9 1.1 1.1 1.9.6l2.6-2 3.9 2.8c.7.5 1.3.2 1.5-.6l3.9-16.5c.2-.9-.4-1.4-1.7-1.1z"></path></svg>
+                </a>
+                <a href="https://vk.com/ammaproduction?from=groups" target="_blank" rel="noopener noreferrer" aria-label="Перейти в сообщество ВКонтакте AmmA Production">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 12c2 0 3.5 1.6 6.2 4.4.7.7 1.2 1 1.6 1 1 0 .9-.9.9-1.8V9.6c0-.6 0-1-.6-1.3-.5-.3-1.5-.1-1.9.2-.5.4-.8.9-1.2 1.1-.8.5-.9.3-1-.1-.2-1.1-1.2-2.8-2.6-3.1-.9-.2-1.3.1-1.3.9v2.1c0 .5-.3.7-.7.7-.8 0-2-.7-3.2-1.9C7.6 8.4 6.8 7.6 5.9 7.6c-.6 0-.9.4-1.1.9-.2.6-.2 1.2-.2 1.9v3.2c0 .8.3 1.1.8 1.1.6 0 1.1-.4 1.5-.8.9-.9 1.6-1.6 3-1.6.8 0 1.2.5 1.3 1 0 .5-.1.9-.1 1.7 0 .8.3 1.1 1 1.1 1 0 1.8-1 2.5-1.8.7-.8 1.2-1.2 1.9-1.2z"></path></svg>
+                </a>
+            </div>
+
+            <!-- Mobile navigation panel (hidden by default) -->
+            <div id="mobile-nav" class="mobile-nav" hidden aria-hidden="true">
+                <div class="mobile-nav-backdrop" data-mobile-nav-backdrop></div>
+                <div class="mobile-nav-panel" role="dialog" aria-modal="true">
+                    <button class="mobile-nav-close" aria-label="Закрыть меню">&times;</button>
+                    <ul>
+                        <li><a href="#playbill">Афиша</a></li>
+                        <li><a href="#team">Команда</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -1057,25 +1311,50 @@
             <h2 class="section-title">Команда</h2>
             <div class="team-grid">
                 <div class="team-card">
+                    <img src="team-photos/annenkova.jpg" alt="Вера Анненкова" style="width:100%;height:220px;object-fit:cover;border-radius:12px;filter:grayscale(1);margin-bottom:1rem;">
                     <strong>Вера Анненкова</strong>
                     <span>Художественный руководитель</span>
                 </div>
                 <div class="team-card">
+                    <img src="team-photos/malikov.jpg" alt="Михаил Маликов" style="width:100%;height:220px;object-fit:cover;border-radius:12px;filter:grayscale(1);margin-bottom:1rem;">
                     <strong>Михаил Маликов</strong>
                     <span>Актер</span>
                 </div>
                 <div class="team-card">
+                    <img src="team-photos/maznenkova.jpg" alt="Алина Мазненкова" style="width:100%;height:220px;object-fit:cover;border-radius:12px;filter:grayscale(1);margin-bottom:1rem;">
                     <strong>Алина Мазненкова</strong>
-                    <span>Актер</span>
+                    <span>Актриса</span>
                 </div>
-                <div class="team-card">
+                <div class="team-card dementiev">
+                    <img src="team-photos/dementiev.jpg" alt="Максим Дементьев" class="team-photo" style="filter:grayscale(1);">
                     <strong>Максим Дементьев</strong>
                     <span>Актер</span>
                 </div>
                 <div class="team-card">
+                    <img src="team-photos/oleinik.jpg" alt="Аксинья Олейник" style="width:100%;height:220px;object-fit:cover;border-radius:12px;filter:grayscale(1);margin-bottom:1rem;">
                     <strong>Аксинья Олейник</strong>
-                    <span>Актер</span>
+                    <span>Актриса</span>
                 </div>
+                    <div class="team-card">
+                        <strong>Аким Гутников</strong>
+                        <span>Звукорежиссёр</span>
+                    </div>
+                    <div class="team-card">
+                        <strong>Роман Савин</strong>
+                        <span>Художник по свету</span>
+                    </div>
+                    <div class="team-card">
+                        <strong>Никита Ягодкин</strong>
+                        <span>Главный механик сцены</span>
+                    </div>
+                    <div class="team-card">
+                        <strong>Марина Ягодкина</strong>
+                        <span>Заведующая бутафорским цехом</span>
+                    </div>
+                    <div class="team-card">
+                        <strong>Андрей Шестаков</strong>
+                        <span>Механик сцены</span>
+                    </div>
             </div>
         </section>
 
@@ -1105,9 +1384,68 @@
 
     <footer>
 
-        © 2025 AmmA Production. Все права защищены.
+        <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;">
+            <div>© 2026 AmmA Production. Все права защищены.</div>
+            <div class="social-buttons" aria-label="Социальные сети">
+                <a class="social-button" href="https://t.me/ammaproduction" target="_blank" rel="noopener noreferrer" aria-label="Телеграм канал AmmA Production">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M21.5 4.5L3.6 10.3c-.8.3-.8.9-.2 1.1l3.7 1.2 1.3 4.1c.3.9 1.1 1.1 1.9.6l2.6-2 3.9 2.8c.7.5 1.3.2 1.5-.6l3.9-16.5c.2-.9-.4-1.4-1.7-1.1z"></path></svg>
+                    <span style="margin-left:0.5rem">Телеграм</span>
+                </a>
+                <a class="social-button" href="https://vk.com/ammaproduction?from=groups" target="_blank" rel="noopener noreferrer" aria-label="Сообщество ВКонтакте AmmA Production">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 12c2 0 3.5 1.6 6.2 4.4.7.7 1.2 1 1.6 1 1 0 .9-.9.9-1.8V9.6c0-.6 0-1-.6-1.3-.5-.3-1.5-.1-1.9.2-.5.4-.8.9-1.2 1.1-.8.5-.9.3-1-.1-.2-1.1-1.2-2.8-2.6-3.1-.9-.2-1.3.1-1.3.9v2.1c0 .5-.3.7-.7.7-.8 0-2-.7-3.2-1.9C7.6 8.4 6.8 7.6 5.9 7.6c-.6 0-.9.4-1.1.9-.2.6-.2 1.2-.2 1.9v3.2c0 .8.3 1.1.8 1.1.6 0 1.1-.4 1.5-.8.9-.9 1.6-1.6 3-1.6.8 0 1.2.5 1.3 1 0 .5-.1.9-.1 1.7 0 .8.3 1.1 1 1.1 1 0 1.8-1 2.5-1.8.7-.8 1.2-1.2 1.9-1.2z"></path></svg>
+                    <span style="margin-left:0.5rem">ВКонтакте</span>
+                </a>
+            </div>
+        </div>
     </footer>
 
+    <script>
+        // Mobile menu behavior
+        (function () {
+            const btn = document.querySelector('.mobile-menu-button');
+            const mobileNav = document.getElementById('mobile-nav');
+            const closeBtn = document.querySelector('.mobile-nav-close');
+            const backdrop = document.querySelector('[data-mobile-nav-backdrop]');
+
+            if (!btn || !mobileNav) return;
+
+            function openMenu() {
+                mobileNav.hidden = false;
+                mobileNav.setAttribute('aria-hidden', 'false');
+                btn.setAttribute('aria-expanded', 'true');
+                // trap focus (basic) — focus first link
+                const firstLink = mobileNav.querySelector('a');
+                if (firstLink) firstLink.focus();
+            }
+
+            function closeMenu() {
+                mobileNav.setAttribute('aria-hidden', 'true');
+                btn.setAttribute('aria-expanded', 'false');
+                // delay hiding to allow panel transition
+                setTimeout(() => { mobileNav.hidden = true; }, 300);
+                btn.focus();
+            }
+
+            btn.addEventListener('click', () => {
+                const opened = btn.getAttribute('aria-expanded') === 'true';
+                if (opened) closeMenu(); else openMenu();
+            });
+
+            closeBtn && closeBtn.addEventListener('click', closeMenu);
+            backdrop && backdrop.addEventListener('click', closeMenu);
+
+            // close on link click
+            mobileNav.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') closeMenu();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileNav.getAttribute('aria-hidden') === 'false') {
+                    closeMenu();
+                }
+            });
+        })();
+    </script>
     <script src="main.js"></script>
 
 </body>

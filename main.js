@@ -5,57 +5,27 @@ const AFISHA_PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-152157226736
 const AFISHA_SUPPLEMENTAL = Object.freeze({
     marat: {
         title: 'Мой бедный Марат',
-        venue: 'Москва · Сцена AmmA Production',
-        image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
+        venue: 'Москва · Центр Высоцкого',
+        image: 'https://amma-production.ru/img/maxresdefault.png',
         description:
             'Легендарная история Алексея Арбузова о трёх молодых людях, чья дружба и любовь взрослеют на фоне осаждённого города.',
         creators: [
-            { role: 'Режиссёр', name: 'Вера Анненкова' },
-            { role: 'Продюсер', name: 'Михаил Маликов' },
-            { role: 'Исполнители', name: 'Алина Мазненкова, Максим Дементьев' },
-            { role: 'Художник по свету', name: 'Аксинья Олейник' }
+            
         ],
-        gallery: [
-            {
-                src: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80',
-                caption: 'Погружение в атмосферу блокадного города'
-            },
-            {
-                src: 'https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=900&q=80',
-                caption: 'Диалог героев на тёмной сцене'
-            },
-            {
-                src: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=900&q=80',
-                caption: 'Финальный световой акцент спектакля'
-            }
-        ]
+        gallery: []
     },
     okna: {
         title: 'Окна. Город. Любовь...',
-        venue: 'Москва · Арт-пространство «Окна»',
-        image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
+        venue: 'Москва · Центр Высоцкого',
+        image: '',
         description:
-            'Поэтический спектакль о городских историях, где пластика, видеоарт и музыка превращают каждое окно в отдельную историю любви.',
+            '',
         creators: [
-            { role: 'Художественный руководитель', name: 'Вера Анненкова' },
-            { role: 'Продюсер', name: 'Михаил Маликов' },
-            { role: 'Видеохудожник', name: 'Аксинья Олейник' },
-            { role: 'Исполнители', name: 'Алина Мазненкова, Максим Дементьев' }
+            { role: 'Режиссер', name: 'Вера Анненкова' },
+            { role: 'В ролях', name: 'Максим Дементьев, Михаил Маликов, Алина Мазненкова, Аксинья Олейник' },
+            
         ],
-        gallery: [
-            {
-                src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
-                caption: 'Городской ритм спектакля'
-            },
-            {
-                src: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80',
-                caption: 'Сцена у панорамных окон'
-            },
-            {
-                src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=80',
-                caption: 'Пластический дуэт в свете города'
-            }
-        ]
+        gallery: []
     },
     ostrov: {
         title: 'Остров',
@@ -69,20 +39,7 @@ const AFISHA_SUPPLEMENTAL = Object.freeze({
             { role: 'Исполнители', name: 'Алина Мазненкова, Максим Дементьев' },
             { role: 'Художник по свету', name: 'Аксинья Олейник' }
         ],
-        gallery: [
-            {
-                src: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80',
-                caption: 'Герои на краю острова'
-            },
-            {
-                src: 'https://images.unsplash.com/photo-1462212210333-335063b676d3?auto=format&fit=crop&w=900&q=80',
-                caption: 'Мистическое пространство спектакля'
-            },
-            {
-                src: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&w=900&q=80',
-                caption: 'Музыкальный эпизод у моря'
-            }
-        ]
+        gallery: []
     }
 });
 
@@ -255,6 +212,19 @@ function setupAfishaModal() {
     const actionsEl = modal.querySelector('[data-afisha-modal-actions]');
     const closeTriggers = modal.querySelectorAll('[data-afisha-modal-close]');
     let restoreFocusTo = null;
+    let currentEventId = null;
+
+    // Try server-side listing first (more efficient). Shared helper used by open() and renderGallery.
+    async function fetchImgListFromServer(eventId){
+        if(!eventId) return [];
+        try{
+            const resp = await fetch(`/api/img-list/${encodeURIComponent(eventId)}`, { cache: 'no-store' });
+            if(!resp.ok) return [];
+            const payload = await resp.json();
+            if(Array.isArray(payload?.images) && payload.images.length) return payload.images.slice(0, 32);
+        }catch(e){ /* ignore */ }
+        return [];
+    }
 
     closeTriggers.forEach((trigger) => {
         trigger.addEventListener('click', close);
@@ -288,8 +258,28 @@ function setupAfishaModal() {
             descEl.hidden = !descEl.textContent;
         }
 
-        renderCreators(details.creators || []);
-        renderGallery(details.gallery || [], title);
+    renderCreators(details.creators || []);
+    // set current event id for probing img folder
+    currentEventId = details.id || null;
+
+    // Prefer server-side img list from img/<eventId> - faster and authoritative.
+    (async () => {
+        let serverList = [];
+        if (currentEventId) {
+            serverList = await fetchImgListFromServer(currentEventId);
+        }
+
+        if (serverList && serverList.length) {
+            // server returned images (already randomized)
+            console.info('afisha modal: using server-side img list for', currentEventId, serverList.length, 'images');
+            renderGallery(serverList, title, { source: 'server' });
+        } else {
+            // fallback to JSON gallery or single image
+            const galleryData = Array.isArray(details.gallery) && details.gallery.length ? details.gallery : (details.image ? [{ src: details.image }] : []);
+            console.info('afisha modal: using JSON gallery / main image for', currentEventId, galleryData.length, 'images');
+            renderGallery(galleryData, title, { source: 'json' });
+        }
+    })();
         renderActions(details.ticketButtons || [], details.ticketUrl);
 
         modal.hidden = false;
@@ -341,7 +331,7 @@ function setupAfishaModal() {
             return;
         }
 
-        const markup = list
+        const markup = '<h3 style="margin:0 0 0.5rem; font-size:1rem; color:var(--text)">Создатели</h3>' + list
             .map((item) => {
                 const role = escapeHtml(item?.role || '');
                 const name = escapeHtml(item?.name || '');
@@ -353,7 +343,7 @@ function setupAfishaModal() {
         creatorsEl.hidden = false;
     }
 
-    function renderGallery(images, title) {
+    function renderGallery(images, title, options = {}) {
         if (!galleryEl) {
             return;
         }
@@ -364,23 +354,188 @@ function setupAfishaModal() {
             return;
         }
 
-        const markup = images
-            .map((entry, index) => {
-                const src = typeof entry === 'string' ? entry : entry?.src;
-                if (!src) {
-                    return '';
-                }
-                const caption = typeof entry === 'object' && entry?.caption ? entry.caption : `Кадр ${index + 1}`;
-                const safeSrc = escapeAttr(src);
-                const safeCaption = escapeHtml(caption);
-                const altText = escapeAttr(`${title} — фотография ${index + 1}`);
-                return `<figure><img src="${safeSrc}" alt="${altText}" loading="lazy"><figcaption>${safeCaption}</figcaption></figure>`;
-            })
-            .filter(Boolean)
-            .join('');
+        // helper to normalize image src (uploads/ or img/ -> absolute)
+        function normalizeSrc(src){
+            if(!src) return '';
+            if(/^https?:\/\//i.test(src)) return src; // absolute URL
+            if(src.startsWith('/')) return src; // already root-relative
+            if(src.startsWith('uploads/') || src.startsWith('./uploads/') || src.startsWith('../uploads/')) return '/' + src.replace(/^\.\//, '');
+            if(src.startsWith('img/') || src.startsWith('./img/') || src.startsWith('../img/')) return '/' + src.replace(/^\.\//, '');
+            if(src.startsWith('./') || src.startsWith('../')) return src; // leave relative paths as-is
+            // assume plain filename stored in gallery -> it's an upload
+            return '/uploads/' + src;
+        }
 
-        galleryEl.innerHTML = markup;
-        galleryEl.hidden = !markup;
+        // Note: fetchImgListFromServer is defined in outer scope (setupAfishaModal)
+
+        // probe an img folder on the server for numbered images (client-side)
+        async function probeImgFolderForEvent(eventId, limit=8){
+            if(!eventId) return [];
+            const candidates = [];
+            const exts = ['jpg','jpeg','png','webp','svg'];
+            // common naming patterns
+            const patterns = [];
+            for(let i=1;i<=limit;i++){
+                patterns.push(String(i));
+                patterns.push(String(i).padStart(2,'0'));
+            }
+            // try combinations
+            for(const p of patterns){
+                for(const ext of exts){
+                    candidates.push(`/img/${encodeURIComponent(eventId)}/${p}.${ext}`);
+                }
+            }
+            // also try generic names
+            for(const ext of exts){ candidates.push(`/img/${encodeURIComponent(eventId)}/photo.${ext}`); candidates.push(`/img/${encodeURIComponent(eventId)}/main.${ext}`); }
+
+            const found = [];
+            // Probe sequentially to avoid many parallel requests
+            for(const url of candidates){
+                try{
+                    const res = await fetch(url, { method: 'HEAD' });
+                    if(res.ok){ found.push(url); }
+                }catch(e){ /* ignore */ }
+                if(found.length >= limit) break;
+            }
+            if(found.length) console.info('probeImgFolderForEvent: found', found.length, 'images for', eventId);
+            return found;
+        }
+
+        // Build slides list from provided images OR probe /img/<id>/ if none provided
+        let slides = images
+            .map((entry) => normalizeSrc(typeof entry === 'string' ? entry : entry?.src))
+            .filter(Boolean);
+
+        if(options.source){
+            console.info('renderGallery: source=', options.source, 'initialSlides=', slides.length);
+        }
+
+        if(!slides.length && currentEventId){
+            // First try server-side listing (fast & reliable). If empty, fallback to HEAD probe.
+            (async ()=>{
+                let found = await fetchImgListFromServer(currentEventId);
+                if(!found || !found.length){
+                    found = await probeImgFolderForEvent(currentEventId, 8);
+                }
+
+                if(found && found.length){
+                    // ensure shuffled order (server already randomizes but keep client-side safety)
+                    for(let i = found.length -1; i>0; i--){ const j = Math.floor(Math.random()*(i+1)); [found[i],found[j]]=[found[j],found[i]] }
+                    // rebuild slider by calling renderGallery recursively with found slides as images
+                    renderGallery(found, title);
+                }
+            })();
+            // while async completion happens, keep gallery hidden
+            return;
+        }
+
+        if(!slides.length){ galleryEl.innerHTML = ''; galleryEl.hidden = true; return; }
+
+        // build slider markup
+        const slidesMarkup = slides.map(src => `<div class="slide"><img src="${escapeAttr(src)}" loading="lazy"/></div>`).join('');
+        const navButtons = slides.map((_,i)=>`<button data-slide="${i}">${i+1}</button>`).join('');
+        galleryEl.innerHTML = `<div class="slider" aria-live="polite">${slidesMarkup}</div><div class="slider-nav">${navButtons}</div>`;
+        galleryEl.hidden = false;
+
+        // slider behavior: autoplay + navigation
+        const slider = galleryEl.querySelector('.slider');
+        const nav = galleryEl.querySelector('.slider-nav');
+        let current = 0; let autoplayId = null;
+        function showSlide(i){ current = (i+slides.length)%slides.length; slider.style.transform = `translateX(-${current*100}%)`; nav.querySelectorAll('button').forEach(b=>b.classList.toggle('active', Number(b.dataset.slide)===current)); }
+        function startAuto(){ if(autoplayId) clearInterval(autoplayId); autoplayId = setInterval(()=> showSlide(current+1), 4000); }
+        function stopAuto(){ if(autoplayId) clearInterval(autoplayId); autoplayId = null; }
+
+        nav.addEventListener('click', (e)=>{ const btn = e.target.closest('button'); if(!btn) return; stopAuto(); showSlide(Number(btn.dataset.slide)); startAuto(); });
+        slider.addEventListener('mouseenter', stopAuto);
+        slider.addEventListener('mouseleave', startAuto);
+
+        // Swipe / drag support (touch and pointer)
+        let isPointerDown = false;
+        let startX = 0;
+        let currentDelta = 0;
+        const containerWidth = () => galleryEl.clientWidth || window.innerWidth;
+
+        function applyDragTransform(delta){
+            const w = containerWidth();
+            slider.style.transition = 'none';
+            slider.style.transform = `translateX(${ -current * w + delta }px)`;
+        }
+
+        function endDrag(){
+            const w = containerWidth();
+            slider.style.transition = 'transform 600ms cubic-bezier(.2,.9,.2,1)';
+            // threshold 0.25 of width
+            if(Math.abs(currentDelta) > w * 0.25){
+                if(currentDelta > 0) showSlide(current-1); else showSlide(current+1);
+            }else{
+                showSlide(current);
+            }
+            currentDelta = 0; isPointerDown = false; startAuto();
+        }
+
+        // Pointer events (preferred)
+        slider.addEventListener('pointerdown', (e)=>{
+            isPointerDown = true; startX = e.clientX; currentDelta = 0; stopAuto(); slider.setPointerCapture && slider.setPointerCapture(e.pointerId);
+        });
+        slider.addEventListener('pointermove', (e)=>{
+            if(!isPointerDown) return; currentDelta = e.clientX - startX; applyDragTransform(currentDelta);
+        });
+        slider.addEventListener('pointerup', (e)=>{ if(isPointerDown) { slider.releasePointerCapture && slider.releasePointerCapture(e.pointerId); endDrag(); } });
+        slider.addEventListener('pointercancel', ()=>{ if(isPointerDown) endDrag(); });
+
+        // Touch fallback (for older browsers)
+        slider.addEventListener('touchstart', (e)=>{ if(e.touches && e.touches[0]){ startX = e.touches[0].clientX; currentDelta = 0; isPointerDown = true; stopAuto(); } }, {passive:true});
+        slider.addEventListener('touchmove', (e)=>{ if(!isPointerDown) return; const t = e.touches && e.touches[0]; if(!t) return; currentDelta = t.clientX - startX; applyDragTransform(currentDelta); }, {passive:true});
+        slider.addEventListener('touchend', (e)=>{ if(isPointerDown) endDrag(); });
+
+        // init
+        showSlide(0); startAuto();
+    }
+
+    // Lightbox implementation
+    let lb = null;
+    function createLightbox(){
+        if(lb) return lb;
+        lb = document.createElement('div'); lb.className='afisha-lightbox';
+        lb.innerHTML = `
+            <div class="lb-inner">
+                <button class="lb-close" aria-label="Закрыть">&times;</button>
+                <div style="text-align:center"><img src="" alt=""/></div>
+                <div class="lb-caption"></div>
+                <div class="lb-nav">
+                  <button data-dir="prev">‹</button>
+                  <button data-dir="next">›</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(lb);
+        lb.querySelector('.lb-close').addEventListener('click', closeLightbox);
+        lb.querySelector('[data-dir="prev"]').addEventListener('click', ()=> navigateLightbox(-1));
+        lb.querySelector('[data-dir="next"]').addEventListener('click', ()=> navigateLightbox(1));
+        lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLightbox(); });
+        return lb;
+    }
+
+    let lbImages = [];
+    let lbIndex = 0;
+    function openLightbox(imagesArray, index, title){
+        if(!imagesArray || !imagesArray.length) return;
+        lbImages = imagesArray;
+        lbIndex = Math.max(0, Math.min(index || 0, imagesArray.length-1));
+        const box = createLightbox();
+        const img = box.querySelector('img');
+        img.src = lbImages[lbIndex];
+        box.querySelector('.lb-caption').textContent = title || '';
+        box.classList.add('is-visible');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(){ if(lb){ lb.classList.remove('is-visible'); document.body.style.overflow = ''; } }
+
+    function navigateLightbox(dir){
+        if(!lbImages || !lbImages.length) return;
+        lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
+        const img = lb.querySelector('img'); img.src = lbImages[lbIndex];
     }
 
     function renderActions(buttons, ticketUrl) {
@@ -409,6 +564,18 @@ function initAfishaSection(modalController, heroSlider) {
     const statusField = section.querySelector('[data-afisha-status]');
     const afishaLookup = new Map();
     let events = [];
+
+    // returns true for events that should be visible (upcoming or undated)
+    function isEventUpcoming(event){
+        if(!event) return false;
+        // keep events without a valid date
+        if(!event.date || !(event.date instanceof Date) || Number.isNaN(event.date.getTime())) return true;
+        const now = new Date();
+        // compare only by date (local timezone) - event stays visible if its date is today or in future
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const eventDayStart = new Date(event.date.getFullYear(), event.date.getMonth(), event.date.getDate()).getTime();
+        return eventDayStart >= todayStart;
+    }
 
     if (grid) {
         renderAfishaSkeleton(grid, 3);
@@ -454,14 +621,17 @@ function initAfishaSection(modalController, heroSlider) {
 
             const payload = await response.json();
             const list = Array.isArray(payload?.events) ? payload.events : Array.isArray(payload) ? payload : [];
-            events = list.map(normalizeAfishaEvent).filter(Boolean);
+            const allEvents = list.map(normalizeAfishaEvent).filter(Boolean);
 
+            // keep a full lookup for modal/details but only show upcoming events on the main page
             afishaLookup.clear();
-            events.forEach((item) => {
+            allEvents.forEach((item) => {
                 if (item?.id) {
                     afishaLookup.set(item.id, item);
                 }
             });
+
+            events = allEvents.filter(isEventUpcoming);
 
             if (statusField) {
                 statusField.hidden = true;
@@ -1038,4 +1208,3 @@ function escapeAttr(value) {
 function escapeCssUrl(value) {
     return String(value ?? '').replace(/([')\\"])/g, '\\$1');
 }
-
