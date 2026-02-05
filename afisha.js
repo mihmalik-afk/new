@@ -228,6 +228,61 @@
         return `${formatter.format(single)} ${resolvedCurrency}`;
     }
 
+    // === YM tracking helpers ===
+    function trackBuyTicket(goalName = 'buy_ticket_click') {
+        try {
+            if (typeof ym === 'function') {
+                ym(106581416, 'reachGoal', goalName);
+                return;
+            }
+
+            if (document.querySelector('script[data-ym-loader="106581416"]')) {
+                const waiter = setInterval(() => {
+                    if (typeof ym === 'function') {
+                        clearInterval(waiter);
+                        ym(106581416, 'reachGoal', goalName);
+                    }
+                }, 200);
+                setTimeout(() => clearInterval(waiter), 5000);
+                return;
+            }
+
+            const s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://mc.yandex.ru/metrika/tag.js?id=106581416';
+            s.setAttribute('data-ym-loader', '106581416');
+            s.onload = function () {
+                try {
+                    if (typeof ym === 'function') {
+                        ym(106581416, 'reachGoal', goalName);
+                    }
+                } catch (e) {
+                    console.error('Ошибка вызова ym после загрузки скрипта', e);
+                }
+            };
+            s.onerror = function () {
+                console.error('Не удалось загрузить Yandex.Metrika');
+            };
+            document.head.appendChild(s);
+        } catch (err) {
+            console.error('trackBuyTicket error', err);
+        }
+    }
+
+    // Delegate clicks from any element with data-ym-track attribute
+    document.addEventListener('click', function (ev) {
+        try {
+            const el = ev.target.closest && ev.target.closest('[data-ym-track]');
+            if (!el) return;
+
+            const goal = el.getAttribute('data-ym-track') || 'buy_ticket_click';
+            // fire and forget — do not block navigation
+            trackBuyTicket(goal);
+        } catch (e) {
+            console.error('delegated ym tracker error', e);
+        }
+    }, false);
+
     function createMetaRow(label, value) {
         if (!value) {
             return null;
@@ -321,20 +376,16 @@
 
         if (event.url) {
             const link = document.createElement('a');
-link.className = 'afisha-card__link';
-link.href = event.url;
-link.target = '_blank';
-link.rel = 'noopener noreferrer';
-link.textContent = 'Купить билеты';
+            link.className = 'afisha-card__link';
+            link.href = event.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = 'Купить билеты';
 
-// 🔥 ЦЕЛЬ ЯНДЕКС МЕТРИКИ
-link.addEventListener('click', function (e) {
-    if (typeof ym === 'function') {
-        ym(106581416, 'reachGoal', 'buy_ticket_click');
-    }
-});
+            // помечаем ссылку для делегированного трекинга Яндекс.Метрики
+            link.setAttribute('data-ym-track', 'buy_ticket_click');
 
-footer.appendChild(link);
+            footer.appendChild(link);
         }
 
         if (footer.children.length > 0) {
